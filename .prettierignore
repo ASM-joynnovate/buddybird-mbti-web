@@ -1,0 +1,23 @@
+# Build output
+.next/
+out/
+build/
+
+# Dependencies
+node_modules/
+.yarn/
+
+# Static assets
+public/
+
+# Generated / lock files
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+next-env.d.ts
+
+# Agent / editor tooling (not project source)
+.agents/
+.claude/
+.idea/
+skills-lock.json
