@@ -1,0 +1,291 @@
+/*
+ * Test surface — "editorial trail" (issue #03 variant C, confirmed). Calm, max
+ * legibility on a daylight-jungle backdrop: layered foliage behind content, a
+ * photo card above the question, the question in a surface card with a "문항 N/12"
+ * kicker, and full-width choice rows anchored to the bottom. Tokens come from the
+ * @theme design system in globals.css.
+ */
+
+.test-surface {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+    max-width: 480px;
+    margin-inline: auto;
+    overflow: hidden;
+    padding: 32px 24px;
+    background: radial-gradient(
+        150% 72% at 50% -12%,
+        #f7fcf0 0%,
+        var(--color-bg) 52%,
+        var(--color-surface-sunken) 100%
+    );
+}
+
+/* --- Atmospheric jungle backdrop (restrained, behind content) --- */
+.test-foliage {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.test-leaf {
+    position: absolute;
+    width: 64vw;
+    max-width: 270px;
+    aspect-ratio: 1 / 1.25;
+    clip-path: path(
+        'M140 8 C210 40 268 120 250 210 C236 280 168 320 96 300 C28 282 4 200 22 130 C38 64 80 24 140 8 Z'
+    );
+}
+
+.test-leaf--tr {
+    top: -64px;
+    right: -68px;
+    background: var(--color-foliage-near);
+    opacity: 0.42;
+    transform: rotate(26deg);
+}
+
+.test-leaf--bl {
+    bottom: -78px;
+    left: -96px;
+    background: var(--color-foliage-mid);
+    opacity: 0.32;
+    transform: rotate(-18deg);
+}
+
+.test-leaf--mid {
+    top: 40%;
+    right: -130px;
+    background: var(--color-foliage-deep);
+    opacity: 0.16;
+    filter: blur(3px);
+    transform: rotate(48deg);
+}
+
+/* --- Progress trail with step markers --- */
+.test-trail {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 32px;
+}
+
+.test-step {
+    flex: 1;
+    height: 6px;
+    border-radius: 9999px;
+    background: var(--color-surface-sunken);
+}
+
+.test-step--done {
+    background: var(--color-foliage-mid);
+}
+
+.test-step--current {
+    background: var(--color-primary);
+}
+
+.test-count {
+    margin-left: 8px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--color-ink-muted);
+    white-space: nowrap;
+}
+
+/* --- Animated stage (remounts per question via key) --- */
+.test-stage {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    animation: test-slide 520ms var(--ease-leaf) both;
+}
+
+@keyframes test-slide {
+    from {
+        opacity: 0;
+        transform: translateX(22px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* --- Photo card (placeholder for the parrot photo) --- */
+.test-photo {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    margin-bottom: 24px;
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    border: 1px solid color-mix(in srgb, var(--color-outline) 80%, transparent);
+    box-shadow: var(--shadow-leaf-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.test-photo::after {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: -18px;
+    width: 78px;
+    height: 78px;
+    background: var(--color-foliage-near);
+    clip-path: path(
+        'M140 8 C210 40 268 120 250 210 C236 280 168 320 96 300 C28 282 4 200 22 130 C38 64 80 24 140 8 Z'
+    );
+    background-size: cover;
+    opacity: 0.55;
+    transform: rotate(18deg);
+    z-index: -1;
+}
+
+.test-photo-ph {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-ink-muted);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+/* --- Question card --- */
+.test-card {
+    position: relative;
+    z-index: 2;
+    padding: 24px;
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    border: 1px solid color-mix(in srgb, var(--color-outline) 75%, transparent);
+    box-shadow: var(--shadow-leaf-card);
+}
+
+.test-kicker {
+    margin: 0 0 8px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--color-ink-muted);
+}
+
+.test-question {
+    margin: 0;
+    font-size: 1.75rem;
+    line-height: 1.14;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+}
+
+/* --- Choice rows (ChoiceButton) --- */
+.test-choices {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 32px;
+}
+
+.choice-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    text-align: left;
+    padding: 16px 16px 16px 12px;
+    border: 1px solid color-mix(in srgb, var(--color-outline) 70%, transparent);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font: inherit;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-leaf-low);
+    cursor: pointer;
+    transition:
+        border-color 160ms var(--ease-leaf),
+        box-shadow 160ms var(--ease-leaf),
+        background 160ms var(--ease-leaf);
+}
+
+.choice-bar {
+    flex: none;
+    width: 5px;
+    align-self: stretch;
+    border-radius: 9999px;
+    background: var(--choice-feather, var(--color-foliage-mid));
+}
+
+.choice-label {
+    flex: 1;
+    line-height: 1.4;
+}
+
+.choice-chevron {
+    flex: none;
+    color: var(--color-ink-muted);
+    transition: transform 160ms var(--ease-leaf);
+}
+
+.choice-row:hover {
+    border-color: var(--color-primary);
+    background: #ffffff;
+    box-shadow: var(--shadow-leaf-card);
+}
+
+.choice-row:hover .choice-chevron {
+    transform: translateX(3px);
+}
+
+.choice-row:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* --- Back affordance --- */
+.test-back {
+    position: relative;
+    z-index: 2;
+    align-self: flex-start;
+    margin-top: 16px;
+    padding: 8px 0;
+    border: 0;
+    background: none;
+    color: var(--color-ink-muted);
+    font: inherit;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.test-back:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+/* Reduced motion: the foliage-parting transition becomes an instant cut. */
+@media (prefers-reduced-motion: reduce) {
+    .test-stage {
+        animation: none;
+    }
+
+    .choice-row,
+    .choice-chevron {
+        transition: none;
+    }
+}
