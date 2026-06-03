@@ -1,6 +1,6 @@
 // Result type <-> URL query param mapping for the static `/result` route.
-// The result code travels as a query param so the route stays statically exported.
-// TODO(#07): finalize answer/type encoding & restoration.
+// The result code travels as a query param so the route stays statically exported,
+// and opening `/result/?t=ENFP` directly reconstructs the same type (issue #07).
 
 import type { TypeCode } from '@/lib/mbti/types'
 
