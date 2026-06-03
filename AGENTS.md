@@ -5,3 +5,33 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 
 <!-- END:nextjs-agent-rules -->
+
+## Product
+
+**버디버드(BuddyBird) 앵무새 MBTI** — 앵무새 보호자를 버디버드 앱 설치로 유도하는
+바이럴 모바일 웹. 보호자가 자기 앵무새를 관찰한 내용을 2지선다로 답하면 앵무새의
+MBTI를 도출하고, 결과 카드를 인스타로 공유하게 해 앱 유입을 일으킨다.
+
+- **플로우**: 안내(Intro) → 문항(Test, 2지선다·자동 진행) → 결과(Result) → 앱 설치(App CTA)
+- **MBTI**: 정식 4축 16유형 / 축당 3문항(총 12문항)·동점 불가. 산출은 순수 함수로 분리.
+- **사진**: 결과 페이지에서 카메라 촬영 + 갤러리 업로드. 사진은 서버 전송 없이 100% 클라이언트 처리.
+- **공유**: 결과 카드를 Canvas로 합성 → Web Share API 네이티브 공유(미지원 시 다운로드 폴백). 인스타 직접 게시 API는 없음.
+- **앱 유도**: 딥링크 서비스(OneLink/Branch) + 스토어 링크. 링크는 단일 설정 상수로 관리.
+- **백엔드 없음**: 클라이언트 전용, 정적 배포. 분석은 클라이언트 이벤트 전송까지만.
+- **모바일 우선**, reduced-motion·키보드·스크린리더 접근성 준수. 한국어 단일(MVP).
+
+상세는 `.scratch/parrot-mbti/PRD.md` 참조.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as markdown files under `.scratch/<feature>/`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Canonical default label strings (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context — one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
