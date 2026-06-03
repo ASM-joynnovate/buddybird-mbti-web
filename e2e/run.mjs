@@ -9,9 +9,13 @@
 
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
+import { run as runAccessibility } from './flows/accessibility.mjs'
 import { run as runAnalyticsEvents } from './flows/analytics-events.mjs'
 import { run as runFullNavigation } from './flows/full-navigation.mjs'
+import { run as runFunnelEvents } from './flows/funnel-events.mjs'
+import { run as runIntroCarousel } from './flows/intro-carousel.mjs'
 import { run as runKnownAnswerType } from './flows/known-answer-type.mjs'
+import { run as runResponsive } from './flows/responsive.mjs'
 import { settle, setViewport, startStaticServer, stopServer } from './helpers.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -26,6 +30,10 @@ const FLOWS = [
     { name: 'full-navigation', fn: runFullNavigation },
     { name: 'known-answer-type', fn: runKnownAnswerType },
     { name: 'analytics-events', fn: runAnalyticsEvents },
+    { name: 'intro-carousel', fn: runIntroCarousel },
+    { name: 'funnel-events', fn: runFunnelEvents },
+    { name: 'accessibility', fn: runAccessibility },
+    { name: 'responsive', fn: runResponsive },
 ]
 
 // ---------------------------------------------------------------------------
