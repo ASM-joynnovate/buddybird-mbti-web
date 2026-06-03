@@ -2,3 +2,4 @@
 
 export * from './types'
 export * from './compute-result'
+export * from './temperament'

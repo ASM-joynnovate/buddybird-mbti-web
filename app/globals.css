@@ -64,3 +64,29 @@ body {
         -apple-system,
         sans-serif;
 }
+
+/* Shared parrot-image fallback (ParrotImage) — shown until author images land or on
+ * load error. Fills its frame so the carousel/result/preview layout never shifts. */
+.parrot-image-fallback {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(160deg, var(--color-surface) 0%, var(--color-surface-sunken) 100%);
+    color: var(--color-ink-muted);
+}
+
+.parrot-image-fallback-mark {
+    font-size: 2.5rem;
+    line-height: 1;
+}
+
+.parrot-image-fallback-code {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: 1.25rem;
+    letter-spacing: 0.04em;
+    color: var(--color-ink);
+}

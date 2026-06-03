@@ -16,3 +16,4 @@ for (const question of QUESTIONS) {
 
 export * from './questions'
 export * from './types'
+export * from './assets'
