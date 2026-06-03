@@ -86,6 +86,9 @@ export default function TestPage() {
             </div>
 
             <div className="test-stage" key={currentIndex}>
+                <span className="test-grass test-grass--left" aria-hidden="true" />
+                <span className="test-grass test-grass--right" aria-hidden="true" />
+
                 <div className="test-photo" aria-hidden="true">
                     <span className="test-photo-ph">
                         <svg

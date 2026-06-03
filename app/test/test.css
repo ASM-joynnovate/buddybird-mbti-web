@@ -122,6 +122,92 @@
     }
 }
 
+/* --- Grass-parting transition (issue #05): vector blade silhouettes graze the left
+   and right edges and part outward as the next question pushes through. Lives inside
+   the keyed .test-stage so it replays on every advance (and on goBack). Edge-only and
+   short so it never disrupts the auto-advance rhythm. Compositor-only props. --- */
+.test-grass {
+    position: absolute;
+    top: -32px;
+    bottom: -32px;
+    width: 72px;
+    z-index: 3;
+    pointer-events: none;
+    opacity: 0;
+    background: var(--color-foliage-mid);
+}
+
+.test-grass--left {
+    left: -28px;
+    /* Blade tips point inward (right edge sawtooth). */
+    clip-path: polygon(
+        0 0,
+        100% 6%,
+        0 12%,
+        100% 19%,
+        0 26%,
+        100% 33%,
+        0 40%,
+        100% 47%,
+        0 54%,
+        100% 61%,
+        0 68%,
+        100% 75%,
+        0 82%,
+        100% 89%,
+        0 96%,
+        0 100%
+    );
+    animation: grass-part-left 360ms var(--ease-leaf) both;
+}
+
+.test-grass--right {
+    right: -28px;
+    background: var(--color-foliage-near);
+    /* Mirror: blade tips point inward (left edge sawtooth). */
+    clip-path: polygon(
+        100% 0,
+        0 6%,
+        100% 12%,
+        0 19%,
+        100% 26%,
+        0 33%,
+        100% 40%,
+        0 47%,
+        100% 54%,
+        0 61%,
+        100% 68%,
+        0 75%,
+        100% 82%,
+        0 89%,
+        100% 96%,
+        100% 100%
+    );
+    animation: grass-part-right 360ms var(--ease-leaf) both;
+}
+
+@keyframes grass-part-left {
+    0% {
+        opacity: 0.55;
+        transform: translateX(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-46%);
+    }
+}
+
+@keyframes grass-part-right {
+    0% {
+        opacity: 0.55;
+        transform: translateX(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(46%);
+    }
+}
+
 /* --- Photo card (placeholder for the parrot photo) --- */
 .test-photo {
     position: relative;
@@ -282,6 +368,11 @@
 @media (prefers-reduced-motion: reduce) {
     .test-stage {
         animation: none;
+    }
+
+    .test-grass {
+        animation: none;
+        opacity: 0;
     }
 
     .choice-row,
