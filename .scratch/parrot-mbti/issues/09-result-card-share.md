@@ -27,3 +27,7 @@ Status: ready-for-agent
 
 - 08 (`08-photo-capture-preview.md`)
 - 03 (`03-visual-design-direction.md`) — 디자인 게이트
+
+## Comments
+
+- 구현 완료 (branch `feat/parrot-mbti-foundation`). `lib/card`(compose-card 1080×1080 Canvas) + `lib/share`(Web Share files + 다운로드 폴백) + `components/share-button.tsx`. 폰트 로딩·same-origin taint 회피 처리. 검증: `yarn type-check && yarn lint && yarn build && yarn e2e:run` 전부 통과.

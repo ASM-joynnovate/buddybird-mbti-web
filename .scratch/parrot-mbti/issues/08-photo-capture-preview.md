@@ -28,3 +28,7 @@ Status: ready-for-agent
 ## Blocked by
 
 - 07 (`07-result-report-page.md`)
+
+## Comments
+
+- 구현 완료 (branch `feat/parrot-mbti-foundation`). `components/photo-input.tsx` + `lib/photo/use-photo-source.ts` 카메라/갤러리 입력·카드 배치 미리보기, 100% 클라이언트(objectURL 라이프사이클). 검증: `yarn type-check && yarn lint && yarn build && yarn e2e:run` 전부 통과.

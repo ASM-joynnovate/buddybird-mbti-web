@@ -26,3 +26,7 @@ Status: ready-for-agent
 - 04 (`04-test-question-page.md`)
 - 07 (`07-result-report-page.md`)
 - 09 (`09-result-card-share.md`)
+
+## Comments
+
+- 구현 완료 (branch `feat/parrot-mbti-foundation`). photo_attached·share_success·share_fallback·app_cta_click 발행 배선(스키마 불변), `e2e/flows/funnel-events.mjs`로 검증. 검증: `yarn type-check && yarn lint && yarn build && yarn e2e:run` 전부 통과.

@@ -29,3 +29,7 @@ Status: ready-for-agent
 - 02 (`02-mbti-engine-content-model.md`)
 - 04 (`04-test-question-page.md`)
 - 03 (`03-visual-design-direction.md`) — 디자인 게이트
+
+## Comments
+
+- 구현 완료 (branch `feat/parrot-mbti-foundation`). `app/result/result-view.tsx`에 유형 대표 이미지·기질 그룹 뱃지·App CTA·공유 URL 진입(in-memory 결과면 다시하기, 공유 방문자면 나도 테스트하기) 구현. 검증: `yarn type-check && yarn lint && yarn build && yarn e2e:run` 전부 통과.

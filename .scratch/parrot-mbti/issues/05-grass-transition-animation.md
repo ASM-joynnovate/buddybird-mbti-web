@@ -37,3 +37,7 @@ Status: ready-for-agent
 
 - 04 (`04-test-question-page.md`)
 - 03 (`03-visual-design-direction.md`) — 디자인 게이트
+
+## Comments
+
+- 구현 완료 (branch `feat/parrot-mbti-foundation`). 풀숲 갈라짐+전진 전환을 `app/test/test.css`(grass-part-left/right) + `app/test/page.tsx` 가장자리 레이어로 구현, reduced-motion 즉시전환 폴백. 검증: `yarn type-check && yarn lint && yarn build && yarn e2e:run` 전부 통과.

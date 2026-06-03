@@ -29,3 +29,7 @@ Status: ready-for-agent
 ## Blocked by
 
 - 03 (`03-visual-design-direction.md`) — 디자인 게이트
+
+## Comments
+
+- 구현 완료 (branch `feat/parrot-mbti-foundation`). `components/type-carousel.tsx` 자동/수동/reduced-motion 캐러셀 + `app/page.tsx`에 App CTA(placeholder 상수) 연동, 기존 testid 보존. 검증: `yarn type-check && yarn lint && yarn build && yarn e2e:run` 전부 통과.

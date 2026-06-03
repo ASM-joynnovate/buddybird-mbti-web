@@ -31,3 +31,7 @@ Status: ready-for-agent
 - 06 (`06-intro-page-carousel.md`)
 - 07 (`07-result-report-page.md`)
 - 09 (`09-result-card-share.md`)
+
+## Comments
+
+- 구현 완료 (branch `feat/parrot-mbti-foundation`). progressbar 시맨틱·전 컨트롤 focus-visible·이미지 alt/치수(CLS), `e2e/flows/accessibility.mjs` + `responsive.mjs`(320·375·768·1024·1440 오버플로 0) 통과. 검증: `yarn type-check && yarn lint && yarn build && yarn e2e:run` 전부 통과.
