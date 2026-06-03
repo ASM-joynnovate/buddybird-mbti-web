@@ -1,26 +1,66 @@
 @import 'tailwindcss';
 
-:root {
-    --background: #ffffff;
-    --foreground: #171717;
+/*
+ * Parrot MBTI design system — tropical daylight jungle, single fixed theme.
+ * Confirmed in issue #03 (variant C — editorial trail). Source of truth for the
+ * token values is DESIGN.md; this is their Tailwind v4 @theme binding so the whole
+ * funnel shares one palette/type/shape system.
+ */
+@theme {
+    /* Action anchor — the single CTA color across the funnel.
+     * PLACEHOLDER for the BuddyBird brand color until issue #12; swaps here only. */
+    --color-primary: #c9215e;
+    --color-on-primary: #ffffff;
+    --color-primary-hover: #b31a53;
+    --color-primary-active: #9e1648;
+
+    /* Base world (greens) — the daylight jungle stage. */
+    --color-bg: #e8f4dd;
+    --color-surface: #f4fbec;
+    --color-surface-sunken: #dcefcf;
+    --color-ink: #1a2e1f;
+    --color-ink-muted: #4c6151;
+    --color-outline: #c2d8b0;
+
+    /* Foliage depth layers (decorative overlap + tinted shadow source). */
+    --color-foliage-near: #5ab45a;
+    --color-foliage-mid: #2e7d43;
+    --color-foliage-deep: #1b5e34;
+
+    /* 4 temperament-group feather accents (type identity; decorative flourishes). */
+    --color-group-ruby: #e8443b;
+    --color-group-marigold: #f4a93c;
+    --color-group-teal: #15b8a0;
+    --color-group-cobalt: #3d7bd9;
+
+    --color-error: #d7263d;
+
+    /* Organic, generous radii. */
+    --radius-sm: 12px;
+    --radius-md: 20px;
+    --radius-lg: 28px;
+    --radius-xl: 36px;
+
+    /* Type families — bound to next/font variables set on <html> (layout.tsx). */
+    --font-sans: var(--font-noto-kr);
+    --font-display: var(--font-jua);
+
+    /* Green-tinted elevation (never neutral gray). */
+    --shadow-leaf-low: 0 4px 12px -6px rgba(27, 94, 52, 0.35);
+    --shadow-leaf-card: 0 14px 32px -12px rgba(27, 94, 52, 0.45);
+
+    /* Foliage-parting motion. */
+    --ease-leaf: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@theme inline {
-    --color-background: var(--background);
-    --color-foreground: var(--foreground);
-    --font-sans: var(--font-geist-sans);
-    --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background: #0a0a0a;
-        --foreground: #ededed;
-    }
-}
-
+/* Single fixed theme: NO automatic prefers-color-scheme dark mode (ADR-0001) —
+ * the shared result card must look identical for every viewer. */
 body {
-    background: var(--background);
-    color: var(--foreground);
-    font-family: Arial, Helvetica, sans-serif;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family:
+        var(--font-sans),
+        system-ui,
+        -apple-system,
+        sans-serif;
 }

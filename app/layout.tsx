@@ -1,16 +1,22 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Jua, Noto_Sans_KR } from 'next/font/google'
 import { TestProgressProvider } from '@/lib/state/test-progress-context'
 import './globals.css'
 
-const geistSans = Geist({
-    variable: '--font-geist-sans',
+// Display — Jua (rounded Korean gothic). Single weight (400); hierarchy from size.
+const jua = Jua({
+    weight: '400',
     subsets: ['latin'],
+    variable: '--font-jua',
 })
 
-const geistMono = Geist_Mono({
-    variable: '--font-geist-mono',
+// Body — Pretendard stand-in. Pretendard is not on Google Fonts; DESIGN.md names
+// Noto Sans KR as the fallback. preload:false skips the large Korean-subset preload.
+const notoSansKr = Noto_Sans_KR({
+    weight: ['400', '500', '700'],
     subsets: ['latin'],
+    preload: false,
+    variable: '--font-noto-kr',
 })
 
 export const metadata: Metadata = {
@@ -24,10 +30,7 @@ export default function RootLayout({
     children: React.ReactNode
 }>) {
     return (
-        <html
-            lang="ko"
-            className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-        >
+        <html lang="ko" className={`${jua.variable} ${notoSansKr.variable} h-full antialiased`}>
             <body className="flex min-h-full flex-col">
                 <TestProgressProvider>{children}</TestProgressProvider>
             </body>
