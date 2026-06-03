@@ -24,13 +24,13 @@ export function ResultView() {
         return (
             <main
                 data-testid="result-root"
-                className="flex flex-1 flex-col items-center justify-center gap-6 px-6 py-16 text-center"
+                className="flex flex-1 flex-col items-center justify-center gap-6 px-6 py-16 text-center text-ink"
             >
-                <p className="text-zinc-600">결과 없음</p>
+                <p className="text-ink-muted">결과 없음</p>
                 <button
                     type="button"
                     onClick={() => router.push('/')}
-                    className="rounded-md bg-zinc-900 px-6 py-3 text-base font-medium text-white"
+                    className="rounded-full bg-primary px-8 py-4 text-base font-bold text-on-primary"
                 >
                     처음으로
                 </button>
@@ -43,22 +43,22 @@ export function ResultView() {
     return (
         <main
             data-testid="result-root"
-            className="flex flex-1 flex-col items-center justify-center gap-4 px-6 py-16 text-center"
+            className="flex flex-1 flex-col items-center justify-center gap-4 px-6 py-16 text-center text-ink"
         >
-            <p data-testid="result-type" className="text-3xl font-bold tracking-tight">
+            <p data-testid="result-type" className="font-display text-6xl tracking-tight text-ink">
                 {type}
             </p>
             {info !== null && (
                 <>
-                    <h1 className="text-xl font-semibold">{info.name}</h1>
-                    <p className="max-w-sm text-zinc-600">{info.report}</p>
+                    <h1 className="font-display text-2xl text-ink">{info.name}</h1>
+                    <p className="max-w-sm leading-relaxed text-ink-muted">{info.report}</p>
                 </>
             )}
             <button
                 type="button"
                 data-testid="restart-button"
                 onClick={handleRestart}
-                className="mt-4 rounded-md border border-zinc-300 px-6 py-3 text-base font-medium"
+                className="mt-4 rounded-full border border-outline bg-[var(--color-surface)] px-8 py-4 text-base font-bold text-ink"
             >
                 다시하기
             </button>
