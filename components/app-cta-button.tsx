@@ -23,7 +23,7 @@ export function AppCtaButton({ placement }: AppCtaButtonProps) {
             rel="noopener noreferrer"
             data-testid={`app-cta-${placement}`}
             onClick={handleClick}
-            className="inline-flex items-center gap-2 rounded-full border border-outline bg-[var(--color-surface)] px-6 py-3 text-sm font-bold text-ink shadow-[var(--shadow-leaf-low)] transition-transform focus-visible:[outline:3px_solid_var(--color-primary)] focus-visible:[outline-offset:2px] active:scale-[0.98]"
+            className="btn-candy--ghost inline-flex items-center gap-2 rounded-full border border-outline bg-[var(--color-surface)] px-6 py-3 text-sm font-bold text-ink focus-visible:[outline:3px_solid_var(--color-primary)] focus-visible:[outline-offset:2px]"
         >
             <span aria-hidden="true">🐦</span>
             {APP_CTA_LABEL}

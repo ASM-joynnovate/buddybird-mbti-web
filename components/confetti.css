@@ -1,0 +1,32 @@
+/*
+ * Confetti layer (result surface). Per-piece CSS vars set inline by Confetti:
+ *   --c-left, --c-delay, --c-duration, --c-color
+ * Uses the shared `confetti-fall` keyframe (globals.css). Fixed + pointer-events:none
+ * so it never shifts layout or blocks interaction.
+ */
+
+.confetti {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.confetti-piece {
+    position: absolute;
+    top: 0;
+    left: var(--c-left);
+    width: 10px;
+    height: 14px;
+    background: var(--c-color);
+    opacity: 0;
+    will-change: transform, opacity;
+    animation: confetti-fall var(--c-duration) var(--ease-leaf) var(--c-delay) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .confetti {
+        display: none;
+    }
+}

@@ -1,0 +1,109 @@
+/*
+ * Axis spectrum bars (result surface). Per-row CSS vars set inline by AxisBars:
+ *   --axis-color  per-axis hue (globals.css token)
+ *   --seg-start   colored segment left offset (% from track left)
+ *   --seg-width   colored segment width (%)
+ *   --knob-pos    knob center position (% from track left)
+ */
+
+.axis-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.axis-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.axis-ends {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--color-ink-muted);
+}
+
+.axis-end {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 3px;
+    transition: color 0.3s var(--ease-leaf);
+}
+
+.axis-end em {
+    font-style: normal;
+    font-size: 0.6875rem;
+    opacity: 0.6;
+}
+
+.axis-end.is-active {
+    color: var(--axis-color);
+    font-weight: 800;
+}
+
+.axis-pct {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    color: var(--axis-color);
+}
+
+.axis-track {
+    position: relative;
+    height: 14px;
+    border-radius: 9999px;
+    background: var(--color-surface-sunken);
+    box-shadow: inset 0 1px 2px rgba(58, 46, 26, 0.16);
+}
+
+/* Center tick — neutral baseline reference. */
+.axis-track::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    bottom: -3px;
+    left: 50%;
+    width: 2px;
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--color-outline) 85%, transparent);
+    transform: translateX(-50%);
+}
+
+.axis-fill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--seg-start);
+    width: var(--seg-width);
+    border-radius: 9999px;
+    background: var(--axis-color);
+    transition:
+        left 0.9s var(--ease-spring),
+        width 0.9s var(--ease-spring);
+}
+
+.axis-knob {
+    position: absolute;
+    top: 50%;
+    left: var(--knob-pos);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--axis-color);
+    border: 4px solid #ffffff;
+    box-shadow: var(--shadow-leaf-low);
+    transform: translate(-50%, -50%);
+    transition: left 0.9s var(--ease-spring);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .axis-fill,
+    .axis-knob {
+        transition-duration: 0.001ms;
+    }
+}
