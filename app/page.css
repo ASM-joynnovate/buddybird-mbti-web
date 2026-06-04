@@ -56,38 +56,12 @@
     transform: rotate(-1.5deg);
 }
 
-/* --- Type peek row --- *
- * (The former full-bleed forest band lived here; it was removed when the PNG
- * forest background became the app-wide backdrop — ADR-0004. The peek row now
- * carries margin-top:auto so the headline stays up top and the peek/stats/CTA
- * settle toward the bottom over the forest.) */
-.peek-row {
-    display: flex;
-    width: 100%;
-    gap: 12px;
-    justify-content: center;
-    margin-top: 16px;
-    flex-wrap: nowrap;
-    overflow: hidden;
-}
-
-.peek {
-    flex: none;
-    width: 56px;
-    height: 56px;
-    border-radius: 18px;
-    display: grid;
-    place-items: center;
-    box-shadow: var(--sh-sm);
-    overflow: hidden;
-}
-
-.peek img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-}
+/* --- Type showcase --- *
+ * (The former full-bleed forest band and the static peek row lived here; the band
+ * was removed when the PNG forest background became the app-wide backdrop — ADR-0004,
+ * and the peek row was replaced by the centre-fixed peek carousel that now lives in
+ * the TypeShowcase component — ADR-0005. The showcase sits directly under the
+ * headline; .hero-stats keeps margin-top:auto so stats + CTA settle at the bottom.) */
 
 /* --- Dex entry --- */
 .hero-dex {

@@ -15,7 +15,8 @@
 
 /* --- Active type card (5:9 inner columns) --- *
  * Height follows content (a compact band), not a fixed 3:2 ratio: the card is the
- * taller of its 1:1 image tile and the right-hand text. */
+ * taller of its 1:1 image tile and the right-hand text. A gentle opacity fade plays
+ * on each active-type swap (the card is keyed by type), disabled under reduced motion. */
 .showcase-card {
     display: flex;
     align-items: stretch;
@@ -25,6 +26,16 @@
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-leaf-card);
     overflow: hidden;
+    animation: showcase-card-fade 320ms var(--ease-leaf);
+}
+
+@keyframes showcase-card-fade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 /* Left column (5): padding keeps the gradient tile off the card edges. */
@@ -104,4 +115,67 @@
     font-size: clamp(0.8125rem, 3.2vw, 0.9375rem);
     line-height: 1.4;
     color: var(--color-ink-muted);
+}
+
+/* --- Centre-fixed peek carousel --- *
+ * The track is anchored at the viewport's horizontal centre (left: 50%) and slid by
+ * an absolute pixel offset so the active cell lands dead centre; scale on the active
+ * tile does not change the layout pitch, so the centring maths stay exact. */
+.showcase-peek-viewport {
+    width: 100%;
+    overflow: hidden;
+}
+
+.showcase-peek-track {
+    display: flex;
+    gap: 12px;
+    position: relative;
+    left: 50%;
+    width: max-content;
+    will-change: transform;
+    transition: transform 520ms var(--ease-leaf);
+}
+
+.peek {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    box-shadow: var(--sh-sm);
+    overflow: hidden;
+    opacity: 0.55;
+    transition:
+        opacity 280ms var(--ease-leaf),
+        transform 280ms var(--ease-leaf);
+}
+
+.peek img,
+.peek .parrot-image-fallback {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.peek.is-active {
+    opacity: 1;
+    transform: scale(1.22);
+    z-index: 1;
+}
+
+/* Reduced motion: no auto-advance (handled in JS), no slide/scale/fade tweens. */
+@media (prefers-reduced-motion: reduce) {
+    .showcase-card {
+        animation: none;
+    }
+
+    .showcase-peek-track {
+        transition: none;
+    }
+
+    .peek {
+        transition: none;
+    }
 }
