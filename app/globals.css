@@ -1,63 +1,139 @@
 @import 'tailwindcss';
 
 /*
- * Parrot MBTI design system — tropical daylight jungle, single fixed theme.
- * Confirmed in issue #03 (variant C — editorial trail). Source of truth for the
- * token values is DESIGN.md; this is their Tailwind v4 @theme binding so the whole
- * funnel shares one palette/type/shape system.
+ * Parrot MBTI design system — "동화숲 월드" (low-poly fairytale forest), single
+ * fixed theme. Pivoted from the green "Tropical Jungle" system (ADR-0002): a warm
+ * cream-parchment base with leaf-green / royal-purple / gold accents and a
+ * bell-orange CTA. Source of truth for token values is DESIGN.md; this is their
+ * Tailwind v4 @theme binding so the whole funnel shares one palette/type/shape
+ * system. Token KEYS are preserved (whole codebase consumes --color-* utilities);
+ * only their VALUES change here. Ported bundle component CSS reads the original
+ * 동화숲 token names via the :root alias block below.
  */
 @theme {
-    /* Action anchor — the single CTA color across the funnel.
-     * PLACEHOLDER for the BuddyBird brand color until issue #12; swaps here only. */
-    --color-primary: #c9215e;
+    /* Action anchor — the single CTA color across the funnel: bell-touch orange. */
+    --color-primary: #e8772e;
     --color-on-primary: #ffffff;
-    --color-primary-hover: #b31a53;
-    --color-primary-active: #9e1648;
+    --color-primary-hover: #c85f1e;
+    --color-primary-active: #a84e16;
 
-    /* Base world (greens) — the daylight jungle stage. */
-    --color-bg: #e8f4dd;
-    --color-surface: #f4fbec;
-    --color-surface-sunken: #dcefcf;
-    --color-ink: #1a2e1f;
-    --color-ink-muted: #4c6151;
-    --color-outline: #c2d8b0;
+    /* Base world — warm cream parchment (the fairytale-forest stage). */
+    --color-bg: #fbf3df;
+    --color-surface: #fffdf6;
+    --color-surface-sunken: #f4e9cc;
+    --color-ink: #2a2118; /* warm dark brown-ink */
+    --color-ink-muted: #6b6150;
+    --color-outline: #ece0c4;
 
-    /* Foliage depth layers (decorative overlap + tinted shadow source). */
-    --color-foliage-near: #5ab45a;
-    --color-foliage-mid: #2e7d43;
-    --color-foliage-deep: #1b5e34;
+    /* Foliage depth layers (decorative overlap + tinted shadow source) — forest greens. */
+    --color-foliage-near: #5b9e3a; /* leaf green */
+    --color-foliage-mid: #3c7a24; /* deep forest green */
+    --color-foliage-deep: #2e6b2e;
 
     /* 4 temperament-group feather accents (type identity; decorative flourishes). */
-    --color-group-ruby: #e8443b;
-    --color-group-marigold: #f4a93c;
-    --color-group-teal: #15b8a0;
-    --color-group-cobalt: #3d7bd9;
+    --color-group-ruby: #c8341f;
+    --color-group-marigold: #f0913a;
+    --color-group-teal: #2e9bb5;
+    --color-group-cobalt: #3e8fd0;
+
+    /* Per-axis spectrum colors (result axis bars). One representative 동화숲 hue per
+     * MBTI axis (E / N / F / J letters), from the bundle's axis palette. */
+    --color-axis-ei: #e8772e; /* 에너지 — bell orange (E) */
+    --color-axis-sn: #7b3fb5; /* 인식 — royal purple (N) */
+    --color-axis-tf: #e86a9e; /* 판단 — bloom pink (F) */
+    --color-axis-jp: #3c7a24; /* 생활 — forest green (J) */
 
     --color-error: #d7263d;
 
     /* Organic, generous radii. */
     --radius-sm: 12px;
     --radius-md: 20px;
-    --radius-lg: 28px;
-    --radius-xl: 36px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
 
     /* Type families — bound to next/font variables set on <html> (layout.tsx). */
     --font-sans: var(--font-noto-kr);
     --font-display: var(--font-jua);
 
-    /* Green-tinted elevation (never neutral gray). */
-    --shadow-leaf-low: 0 4px 12px -6px rgba(27, 94, 52, 0.35);
-    --shadow-leaf-card: 0 14px 32px -12px rgba(27, 94, 52, 0.45);
+    /* Warm-tinted elevation (soft forest-brown tint, never neutral gray). */
+    --shadow-leaf-low: 0 4px 14px rgba(58, 46, 26, 0.1);
+    --shadow-leaf-card: 0 10px 30px rgba(58, 46, 26, 0.13);
 
-    /* Foliage-parting motion. */
+    /* Foliage-parting motion (large transitions: carousel, route changes). */
     --ease-leaf: cubic-bezier(0.16, 1, 0.3, 1);
+    /* Spring with overshoot — playful "bounce" for interactions + entrances only. */
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/*
+ * Bundle token aliases (outside @theme so Tailwind does not try to emit utilities
+ * for them). Ported 동화숲 component CSS (.chip / .modal / .dex-card / .story-card)
+ * references these original names; values resolve to the @theme palette above so
+ * there is one source of truth. New per-type gradients are injected inline by React
+ * (--type-grad), so they are intentionally absent here.
+ */
+:root {
+    --brand: var(--color-foliage-near); /* leaf green */
+    --brand-d: var(--color-foliage-mid); /* deep forest green */
+    --royal: var(--color-axis-sn); /* royal purple */
+    --gold: #e8b53a;
+    --cta: var(--color-primary); /* bell orange */
+    --cta-d: var(--color-primary-hover);
+
+    /* Pop accents (rainbow tail + costumes) used by ported decor/chips. */
+    --pop-green: #5b9e3a;
+    --pop-purple: #7b3fb5;
+    --pop-gold: #e8b53a;
+    --pop-teal: #2e9bb5;
+    --pop-blue: #3e8fd0;
+    --pop-red: #c8341f;
+    --pop-pink: #e86a9e;
+    --pop-mango: #f0913a;
+    --pop-yellow: #f4c842;
+    --pop-lime: #8fc740;
+
+    /* Surfaces / text. */
+    --bg: var(--color-bg);
+    --bg-2: var(--color-surface-sunken);
+    --card: var(--color-surface);
+    --ink: var(--color-ink);
+    --ink-2: var(--color-ink-muted);
+    --line: var(--color-outline);
+
+    /* Gradients. */
+    --grad-sunset: linear-gradient(135deg, #f4c842 0%, #e8772e 50%, #c8341f 100%);
+    --grad-canopy: linear-gradient(180deg, #a8dcf0 0%, #c9e89a 46%, #9bd13e 100%);
+    --grad-meadow: linear-gradient(180deg, #9bd13e 0%, #5b9e3a 100%);
+
+    /* Round / motion. */
+    --r-card: 32px;
+    --r-opt: 20px;
+    --r-pill: 999px;
+    --spring: var(--ease-spring);
+    --ease: var(--ease-leaf);
+
+    /* Warm forest-tinted shadows. */
+    --sh-sm: 0 4px 14px rgba(58, 46, 26, 0.1);
+    --sh-md: 0 10px 30px rgba(58, 46, 26, 0.13);
+    --sh-lg: 0 24px 60px rgba(46, 36, 20, 0.18);
 }
 
 /* Single fixed theme: NO automatic prefers-color-scheme dark mode (ADR-0001) —
- * the shared result card must look identical for every viewer. */
+ * the shared result card must look identical for every viewer.
+ *
+ * Fairytale-forest ambient: a layered radial wash over the cream parchment —
+ * sky-blue at the top, meadow-green at the bottom, a hint of stream at the lower
+ * left. Fixed attachment so it reads as a world the funnel sits inside. Korean
+ * wraps on word boundaries only (no mid-word breaks). */
 body {
-    background: var(--color-bg);
+    background-color: var(--color-bg);
+    background-image:
+        radial-gradient(135% 70% at 50% -16%, rgba(127, 196, 236, 0.3), transparent 46%),
+        radial-gradient(150% 58% at 50% 116%, rgba(91, 158, 58, 0.26), transparent 52%),
+        radial-gradient(90% 40% at 12% 88%, rgba(63, 184, 216, 0.1), transparent 60%);
+    background-attachment: fixed;
     color: var(--color-ink);
+    word-break: keep-all;
     font-family:
         var(--font-sans),
         system-ui,
@@ -89,4 +165,511 @@ body {
     font-size: 1.25rem;
     letter-spacing: 0.04em;
     color: var(--color-ink);
+}
+
+/* ── Candy buttons — dimensional CTA (inset highlight + bottom-shadow + colored
+ * drop shadow), springy hover/active. Shared by intro + result primary actions. */
+.btn-candy {
+    box-shadow:
+        0 10px 24px -6px color-mix(in srgb, var(--color-primary) 42%, transparent),
+        inset 0 -5px 0 rgba(0, 0, 0, 0.16),
+        inset 0 3px 0 rgba(255, 255, 255, 0.32);
+    transition:
+        transform 0.28s var(--ease-spring),
+        box-shadow 0.28s var(--ease-spring),
+        background 0.2s var(--ease-leaf),
+        filter 0.2s var(--ease-leaf);
+}
+
+.btn-candy:hover {
+    transform: translateY(-3px) scale(1.03);
+    filter: saturate(1.06);
+}
+
+.btn-candy:active {
+    transform: translateY(1px) scale(0.98);
+    box-shadow:
+        0 4px 12px -6px color-mix(in srgb, var(--color-primary) 38%, transparent),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.18);
+}
+
+/* Ghost candy — soft leaf-tinted lift for secondary/surface buttons (no pink tint). */
+.btn-candy--ghost {
+    box-shadow:
+        var(--shadow-leaf-low),
+        inset 0 -4px 0 color-mix(in srgb, var(--color-outline) 70%, transparent);
+    transition:
+        transform 0.28s var(--ease-spring),
+        box-shadow 0.28s var(--ease-spring),
+        border-color 0.2s var(--ease-leaf);
+}
+
+.btn-candy--ghost:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow:
+        var(--shadow-leaf-card),
+        inset 0 -4px 0 color-mix(in srgb, var(--color-outline) 70%, transparent);
+}
+
+.btn-candy--ghost:active {
+    transform: translateY(1px) scale(0.98);
+}
+
+/* ── Candy button system (.btn) — ported verbatim from the Claude Design bundle.
+ * The dimensional CTA: inset highlight + bottom shadow + colored drop shadow, springy
+ * hover/active. --brand / --lg / --ghost / --sm modifiers. ── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 0;
+    border-radius: var(--r-pill);
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: 20px;
+    padding: 18px 34px;
+    color: #ffffff;
+    position: relative;
+    background: var(--cta);
+    white-space: nowrap;
+    cursor: pointer;
+    box-shadow:
+        0 10px 24px color-mix(in srgb, var(--cta) 42%, transparent),
+        inset 0 -5px 0 rgba(0, 0, 0, 0.18),
+        inset 0 3px 0 rgba(255, 255, 255, 0.4);
+    transition:
+        transform 0.3s var(--spring),
+        box-shadow 0.3s var(--spring),
+        filter 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    filter: saturate(1.08);
+}
+
+.btn:active {
+    transform: translateY(1px) scale(0.98);
+    box-shadow:
+        0 4px 12px color-mix(in srgb, var(--cta) 36%, transparent),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.18);
+}
+
+.btn:focus-visible {
+    outline: 3px solid var(--pop-blue);
+    outline-offset: 3px;
+}
+
+.btn--lg {
+    font-size: 24px;
+    padding: 22px 44px;
+}
+
+.btn--brand {
+    background: var(--brand);
+    box-shadow:
+        0 10px 24px color-mix(in srgb, var(--brand) 42%, transparent),
+        inset 0 -5px 0 rgba(0, 0, 0, 0.16),
+        inset 0 3px 0 rgba(255, 255, 255, 0.4);
+}
+
+.btn--ghost {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    box-shadow:
+        var(--sh-sm),
+        inset 0 -4px 0 var(--color-outline);
+}
+
+.btn--sm {
+    font-size: 15px;
+    padding: 11px 20px;
+    gap: 7px;
+}
+
+/* ── Floating leaf backdrop (동화숲) — a fixed, app-wide layer behind every screen
+ * (bundle app-shell decor). Sits above the body wash, below content (z-index -1).
+ * Mounted once in app/layout.tsx so the intro, test, and dex all share it. ── */
+.bg-decor {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.bg-decor i {
+    position: absolute;
+    opacity: 0.5;
+    border-radius: 0 100% 0 100%;
+    box-shadow:
+        inset 3px -3px 6px rgba(0, 0, 0, 0.12),
+        inset -2px 2px 5px rgba(255, 255, 255, 0.35);
+    animation: leafsway 8s ease-in-out infinite alternate;
+}
+
+.bg-decor i:nth-child(2n) {
+    border-radius: 100% 0 100% 0;
+    animation-duration: 10s;
+}
+
+.bg-decor i:nth-child(3n) {
+    border-radius: 0 100% 0 100% / 10% 90% 10% 90%;
+}
+
+.bg-decor i:nth-child(1) {
+    width: 220px;
+    height: 220px;
+    top: -40px;
+    left: -70px;
+    background: var(--pop-lime);
+}
+
+.bg-decor i:nth-child(2) {
+    width: 150px;
+    height: 150px;
+    top: 26%;
+    right: -64px;
+    background: var(--brand);
+    opacity: 0.42;
+}
+
+.bg-decor i:nth-child(3) {
+    width: 96px;
+    height: 96px;
+    top: 48%;
+    left: 40%;
+    background: var(--pop-green);
+    opacity: 0.38;
+}
+
+.bg-decor i:nth-child(4) {
+    width: 200px;
+    height: 200px;
+    bottom: 8%;
+    left: -80px;
+    background: var(--brand-d);
+    opacity: 0.4;
+}
+
+.bg-decor i:nth-child(5) {
+    width: 150px;
+    height: 150px;
+    bottom: -30px;
+    right: -56px;
+    background: var(--pop-lime);
+    opacity: 0.46;
+}
+
+.bg-decor i:nth-child(6) {
+    width: 70px;
+    height: 70px;
+    top: 14%;
+    left: 14%;
+    background: var(--brand);
+    opacity: 0.32;
+}
+
+@keyframes leafsway {
+    0% {
+        transform: translateY(0) rotate(-14deg);
+    }
+    100% {
+        transform: translateY(-30px) rotate(18deg);
+    }
+}
+
+/* ── Shared entrance/idle keyframes (playful spring motion). ── */
+@keyframes pop {
+    from {
+        transform: scale(0.4);
+        opacity: 0;
+    }
+}
+
+@keyframes bounce {
+    0% {
+        transform: scale(1);
+    }
+    40% {
+        transform: scale(1.06);
+    }
+    70% {
+        transform: scale(0.97);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes float-up {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.9);
+    }
+}
+
+@keyframes floaty {
+    to {
+        transform: translateY(-26px) rotate(8deg);
+    }
+}
+
+@keyframes confetti-fall {
+    from {
+        opacity: 1;
+        transform: translateY(-12vh) rotate(0deg);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(86vh) rotate(640deg);
+    }
+}
+
+/* Entrance utility classes. */
+.anim-pop {
+    animation: pop 0.5s var(--ease-spring) both;
+}
+
+.anim-float-up {
+    animation: float-up 0.7s var(--ease-spring) both;
+}
+
+/* ── Match chip (궁합) — cross-screen: result match section + type modal. Ported
+ * from the bundle styles.css. The per-type gradient dot + border accent (--c1/--c2)
+ * are injected inline by the MatchChip component. ── */
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    background: var(--color-bg);
+    border: 2px solid var(--color-outline);
+    border-radius: var(--r-pill);
+    padding: 9px 16px 9px 10px;
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--color-ink);
+    cursor: pointer;
+    transition:
+        transform 0.25s var(--ease-spring),
+        border-color 0.2s var(--ease-leaf);
+}
+
+.chip:hover {
+    transform: translateY(-2px);
+    border-color: var(--c1, var(--color-primary));
+}
+
+.chip:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.chip-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    flex: none;
+}
+
+.chip-code {
+    font-family: var(--font-display), system-ui, sans-serif;
+}
+
+.chip-name {
+    color: var(--color-ink-muted);
+}
+
+.chips {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* ── Type detail modal (도감 + result match → /dex?focus). Ported from the bundle
+ * styles.css. Per-type gradient hero via --type-grad (injected inline by React). ── */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: rgba(42, 33, 24, 0.5);
+    backdrop-filter: blur(4px);
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    animation: modal-fade 0.25s ease;
+}
+
+@keyframes modal-fade {
+    from {
+        opacity: 0;
+    }
+}
+
+.modal {
+    background: var(--color-surface);
+    border-radius: var(--r-card);
+    max-width: 420px;
+    width: 100%;
+    max-height: 88dvh;
+    overflow-y: auto;
+    box-shadow: var(--sh-lg);
+    animation: modal-in 0.4s var(--ease-spring);
+}
+
+@keyframes modal-in {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+}
+
+.modal-hero {
+    position: relative;
+    border-radius: var(--r-card) var(--r-card) 0 0;
+    padding: 24px 24px 18px;
+    text-align: center;
+    color: #ffffff;
+    background: var(--type-grad, var(--color-foliage-mid));
+}
+
+.modal-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(120% 80% at 50% -10%, rgba(255, 255, 255, 0.32), transparent 60%);
+    pointer-events: none;
+}
+
+.modal-hero > * {
+    position: relative;
+    z-index: 1;
+}
+
+.modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    font-size: 18px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background 0.2s var(--ease-leaf);
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.modal-close:focus-visible {
+    outline: 3px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.modal-art {
+    width: min(160px, 44vw);
+    aspect-ratio: 1 / 1;
+    margin: 0 auto 2px;
+    filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.22));
+}
+
+.modal-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.modal-code {
+    margin: 4px 0 0;
+    font-size: 2.75rem;
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    text-shadow: 0 3px 0 rgba(0, 0, 0, 0.12);
+}
+
+.modal-nick {
+    margin: 2px 0 0;
+    font-size: 1.5rem;
+    line-height: 1.2;
+}
+
+.modal-body {
+    padding: 22px 24px 26px;
+}
+
+/* Catchphrase pill — tinted with the type's primary color (set inline via --c1 by
+ * callers is not needed here; the gradient hero already carries identity, so this
+ * uses a soft surface-sunken fill). */
+.modal-tag {
+    display: inline-block;
+    margin: 0 0 16px;
+    padding: 9px 18px;
+    border-radius: var(--r-pill);
+    background: var(--color-surface-sunken);
+    color: var(--color-ink);
+    font-weight: 700;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+}
+
+.modal-desc {
+    margin: 0 0 20px;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--color-ink-muted);
+}
+
+.modal-section-title {
+    margin: 0 0 12px;
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--color-ink);
+}
+
+/* Respect reduced-motion: neutralize the playful springs + idle drifts. The
+ * carousel keeps its own guard; this covers the new buttons/entrances/decor. */
+@media (prefers-reduced-motion: reduce) {
+    .modal,
+    .modal-backdrop {
+        animation-duration: 0.001ms;
+    }
+
+    .chip,
+    .btn {
+        transition-duration: 0.08s;
+    }
+
+    .chip:hover,
+    .btn:hover,
+    .btn:active {
+        transform: none;
+    }
+
+    .btn-candy,
+    .btn-candy--ghost {
+        transition-duration: 0.08s;
+    }
+
+    .btn-candy:hover,
+    .btn-candy--ghost:hover,
+    .btn-candy:active,
+    .btn-candy--ghost:active {
+        transform: none;
+    }
+
+    .anim-pop,
+    .anim-float-up,
+    .bg-decor i {
+        animation: none;
+    }
 }

@@ -32,6 +32,15 @@ export default function RootLayout({
     return (
         <html lang="ko" className={`${jua.variable} ${notoSansKr.variable} h-full antialiased`}>
             <body className="flex min-h-full flex-col">
+                {/* App-wide floating leaf backdrop (동화숲) — fixed, behind every screen. */}
+                <div className="bg-decor" aria-hidden="true">
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                </div>
                 <TestProgressProvider>{children}</TestProgressProvider>
             </body>
         </html>
