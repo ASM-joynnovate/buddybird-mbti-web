@@ -29,7 +29,7 @@
 }
 
 .hero-title {
-    margin: 120px 0 16px;
+    margin: clamp(24px, 7vh, 72px) 0 16px;
     font-size: clamp(40px, 11vw, 68px);
     line-height: 1.02;
     letter-spacing: -0.01em;
@@ -66,7 +66,7 @@
     width: 100%;
     gap: 12px;
     justify-content: center;
-    margin-top: auto;
+    margin-top: 16px;
     flex-wrap: nowrap;
     overflow: hidden;
 }

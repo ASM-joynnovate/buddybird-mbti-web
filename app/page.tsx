@@ -8,6 +8,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ParrotImage } from '@/components/parrot-image'
+import { TypeShowcase } from '@/components/type-showcase'
 import { CAROUSEL_TYPES, QUESTION_COUNT, typeGradient } from '@/content'
 import { track } from '@/lib/analytics'
 import type { TypeCode } from '@/lib/mbti'
@@ -84,6 +85,8 @@ export default function Home() {
                     <br />
                     <span className="hl">진짜 성격</span>은?
                 </h1>
+
+                <TypeShowcase pool={PEEK_POOL} />
 
                 <PeekRow pool={PEEK_POOL} />
 

@@ -1,0 +1,107 @@
+/*
+ * Intro type showcase (issues #14/#15/#16). The active card is a 3:2 surface split
+ * into 5:9 columns: a padded 1:1 gradient tile holding the parrot on the left, and
+ * the type code/name + one-line report on the right. The center-fixed peek carousel
+ * (#15) mounts below the card and shares the same active index. Tokens: globals.css.
+ */
+
+.showcase {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+}
+
+/* --- Active type card (5:9 inner columns) --- *
+ * Height follows content (a compact band), not a fixed 3:2 ratio: the card is the
+ * taller of its 1:1 image tile and the right-hand text. */
+.showcase-card {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    background: var(--color-surface);
+    border: 1px solid color-mix(in srgb, var(--color-outline) 80%, transparent);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-leaf-card);
+    overflow: hidden;
+}
+
+/* Left column (5): padding keeps the gradient tile off the card edges. */
+.showcase-card-figure {
+    flex: 5;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    padding: 12px;
+}
+
+/* 1:1 gradient tile — a square capped to a compact size, vertically centred, never
+ * filling the card. The parrot is contained so the silhouette stays whole. */
+.showcase-card-thumb {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    max-width: 104px;
+    aspect-ratio: 1 / 1;
+    border-radius: 16px;
+    box-shadow: var(--sh-sm);
+    overflow: hidden;
+}
+
+.showcase-card-thumb img,
+.showcase-card-thumb .parrot-image-fallback {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Right column (9): wider, left-aligned text block, vertically centred. */
+.showcase-card-body {
+    flex: 9;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 16px 14px 4px;
+    text-align: left;
+}
+
+.showcase-card-head {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    line-height: 1.15;
+}
+
+.showcase-card-code {
+    font-size: clamp(1.05rem, 4.4vw, 1.375rem);
+    letter-spacing: 0.04em;
+    color: var(--color-ink);
+}
+
+.showcase-card-sep {
+    color: color-mix(in srgb, var(--color-ink-muted) 55%, transparent);
+    font-weight: 400;
+}
+
+.showcase-card-name {
+    font-size: clamp(0.95rem, 3.6vw, 1.125rem);
+    font-weight: 700;
+    color: var(--color-ink);
+}
+
+.showcase-card-desc {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    margin: 0;
+    font-size: clamp(0.8125rem, 3.2vw, 0.9375rem);
+    line-height: 1.4;
+    color: var(--color-ink-muted);
+}
