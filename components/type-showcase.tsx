@@ -126,12 +126,20 @@ export function TypeShowcase({ pool, intervalMs = 3000 }: TypeShowcaseProps) {
                     onTransitionEnd={handleTransitionEnd}
                 >
                     {loop.map((code, p) => (
-                        <span
+                        <button
                             // p is stable per render position; the cell content is
                             // governed by `code`, so a positional key is correct here.
                             key={p}
+                            type="button"
                             className={p === pos ? 'peek is-active' : 'peek'}
                             style={{ background: typeGradient(code) }}
+                            // Tapping a tile activates its type immediately: the slide
+                            // recentres on it and the active card follows the shared
+                            // index. An out-of-range pos is normalised by the same
+                            // silent-reset path on the next transition end.
+                            aria-pressed={p === pos}
+                            aria-label={`${code} ${getTypeInfo(code)?.name ?? ''}`.trim()}
+                            onClick={() => setPos(p)}
                         >
                             <ParrotImage
                                 type={code}
@@ -139,10 +147,14 @@ export function TypeShowcase({ pool, intervalMs = 3000 }: TypeShowcaseProps) {
                                 height={56}
                                 loading={Math.abs(p - len) <= 3 ? 'eager' : 'lazy'}
                             />
-                        </span>
+                        </button>
                     ))}
                 </div>
             </div>
+
+            <p className="showcase-caption" data-testid="showcase-caption" aria-live="polite">
+                {active} {info?.name ?? ''}
+            </p>
         </section>
     )
 }

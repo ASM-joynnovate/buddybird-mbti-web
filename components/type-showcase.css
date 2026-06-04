@@ -142,13 +142,22 @@
     place-items: center;
     width: 56px;
     height: 56px;
+    padding: 0;
+    border: none;
     border-radius: 18px;
     box-shadow: var(--sh-sm);
     overflow: hidden;
     opacity: 0.55;
+    cursor: pointer;
+    appearance: none;
     transition:
         opacity 280ms var(--ease-leaf),
         transform 280ms var(--ease-leaf);
+}
+
+.peek:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
 }
 
 .peek img,
@@ -163,6 +172,20 @@
     opacity: 1;
     transform: scale(1.22);
     z-index: 1;
+}
+
+/* Screen-reader-only live caption announcing the active type. */
+.showcase-caption {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
 }
 
 /* Reduced motion: no auto-advance (handled in JS), no slide/scale/fade tweens. */
