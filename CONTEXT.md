@@ -7,9 +7,13 @@ shareable card that funnels toward installing the BuddyBird app.
 ## Flow surfaces
 
 **Intro**:
-The first screen — service pitch, an auto-advancing carousel of per-type parrot
-images, and the "테스트 시작하기" CTA.
-_Avoid_: Landing, Home, Splash
+The first screen — service pitch, an **active type card** (a compact band: a 1:1
+gradient image tile on the left, the type code · name · one-line report on the
+right) paired with a **centre-fixed auto-advancing peek carousel** (all 16 types,
+the middle tile highlighted, a tile tappable to activate it, seamless infinite
+loop), and the "테스트 시작하기" CTA. The card and the centre tile share one active
+index, so they always name the same type. See ADR-0005.
+_Avoid_: Landing, Home, Splash; "peek-row" (the static row it replaced)
 
 **Test**:
 The screen that presents two-choice **Questions** one at a time and auto-advances
