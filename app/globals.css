@@ -287,97 +287,8 @@ body {
     gap: 7px;
 }
 
-/* ── Floating leaf backdrop (동화숲) — a fixed, app-wide layer behind every screen
- * (bundle app-shell decor). Sits above the body wash, below content (z-index -1).
- * Mounted once in app/layout.tsx so the intro, test, and dex all share it. ── */
-.bg-decor {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    overflow: hidden;
-    pointer-events: none;
-}
-
-.bg-decor i {
-    position: absolute;
-    opacity: 0.5;
-    border-radius: 0 100% 0 100%;
-    box-shadow:
-        inset 3px -3px 6px rgba(0, 0, 0, 0.12),
-        inset -2px 2px 5px rgba(255, 255, 255, 0.35);
-    animation: leafsway 8s ease-in-out infinite alternate;
-}
-
-.bg-decor i:nth-child(2n) {
-    border-radius: 100% 0 100% 0;
-    animation-duration: 10s;
-}
-
-.bg-decor i:nth-child(3n) {
-    border-radius: 0 100% 0 100% / 10% 90% 10% 90%;
-}
-
-.bg-decor i:nth-child(1) {
-    width: 220px;
-    height: 220px;
-    top: -40px;
-    left: -70px;
-    background: var(--pop-lime);
-}
-
-.bg-decor i:nth-child(2) {
-    width: 150px;
-    height: 150px;
-    top: 26%;
-    right: -64px;
-    background: var(--brand);
-    opacity: 0.42;
-}
-
-.bg-decor i:nth-child(3) {
-    width: 96px;
-    height: 96px;
-    top: 48%;
-    left: 40%;
-    background: var(--pop-green);
-    opacity: 0.38;
-}
-
-.bg-decor i:nth-child(4) {
-    width: 200px;
-    height: 200px;
-    bottom: 8%;
-    left: -80px;
-    background: var(--brand-d);
-    opacity: 0.4;
-}
-
-.bg-decor i:nth-child(5) {
-    width: 150px;
-    height: 150px;
-    bottom: -30px;
-    right: -56px;
-    background: var(--pop-lime);
-    opacity: 0.46;
-}
-
-.bg-decor i:nth-child(6) {
-    width: 70px;
-    height: 70px;
-    top: 14%;
-    left: 14%;
-    background: var(--brand);
-    opacity: 0.32;
-}
-
-@keyframes leafsway {
-    0% {
-        transform: translateY(0) rotate(-14deg);
-    }
-    100% {
-        transform: translateY(-30px) rotate(18deg);
-    }
-}
+/* The app-wide leaf backdrop (동화숲) now lives in components/leaf-field.{tsx,css}
+ * as faceted low-poly SVG leaves, mounted once via <LeafField /> in app/layout.tsx. */
 
 /* ── Shared entrance/idle keyframes (playful spring motion). ── */
 @keyframes pop {
@@ -668,8 +579,7 @@ body {
     }
 
     .anim-pop,
-    .anim-float-up,
-    .bg-decor i {
+    .anim-float-up {
         animation: none;
     }
 }
