@@ -48,3 +48,13 @@ export const GROUP_TEXT_SAFE_HEX: Record<TemperamentGroup, string> = {
     Sentinels: '#0c6f60',
     Explorers: '#2a55a3',
 }
+
+// Full-bleed result-hero gradient: bright group hue (top) → deepened group hue
+// (bottom) so white type code/name keep AA contrast over the lower band. Built from
+// the same @theme var as GROUP_CSS_VAR (no new tokens), deepened via color-mix.
+export const GROUP_GRADIENT: Record<TemperamentGroup, string> = {
+    Analysts: 'linear-gradient(165deg, var(--color-group-ruby) 0%, #a8221b 100%)',
+    Diplomats: 'linear-gradient(165deg, var(--color-group-marigold) 0%, #9a5a08 100%)',
+    Sentinels: 'linear-gradient(165deg, var(--color-group-teal) 0%, #0c6f60 100%)',
+    Explorers: 'linear-gradient(165deg, var(--color-group-cobalt) 0%, #2a55a3 100%)',
+}

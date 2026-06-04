@@ -9,6 +9,7 @@ export const QUESTIONS: Question[] = [
     {
         id: 'q1',
         axis: 'EI',
+        emoji: '👋',
         text: '낯선 사람이 다가오면 우리 새는?',
         choices: [
             { id: 'q1a', label: '먼저 다가가 관심을 보인다', axis: 'EI', letter: 'E' },
@@ -18,6 +19,7 @@ export const QUESTIONS: Question[] = [
     {
         id: 'q2',
         axis: 'EI',
+        emoji: '🔋',
         text: '하루 종일 혼자 두면 우리 새는?',
         choices: [
             { id: 'q2a', label: '시끄럽게 울며 관심을 요구한다', axis: 'EI', letter: 'E' },
@@ -27,6 +29,7 @@ export const QUESTIONS: Question[] = [
     {
         id: 'q3',
         axis: 'EI',
+        emoji: '🎉',
         text: '여러 마리가 함께 있을 때 우리 새는?',
         choices: [
             { id: 'q3a', label: '무리 한가운데서 어울려 논다', axis: 'EI', letter: 'E' },
@@ -36,6 +39,7 @@ export const QUESTIONS: Question[] = [
     {
         id: 'q4',
         axis: 'SN',
+        emoji: '🧸',
         text: '새 장난감을 주면 우리 새는?',
         choices: [
             { id: 'q4a', label: '직접 물고 만지며 확인한다', axis: 'SN', letter: 'S' },
@@ -45,6 +49,7 @@ export const QUESTIONS: Question[] = [
     {
         id: 'q5',
         axis: 'SN',
+        emoji: '🪑',
         text: '가구 배치가 바뀌면 우리 새는?',
         choices: [
             { id: 'q5a', label: '익숙한 자리부터 꼼꼼히 다시 확인한다', axis: 'SN', letter: 'S' },
@@ -54,6 +59,7 @@ export const QUESTIONS: Question[] = [
     {
         id: 'q6',
         axis: 'SN',
+        emoji: '🍪',
         text: '간식을 찾을 때 우리 새는?',
         choices: [
             { id: 'q6a', label: '늘 두던 자리를 정확히 기억한다', axis: 'SN', letter: 'S' },
@@ -63,6 +69,7 @@ export const QUESTIONS: Question[] = [
     {
         id: 'q7',
         axis: 'TF',
+        emoji: '⚖️',
         text: '간식을 못 받았을 때 우리 새는?',
         choices: [
             { id: 'q7a', label: '규칙을 따지듯 끈질기게 요구한다', axis: 'TF', letter: 'T' },
@@ -72,6 +79,7 @@ export const QUESTIONS: Question[] = [
     {
         id: 'q8',
         axis: 'TF',
+        emoji: '💕',
         text: '보호자가 다른 새를 예뻐하면 우리 새는?',
         choices: [
             { id: 'q8a', label: '아랑곳없이 제 할 일을 한다', axis: 'TF', letter: 'T' },
@@ -81,6 +89,7 @@ export const QUESTIONS: Question[] = [
     {
         id: 'q9',
         axis: 'TF',
+        emoji: '🎓',
         text: '훈련을 시킬 때 우리 새는?',
         choices: [
             { id: 'q9a', label: '보상 규칙을 파악해 또박또박 따른다', axis: 'TF', letter: 'T' },
@@ -90,6 +99,7 @@ export const QUESTIONS: Question[] = [
     {
         id: 'q10',
         axis: 'JP',
+        emoji: '🗓️',
         text: '하루 일과를 보면 우리 새는?',
         choices: [
             { id: 'q10a', label: '정해진 시간표대로 규칙적이다', axis: 'JP', letter: 'J' },
@@ -99,6 +109,7 @@ export const QUESTIONS: Question[] = [
     {
         id: 'q11',
         axis: 'JP',
+        emoji: '🛏️',
         text: '둥지나 잠자리를 두고 우리 새는?',
         choices: [
             { id: 'q11a', label: '늘 같은 자리를 깔끔히 정돈한다', axis: 'JP', letter: 'J' },
@@ -108,6 +119,7 @@ export const QUESTIONS: Question[] = [
     {
         id: 'q12',
         axis: 'JP',
+        emoji: '🍽️',
         text: '먹이를 먹을 때 우리 새는?',
         choices: [
             { id: 'q12a', label: '정해진 양을 차례대로 먹는다', axis: 'JP', letter: 'J' },

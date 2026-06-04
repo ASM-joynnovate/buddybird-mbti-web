@@ -17,3 +17,5 @@ for (const question of QUESTIONS) {
 export * from './questions'
 export * from './types'
 export * from './assets'
+export * from './axes'
+export * from './gradient'

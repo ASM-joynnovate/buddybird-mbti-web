@@ -33,19 +33,39 @@ export interface Choice {
 }
 
 // One question with exactly two choices. `axis` is the axis this question scores.
+// `emoji` is the playful glyph shown above the question on the Test card ("동화숲
+// 월드" quiz design).
 export interface Question {
     id: string
     axis: Axis
+    emoji: string
     text: string
     choices: [Choice, Choice]
 }
 
-// Presentation data for one of the 16 result types. Copy/image are placeholders
-// until content is finalized (issue #12); only `code` is load-bearing now.
+// Presentation data for one of the 16 result types.
+// `name` is the catchy nickname, `report` a short tagline reused by the share
+// card, and `description` the full character blurb shown on the result page and
+// carousel.
+//
+// `colors` is the per-type 2-stop identity gradient ("동화숲 월드", ADR-0002): the
+// primary visual identity across the result hero, dex cards, type modal, and share
+// card. Use content/gradient.ts (`typeGradient` / `typeColors`) to consume it — CSS
+// gets a linear-gradient string, Canvas gets the raw hex pair.
+//
+// `match` is the type's two "best match" codes, shown as MatchChips on the result
+// page and in the type modal (deep-link to /dex?focus=CODE).
+//
+// `imageKey` is a stable slug for the parrot character art. Currently unused for
+// resolving the image (assets.ts derives the path from the uppercase code) but kept
+// as a stable identifier.
 export interface TypeInfo {
     code: TypeCode
     name: string
     report: string
+    description: string
+    colors: readonly [string, string]
+    match: readonly [TypeCode, TypeCode]
     imageKey: string
 }
 
