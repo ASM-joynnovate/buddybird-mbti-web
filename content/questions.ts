@@ -1,129 +1,239 @@
-// Full 12-question set (issue #02). Three questions per axis in fixed order:
-// EI (q1-q3), SN (q4-q6), TF (q7-q9), JP (q10-q12). Copy is finalized in issue #12.
+// Full 13-question set (behaviour-observation themes: 애착 / 활동 / 소통).
+// Two choices per question, each weighting one or more axis letters by +1
+// (symmetric multi-axis scoring, ADR-0003). A question's two choices cover the SAME
+// axes with OPPOSITE letters, so it contributes +1 to each axis it touches no matter
+// which side is picked.
 //
-// Invariant: choice 'a' = axis LEFT letter, choice 'b' = axis RIGHT letter. All-'a' -> ESTJ, all-'b' -> INFP. A deterministic E2E relies on this.
+// Axis-pair allocation (degree EI 7 · SN 7 · TF 7 · JP 5 — all odd ⇒ no ties):
+//   EI-SN ×3 (q3,q4,q12)  EI-TF ×2 (q1,q10)  EI-JP ×2 (q6,q13)
+//   SN-TF ×3 (q5,q8,q11)  SN-JP ×1 (q7)      TF-JP ×2 (q2,q9)
+//
+// Invariant: choice 'a' is always the first option, 'b' the second. Across the set,
+// the 'a' letters win a majority on every axis (E/S/T/J), so all-'a' -> ESTJ and
+// all-'b' -> INFP. A deterministic E2E relies on these anchors.
 
 import type { Question } from '@/lib/mbti/types'
 
 export const QUESTIONS: Question[] = [
     {
         id: 'q1',
-        axis: 'EI',
-        emoji: '👋',
-        text: '낯선 사람이 다가오면 우리 새는?',
+        emoji: '🚪',
+        text: '집사가 외출하려고 현관에서 신발을 신을 때, 우리 앵무새의 반응은?',
         choices: [
-            { id: 'q1a', label: '먼저 다가가 관심을 보인다', axis: 'EI', letter: 'E' },
-            { id: 'q1b', label: '경계하며 거리를 둔다', axis: 'EI', letter: 'I' },
+            {
+                id: 'q1a',
+                label: '"어디 가!! 나도 데려가!!" 새장 창살에 매달려 애절하게 짹짹거리며 분리불안 난리가 난다',
+                weights: { E: 1, F: 1 },
+            },
+            {
+                id: 'q1b',
+                label: '"올 때 해바라기씨나 사 와라." 쳐다도 안 보고 평온하게 제 깃털을 고르거나 밥을 먹는다',
+                weights: { I: 1, T: 1 },
+            },
         ],
     },
     {
         id: 'q2',
-        axis: 'EI',
-        emoji: '🔋',
-        text: '하루 종일 혼자 두면 우리 새는?',
+        emoji: '✋',
+        text: "집사가 다가가 조심스럽게 머리 '긁긁(스킨십)'을 시도하면?",
         choices: [
-            { id: 'q2a', label: '시끄럽게 울며 관심을 요구한다', axis: 'EI', letter: 'E' },
-            { id: 'q2b', label: '조용히 자기 놀이에 집중한다', axis: 'EI', letter: 'I' },
+            {
+                id: 'q2a',
+                label: '기분이 내키면 냅다 고개부터 들이밀며 "더 긁어라 닝겐" 무한 쓰담을 요구하는 애교쟁이',
+                weights: { F: 1, P: 1 },
+            },
+            {
+                id: 'q2b',
+                label: '"어딜 함부로 만져!" 기분이 아니면 가차 없이 부리로 콱! 피의 응징(입질)을 내리는 까칠보스',
+                weights: { T: 1, J: 1 },
+            },
         ],
     },
     {
         id: 'q3',
-        axis: 'EI',
-        emoji: '🎉',
-        text: '여러 마리가 함께 있을 때 우리 새는?',
+        emoji: '📱',
+        text: '집사가 폰을 들여다보며 자기한테 집중하지 않을 때?',
         choices: [
-            { id: 'q3a', label: '무리 한가운데서 어울려 논다', axis: 'EI', letter: 'E' },
-            { id: 'q3b', label: '한쪽 구석에서 혼자 쉰다', axis: 'EI', letter: 'I' },
+            {
+                id: 'q3a',
+                label: '"나랑 놀라고!!!" 화면 앞을 가로막고 손에 찰싹 붙어 온몸으로 방해하는 관종',
+                weights: { E: 1, S: 1 },
+            },
+            {
+                id: 'q3b',
+                label: '"바쁘냐? 그럼 난 잔다." 멀찍이서 제 장난감 갖고 놀거나 혼자 낮잠을 청한다',
+                weights: { I: 1, N: 1 },
+            },
         ],
     },
     {
         id: 'q4',
-        axis: 'SN',
-        emoji: '🧸',
-        text: '새 장난감을 주면 우리 새는?',
+        emoji: '✈️',
+        text: '방 안에서 한 곳에서 다른 곳으로 이동할 때 우리 앵무새의 주특기는?',
         choices: [
-            { id: 'q4a', label: '직접 물고 만지며 확인한다', axis: 'SN', letter: 'S' },
-            { id: 'q4b', label: '멀리서 한참 살피며 상상한다', axis: 'SN', letter: 'N' },
+            {
+                id: 'q4a',
+                label: "슝~ 푸드덕! 무조건 날개를 쫙 펴고 방 안을 가로지르는 날렵한 '탑건' 스타일",
+                weights: { E: 1, N: 1 },
+            },
+            {
+                id: 'q4b',
+                label: "뽈뽈뽈… 두 발로 바닥을 열심히 걸어 다니는 야무진 '뚜벅이' 스타일",
+                weights: { I: 1, S: 1 },
+            },
         ],
     },
     {
         id: 'q5',
-        axis: 'SN',
-        emoji: '🪑',
-        text: '가구 배치가 바뀌면 우리 새는?',
+        emoji: '💥',
+        text: '집사가 한눈판 사이, 우리 앵무새가 가장 많이 치는 대형 사고는?',
         choices: [
-            { id: 'q5a', label: '익숙한 자리부터 꼼꼼히 다시 확인한다', axis: 'SN', letter: 'S' },
-            { id: 'q5b', label: '낯선 변화에 호기심부터 발동한다', axis: 'SN', letter: 'N' },
+            {
+                id: 'q5a',
+                label: '벽지 뜯기, 책 갉아먹기, 키보드 자판 쏙쏙 뽑기… 눈에 띄는 건 다 분해하는 거침없는 파괴왕',
+                weights: { S: 1, T: 1 },
+            },
+            {
+                id: 'q5b',
+                label: '사고는 무슨~ 얌전히 자기 장난감이랑 놀거나 거울 보며 자기 얼굴을 감상하는 몽상가',
+                weights: { N: 1, F: 1 },
+            },
         ],
     },
     {
         id: 'q6',
-        axis: 'SN',
-        emoji: '🍪',
-        text: '간식을 찾을 때 우리 새는?',
+        emoji: '🚿',
+        text: '싱크대나 화장실에서 콸콸콸~ 물소리가 들릴 때 반응은?',
         choices: [
-            { id: 'q6a', label: '늘 두던 자리를 정확히 기억한다', axis: 'SN', letter: 'S' },
-            { id: 'q6b', label: '여기저기 새로운 곳을 뒤진다', axis: 'SN', letter: 'N' },
+            {
+                id: 'q6a',
+                label: '"나도 씻을래!!" 물만 보면 텐션이 올라 냅다 뛰어들어 깃털을 적시는 워터파크 매니아',
+                weights: { E: 1, P: 1 },
+            },
+            {
+                id: 'q6b',
+                label: '전용 목욕통을 대령하거나 곱게 분무해 줘야만 우아하게 씻고, 아니면 물 튀길라 멀찍이 도망',
+                weights: { I: 1, J: 1 },
+            },
         ],
     },
     {
         id: 'q7',
-        axis: 'TF',
-        emoji: '⚖️',
-        text: '간식을 못 받았을 때 우리 새는?',
+        emoji: '😌',
+        text: '배부르고 등 따시고~ 기분이 최고조로 편안할 때 하는 행동은?',
         choices: [
-            { id: 'q7a', label: '규칙을 따지듯 끈질기게 요구한다', axis: 'TF', letter: 'T' },
-            { id: 'q7b', label: '서운한 듯 보호자에게 부빈다', axis: 'TF', letter: 'F' },
+            {
+                id: 'q7a',
+                label: '깃털을 찐빵처럼 빵빵하게 부풀리고 한쪽 발을 몸통에 쏙 숨긴 채 정자세로 휴식 모드',
+                weights: { S: 1, J: 1 },
+            },
+            {
+                id: 'q7b',
+                label: "그날 기분 따라 '빠지직' 부리 가는 소리(ASMR)를 즉흥 연주하거나 집사 품으로 파고든다",
+                weights: { N: 1, P: 1 },
+            },
         ],
     },
     {
         id: 'q8',
-        axis: 'TF',
-        emoji: '💕',
-        text: '보호자가 다른 새를 예뻐하면 우리 새는?',
+        emoji: '😱',
+        text: "우리 앵무새가 가끔 보여주는 '어이없는 쫄보' 모먼트는?",
         choices: [
-            { id: 'q8a', label: '아랑곳없이 제 할 일을 한다', axis: 'TF', letter: 'T' },
-            { id: 'q8b', label: '질투하며 보호자에게 다가온다', axis: 'TF', letter: 'F' },
+            {
+                id: 'q8a',
+                label: '색깔 옷·처음 본 과일·안경 같은 "대체 저걸 왜 무서워해?" 싶은 것에 기겁하는 4차원 쫄보',
+                weights: { N: 1, F: 1 },
+            },
+            {
+                id: 'q8b',
+                label: '쫄보? 그게 뭔데. 제 몸집 100배인 강아지·청소기 앞에서도 깡패처럼 덤비는 노빠꾸 전투기',
+                weights: { S: 1, T: 1 },
+            },
         ],
     },
     {
         id: 'q9',
-        axis: 'TF',
-        emoji: '🎓',
-        text: '훈련을 시킬 때 우리 새는?',
+        emoji: '💩',
+        text: "빼입은 새 옷 위에 시원하게 '응가'를 발사한 뒤 녀석의 태도는?",
         choices: [
-            { id: 'q9a', label: '보상 규칙을 파악해 또박또박 따른다', axis: 'TF', letter: 'T' },
-            { id: 'q9b', label: '보호자 기분을 살피며 반응한다', axis: 'TF', letter: 'F' },
+            {
+                id: 'q9a',
+                label: '"어쩌라고? 치워라 닝겐." 아무 일 없었다는 듯 당당하게 제 깃털을 고르는 강철 멘탈',
+                weights: { T: 1, J: 1 },
+            },
+            {
+                id: 'q9b',
+                label: '집사가 소리치니 오히려 재밌다고 위아래로 헤드뱅잉하거나 슬쩍 눈치 보며 푸드덕 도망',
+                weights: { F: 1, P: 1 },
+            },
         ],
     },
     {
         id: 'q10',
-        axis: 'JP',
-        emoji: '🗓️',
-        text: '하루 일과를 보면 우리 새는?',
+        emoji: '📢',
+        text: '마음에 안 드는 상황(안 꺼내준다, 간식 안 준다)이 닥쳤을 때?',
         choices: [
-            { id: 'q10a', label: '정해진 시간표대로 규칙적이다', axis: 'JP', letter: 'J' },
-            { id: 'q10b', label: '그날 기분 따라 제멋대로다', axis: 'JP', letter: 'P' },
+            {
+                id: 'q10a',
+                label: '"당장 문 열어라악!!!" 동네가 떠나가라 고래고래 샤우팅하며 악성 민원을 폭주시킨다',
+                weights: { E: 1, T: 1 },
+            },
+            {
+                id: 'q10b',
+                label: '꿍얼꿍얼… 투덜투덜… 자기만의 외계어로 쉼 없이 혼잣말하며 조용히 삐쳐 불만을 표출',
+                weights: { I: 1, F: 1 },
+            },
         ],
     },
     {
         id: 'q11',
-        axis: 'JP',
-        emoji: '🛏️',
-        text: '둥지나 잠자리를 두고 우리 새는?',
+        emoji: '🍪',
+        text: '집사가 간식 봉지를 부스럭거리는 소리를 냈을 때 텐션은?',
         choices: [
-            { id: 'q11a', label: '늘 같은 자리를 깔끔히 정돈한다', axis: 'JP', letter: 'J' },
-            { id: 'q11b', label: '그때그때 마음에 드는 곳에 자리잡는다', axis: 'JP', letter: 'P' },
+            {
+                id: 'q11a',
+                label: '눈이 뒤집혀서 봉지 소리만 나도 이미 날아와 대기 중! 식탐 1티어 뚱짹이',
+                weights: { S: 1, T: 1 },
+            },
+            {
+                id: 'q11b',
+                label: '"오, 그거 뭐야?" 한입 먹어보고 아니면 퉤, 먹는 것보다 노는 게 더 좋은 소식좌',
+                weights: { N: 1, F: 1 },
+            },
         ],
     },
     {
         id: 'q12',
-        axis: 'JP',
-        emoji: '🍽️',
-        text: '먹이를 먹을 때 우리 새는?',
+        emoji: '🎤',
+        text: '사람들을 놀라게 하는 우리 앵무새의 필살기(개인기)가 있다면?',
         choices: [
-            { id: 'q12a', label: '정해진 양을 차례대로 먹는다', axis: 'JP', letter: 'J' },
-            { id: 'q12b', label: '내키는 대로 골라 먹는다', axis: 'JP', letter: 'P' },
+            {
+                id: 'q12a',
+                label: '"안녕! 밥 줘!" 말을 따라 하거나 빙글 돌기·하이파이브로 관중 앞에서 폼 나게 뽐내는 엔터테이너',
+                weights: { E: 1, S: 1 },
+            },
+            {
+                id: 'q12b',
+                label: '남들 볼 땐 절대 안 하고 혼자 있을 때만 꿍얼꿍얼 연습하거나, 존재 자체가 특기인 숨 쉬는 솜뭉치',
+                weights: { I: 1, N: 1 },
+            },
+        ],
+    },
+    {
+        id: 'q13',
+        emoji: '☀️',
+        text: '우리 앵무새의 아침 기상과 수면 패턴은?',
+        choices: [
+            {
+                id: 'q13a',
+                label: '해 뜨자마자 "아침이다!!! 다들 일어나!!!" 알람시계처럼 우렁차게 울어대는 얼리버드',
+                weights: { E: 1, J: 1 },
+            },
+            {
+                id: 'q13b',
+                label: '암막 천을 걷어줘도 "5분만 더…" 꾸벅꾸벅 졸거나, 집사 기척이 나야 그제야 부스럭대는 잠만보',
+                weights: { I: 1, P: 1 },
+            },
         ],
     },
 ]

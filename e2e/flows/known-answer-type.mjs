@@ -1,9 +1,9 @@
 // Flow: known-answer-type — drive two deterministic choice sequences and assert
 // strict equality of the computed MBTI type (real engine, issue #02+).
 //
-// Invariant from content/questions.ts:
-//   choice 'a' = axis LEFT letter  -> all-'a' yields ESTJ
-//   choice 'b' = axis RIGHT letter -> all-'b' yields INFP
+// Invariant from content/questions.ts (multi-axis symmetric scoring, ADR-0003):
+//   'a' letters win a majority on every axis -> all-'a' yields ESTJ
+//   'b' letters win a majority on every axis -> all-'b' yields INFP
 //
 // Each combo atomically finds-and-clicks the choice ending in the target variant
 // in one eval round-trip, avoiding the find-then-click race condition.

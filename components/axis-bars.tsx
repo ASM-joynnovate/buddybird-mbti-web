@@ -1,7 +1,7 @@
 'use client'
 
 // Four MBTI axis spectrum bars for the result surface. Each row shows the playful
-// end labels (e.g. 인싸새(E) ↔ 집콕새(I)), a track with a center-anchored colored
+// end labels (e.g. 인싸앵(E) ↔ 집콕앵(I)), a track with a center-anchored colored
 // segment, and a knob marking the lean. The fill grows from 0 to its target on mount
 // for a springy reveal; reduced-motion users get an instant snap via the CSS guard.
 //

@@ -24,11 +24,15 @@ _Avoid_: Outcome, Report page
 ## MBTI model
 
 **Question**:
-A single prompt with exactly two **Choices**. Twelve per test (three per **Axis**).
+A single prompt with exactly two **Choices**. Thirteen per test. A Question is
+_not_ bound to a single **Axis** — each of its Choices may weight several Axes.
 _Avoid_: Item, Q
 
 **Choice**:
-One of a Question's two options; weights exactly one letter of one **Axis** by 1.
+One of a Question's two options; weights the letters of one or more **Axes** by 1
+each. The two Choices of a Question are **symmetric** — they cover the same Axes
+with opposite letters, so the question contributes the same total to each Axis it
+touches regardless of which side is picked.
 _Avoid_: Option, Answer (an "answer" is a Choice the user selected)
 
 **Axis**:

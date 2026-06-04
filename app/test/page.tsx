@@ -8,12 +8,18 @@
 // the presentation is reskinned.
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { useRouter } from 'next/navigation'
-import { LETTER_COLOR, QUESTION_COUNT, QUESTIONS } from '@/content'
+import { QUESTION_COUNT, QUESTIONS } from '@/content'
 import { track } from '@/lib/analytics'
 import { computeResult, type Choice } from '@/lib/mbti'
 import { encodeResult, RESULT_PARAM } from '@/lib/result-url'
 import { useTestProgress } from '@/lib/state/test-progress-context'
 import './test.css'
+
+// Decorative 🅰/🅱 option accents. With multi-axis weighted choices (ADR-0003) a
+// choice no longer maps to a single axis letter, so the tint is purely a visual A/B
+// distinction — not a semantic axis hue. Hex (not a CSS var) so the badge can append
+// an alpha suffix (`${color}22`).
+const OPTION_ACCENTS = ['#e8772e', '#7b3fb5'] as const
 
 export default function TestPage() {
     const router = useRouter()
@@ -57,7 +63,6 @@ export default function TestPage() {
             payload: {
                 questionId: question.id,
                 choiceId: choice.id,
-                axis: question.axis,
                 index: currentIndex,
             },
         })
@@ -137,26 +142,35 @@ export default function TestPage() {
                 aria-valuetext={`${QUESTION_COUNT}문항 중 ${currentIndex + 1}번째`}
             >
                 {QUESTIONS.map((q, i) => {
+                    // Answered segments fill with the picked side's accent (🅰/🅱), mirroring
+                    // the option badges. Choices are multi-axis now (ADR-0003), so the tint
+                    // reflects which side was chosen — not a single axis hue.
                     const ans = answers[q.id]
-                    const fillColor = ans ? LETTER_COLOR[ans.letter] : null
+                    const pickedIndex = ans ? q.choices.findIndex((c) => c.id === ans.id) : -1
                     const width = ans ? '100%' : i === currentIndex ? '14%' : '0'
+                    const background =
+                        pickedIndex >= 0
+                            ? (OPTION_ACCENTS[pickedIndex] ?? OPTION_ACCENTS[0])
+                            : 'var(--color-outline)'
                     return (
                         <span className="seg" key={q.id} aria-hidden="true">
-                            <i style={{ width, background: fillColor ?? 'var(--color-outline)' }} />
+                            <i style={{ width, background }} />
                         </span>
                     )
                 })}
             </div>
 
             <div className={`q-card slide-in-${direction}`} key={currentIndex}>
-                <div className="q-emoji" aria-hidden="true">
-                    {question.emoji}
+                <div className="q-prompt">
+                    <div className="q-emoji" aria-hidden="true">
+                        {question.emoji}
+                    </div>
+                    <h1 className="q-text font-display">{question.text}</h1>
                 </div>
-                <h1 className="q-text font-display">{question.text}</h1>
 
                 <div className="opts">
                     {question.choices.map((choice, i) => {
-                        const color = LETTER_COLOR[choice.letter]
+                        const color = OPTION_ACCENTS[i] ?? OPTION_ACCENTS[0]
                         const isPicked = picked === choice.id
                         return (
                             <button

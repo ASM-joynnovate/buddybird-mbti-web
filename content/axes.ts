@@ -1,6 +1,6 @@
 // Presentation metadata for the four MBTI axes shown as result spectrum bars.
 // Labels are the playful BuddyBird names; the letter is the canonical MBTI letter
-// shown in parentheses (e.g. "인싸새(E)"). `cssVar` is the per-axis bar color token
+// shown in parentheses (e.g. "인싸앵(E)"). `cssVar` is the per-axis bar color token
 // defined in globals.css. Orientation (left/right) matches AXIS_LETTERS in lib/mbti.
 
 import type { Axis, Letter } from '@/lib/mbti'
@@ -21,23 +21,23 @@ export interface AxisMeta {
 
 export const AXIS_META: Record<Axis, AxisMeta> = {
     EI: {
-        left: { label: '인싸새', letter: 'E', color: '#e8772e' },
-        right: { label: '집콕새', letter: 'I', color: '#3e8fd0' },
+        left: { label: '인싸앵', letter: 'E', color: '#e8772e' },
+        right: { label: '집콕앵', letter: 'I', color: '#3e8fd0' },
         cssVar: 'var(--color-axis-ei)',
     },
     SN: {
-        left: { label: '현실새', letter: 'S', color: '#5b9e3a' },
-        right: { label: '구름새', letter: 'N', color: '#7b3fb5' },
+        left: { label: '현실앵', letter: 'S', color: '#5b9e3a' },
+        right: { label: '구름앵', letter: 'N', color: '#7b3fb5' },
         cssVar: 'var(--color-axis-sn)',
     },
     TF: {
-        left: { label: '팩폭새', letter: 'T', color: '#2e9bb5' },
-        right: { label: '말랑새', letter: 'F', color: '#e86a9e' },
+        left: { label: '팩폭앵', letter: 'T', color: '#2e9bb5' },
+        right: { label: '말랑앵', letter: 'F', color: '#e86a9e' },
         cssVar: 'var(--color-axis-tf)',
     },
     JP: {
-        left: { label: '칼각새', letter: 'J', color: '#3c7a24' },
-        right: { label: '즉흥새', letter: 'P', color: '#e8b53a' },
+        left: { label: '칼각앵', letter: 'J', color: '#3c7a24' },
+        right: { label: '즉흥앵', letter: 'P', color: '#e8b53a' },
         cssVar: 'var(--color-axis-jp)',
     },
 }

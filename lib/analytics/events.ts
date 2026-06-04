@@ -8,7 +8,7 @@
 //   - share_fallback   -> download fallback when share is unsupported (#09)
 //   - app_cta_click    -> intro + result app CTA (components/app-cta-button.tsx, #06/#07)
 
-import type { Axis, TypeCode } from '@/lib/mbti/types'
+import type { TypeCode } from '@/lib/mbti/types'
 
 // The union of every analytics event name the app can emit.
 export type AnalyticsEventName =
@@ -25,7 +25,7 @@ export type AnalyticsEvent =
     | { name: 'test_start'; payload: Record<string, never> }
     | {
           name: 'question_answered'
-          payload: { questionId: string; choiceId: string; axis: Axis; index: number }
+          payload: { questionId: string; choiceId: string; index: number }
       }
     | { name: 'test_completed'; payload: { type: TypeCode } }
     | { name: 'photo_attached'; payload: { source: 'camera' | 'gallery' } }

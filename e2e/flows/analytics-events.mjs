@@ -6,9 +6,9 @@
 //   3. Drive the full 12-question flow picking all 'a' choices (yields ESTJ).
 //   4. Read window.__analyticsEvents and assert the ordered sequence.
 //
-// Expected sequence (issue #11, real engine from issue #02):
+// Expected sequence (issue #11, multi-axis engine ADR-0003):
 //   test_start x1
-//   question_answered x12  (one per question, indices 0..11, with sane payload fields)
+//   question_answered x13  (one per question, indices 0..12, with sane payload fields)
 //   test_completed x1      (type === 'ESTJ')
 //
 // Deferred events that must NOT appear yet:
@@ -23,10 +23,10 @@ import {
     waitForSurface,
 } from '../helpers.mjs'
 
-// Expected question count for the full engine (issue #02).
-const EXPECTED_QUESTION_COUNT = 12
+// Expected question count for the multi-axis engine (ADR-0003).
+const EXPECTED_QUESTION_COUNT = 13
 
-// Expected result type when all 'a' choices are picked (axis LEFT letter wins each axis).
+// Expected result type when all 'a' choices are picked ('a' letters win each axis).
 const EXPECTED_TYPE = 'ESTJ'
 
 const DEFERRED_EVENTS = ['photo_attached', 'share_success', 'share_fallback', 'app_cta_click']
@@ -157,8 +157,8 @@ export async function run() {
             `question_answered[${i}].payload.questionId must be a non-empty string; got ${JSON.stringify(p.questionId)}`,
         )
         assert(
-            typeof p.axis === 'string' && p.axis.length === 2,
-            `question_answered[${i}].payload.axis must be a 2-char string; got ${JSON.stringify(p.axis)}`,
+            typeof p.choiceId === 'string' && p.choiceId.length > 0,
+            `question_answered[${i}].payload.choiceId must be a non-empty string; got ${JSON.stringify(p.choiceId)}`,
         )
         assert(
             p.index === i,

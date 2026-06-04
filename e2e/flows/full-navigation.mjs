@@ -15,7 +15,7 @@ import {
 } from '../helpers.mjs'
 
 // Maximum questions we will answer before giving up — a safety ceiling, not a timing
-// assumption. The real engine has 12; this leaves headroom for future growth.
+// assumption. The real engine has 13 (ADR-0003); this leaves headroom for growth.
 const MAX_QUESTIONS = 50
 
 // Return true when result-root is present and visible.

@@ -23,21 +23,23 @@ export const AXIS_LETTERS: Record<Axis, { left: Letter; right: Letter }> = {
     JP: { left: 'J', right: 'P' },
 }
 
-// A single selectable answer. Each choice weights exactly one axis letter by +1.
-// `letter` must be one of the two letters belonging to `axis` (enforced by the engine).
+// A single selectable answer. Each choice weights one or more axis letters by +1
+// (multi-axis weighted scoring, ADR-0003). The two choices of a Question are
+// symmetric: they cover the same axes with opposite letters, so the question
+// contributes the same total to each axis it touches regardless of which side wins.
+// `weights` keys are the letters that receive +1; values are always 1 in the current
+// model but kept numeric to leave room for future tuning.
 export interface Choice {
     id: string
     label: string
-    axis: Axis
-    letter: Letter
+    weights: Partial<Record<Letter, number>>
 }
 
-// One question with exactly two choices. `axis` is the axis this question scores.
-// `emoji` is the playful glyph shown above the question on the Test card ("동화숲
-// 월드" quiz design).
+// One question with exactly two symmetric choices. A Question is no longer bound to a
+// single axis — its Choices may weight several axes (ADR-0003). `emoji` is the playful
+// glyph shown above the question on the Test card ("동화숲 월드" quiz design).
 export interface Question {
     id: string
-    axis: Axis
     emoji: string
     text: string
     choices: [Choice, Choice]

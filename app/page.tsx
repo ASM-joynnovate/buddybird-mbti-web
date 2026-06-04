@@ -8,7 +8,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { useRouter } from 'next/navigation'
 import { ParrotImage } from '@/components/parrot-image'
-import { CAROUSEL_TYPES, typeGradient } from '@/content'
+import { CAROUSEL_TYPES, QUESTION_COUNT, typeGradient } from '@/content'
 import { track } from '@/lib/analytics'
 import type { TypeCode } from '@/lib/mbti'
 import { useTestProgress } from '@/lib/state/test-progress-context'
@@ -111,7 +111,7 @@ export default function Home() {
                     </div>
                     <span className="hero-stats-div" aria-hidden="true" />
                     <div>
-                        <b>12</b>질문
+                        <b>{QUESTION_COUNT}</b>질문
                     </div>
                     <span className="hero-stats-div" aria-hidden="true" />
                     <div>

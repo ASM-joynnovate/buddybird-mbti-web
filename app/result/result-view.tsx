@@ -32,19 +32,15 @@ const GROUP_LABEL: Record<TemperamentGroup, string> = {
     Explorers: '탐험가형',
 }
 
-// Rebuild axis tallies for a shared visitor from the URL-encoded strengths. Each
-// axis has 3 questions, no ties: a "sweep" bit means 3-0, otherwise 2-1. The winning
-// side is the type code letter for that axis. Legacy bare codes (strengths null)
-// default to a full 3-0 lean so the bars still read as intentional.
-function scoresFromStrengths(type: TypeCode, strengths: boolean[] | null): Record<Axis, AxisScore> {
+// Fallback axis tallies for a shared visitor arriving on a legacy/manual bare code
+// (no encoded tally). The exact per-axis counts aren't recoverable from the type code
+// alone, so lean each axis fully toward its winning letter — the bars still read as
+// intentional. Tokens from the current encoder carry exact tallies and skip this.
+function fallbackScores(type: TypeCode): Record<Axis, AxisScore> {
     return AXES.reduce(
         (acc, axis, index) => {
-            const { left } = AXIS_LETTERS[axis]
-            const leftWins = type[index] === left
-            const sweep = strengths ? strengths[index] : true
-            const winner = sweep ? 3 : 2
-            const loser = sweep ? 0 : 1
-            acc[axis] = leftWins ? { left: winner, right: loser } : { left: loser, right: winner }
+            const leftWins = type[index] === AXIS_LETTERS[axis].left
+            acc[axis] = leftWins ? { left: 1, right: 0 } : { left: 0, right: 1 }
             return acc
         },
         {} as Record<Axis, AxisScore>,
@@ -92,11 +88,12 @@ export function ResultView() {
     const info = getTypeInfo(type)
     const group = temperamentGroup(type)
 
-    // Axis bars: real tallies for the player, synthesized from URL strengths otherwise.
+    // Axis bars: real tallies for the player, the exact URL-encoded tallies for a
+    // shared visitor, or a full-lean fallback for a legacy bare code.
     const axisScores =
         result !== null && ownType !== null
             ? result.axisScores
-            : scoresFromStrengths(type, decoded?.strengths ?? null)
+            : (decoded?.axisScores ?? fallbackScores(type))
 
     // Per-type identity gradient is the primary hero visual ("동화숲 월드", ADR-0002);
     // the temperament group is demoted to the badge label only.
