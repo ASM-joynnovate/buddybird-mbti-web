@@ -1,0 +1,170 @@
+/*
+ * Dex (도감) surface — a 16-type grid (2 columns on mobile, 4 on tablet+). Each card
+ * wears its type identity gradient as a soft top wash (--type-grad, injected inline).
+ * The shared type modal lives in globals.css. Tokens: globals.css @theme + aliases.
+ */
+
+.dex-surface {
+    position: relative;
+    width: 100%;
+    max-width: 720px;
+    margin-inline: auto;
+    flex: 1;
+    padding: 32px 20px 56px;
+}
+
+.dex-head {
+    text-align: center;
+    margin-bottom: 26px;
+}
+
+.dex-eyebrow {
+    margin: 0;
+    color: var(--brand-d);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+}
+
+.dex-title {
+    margin: 6px 0;
+    font-size: clamp(1.875rem, 8vw, 2.5rem);
+    line-height: 1.05;
+}
+
+.dex-sub {
+    margin: 0;
+    color: var(--color-ink-muted);
+}
+
+.dex-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+}
+
+@media (min-width: 720px) {
+    .dex-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+    }
+}
+
+.dex-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    border: 3px solid transparent;
+    border-radius: var(--radius-lg);
+    padding: 16px 14px 18px;
+    text-align: center;
+    background: var(--color-surface);
+    box-shadow: var(--sh-sm);
+    cursor: pointer;
+    overflow: hidden;
+    transition:
+        transform 0.3s var(--ease-spring),
+        box-shadow 0.3s var(--ease-spring);
+}
+
+/* Identity gradient wash across the top half of the card. */
+.dex-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 50%;
+    background: var(--type-grad, var(--color-foliage-near));
+    opacity: 0.16;
+    pointer-events: none;
+}
+
+.dex-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: var(--sh-lg);
+}
+
+.dex-card:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.dex-card.mine {
+    border-color: var(--brand);
+}
+
+.dex-mine-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    background: var(--brand);
+    color: #ffffff;
+    font-size: 0.625rem;
+    font-weight: 800;
+    padding: 4px 9px;
+    border-radius: var(--r-pill);
+}
+
+.dex-card-art {
+    position: relative;
+    z-index: 1;
+    width: 92px;
+    height: 92px;
+}
+
+.dex-card-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.dex-card-code {
+    margin-top: 4px;
+    font-size: 1.25rem;
+}
+
+.dex-card-name {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--color-ink-muted);
+}
+
+.dex-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+}
+
+.dex-back {
+    border: 1px solid var(--color-outline);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    border-radius: var(--r-pill);
+    padding: 14px 28px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.dex-back:hover {
+    border-color: var(--color-primary);
+}
+
+.dex-back:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dex-card {
+        transition-duration: 0.08s;
+    }
+
+    .dex-card:hover {
+        transform: none;
+    }
+}

@@ -3,11 +3,22 @@
 import type { CSSProperties } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AppCtaButton } from '@/components/app-cta-button'
+import { AxisBars } from '@/components/axis-bars'
+import { Confetti } from '@/components/confetti'
+import { MatchChip } from '@/components/match-chip'
 import { ParrotImage } from '@/components/parrot-image'
 import { PhotoInput } from '@/components/photo-input'
 import { ShareButton } from '@/components/share-button'
-import { getTypeInfo } from '@/content'
-import { GROUP_CSS_VAR, temperamentGroup, type TemperamentGroup } from '@/lib/mbti'
+import { getTypeInfo, typeGradient } from '@/content'
+import {
+    AXES,
+    AXIS_LETTERS,
+    temperamentGroup,
+    type Axis,
+    type AxisScore,
+    type TemperamentGroup,
+    type TypeCode,
+} from '@/lib/mbti'
 import { usePhotoSource } from '@/lib/photo/use-photo-source'
 import { decodeResult, RESULT_PARAM } from '@/lib/result-url'
 import { useTestProgress } from '@/lib/state/test-progress-context'
@@ -21,6 +32,25 @@ const GROUP_LABEL: Record<TemperamentGroup, string> = {
     Explorers: '탐험가형',
 }
 
+// Rebuild axis tallies for a shared visitor from the URL-encoded strengths. Each
+// axis has 3 questions, no ties: a "sweep" bit means 3-0, otherwise 2-1. The winning
+// side is the type code letter for that axis. Legacy bare codes (strengths null)
+// default to a full 3-0 lean so the bars still read as intentional.
+function scoresFromStrengths(type: TypeCode, strengths: boolean[] | null): Record<Axis, AxisScore> {
+    return AXES.reduce(
+        (acc, axis, index) => {
+            const { left } = AXIS_LETTERS[axis]
+            const leftWins = type[index] === left
+            const sweep = strengths ? strengths[index] : true
+            const winner = sweep ? 3 : 2
+            const loser = sweep ? 0 : 1
+            acc[axis] = leftWins ? { left: winner, right: loser } : { left: loser, right: winner }
+            return acc
+        },
+        {} as Record<Axis, AxisScore>,
+    )
+}
+
 export function ResultView() {
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -28,11 +58,12 @@ export function ResultView() {
     const photo = usePhotoSource()
 
     // Own result = the visitor finished the test this session (in-memory result).
-    // Shared visitor = arrived via a shared URL with only the ?t= param. The Test
+    // Shared visitor = arrived via a shared URL with only the ?t= token. The Test
     // page appends ?t= even for the player's own result, so the param alone cannot
     // distinguish the two — in-memory presence is the real signal.
     const ownType = result?.type ?? null
-    const sharedType = decodeResult(searchParams.get(RESULT_PARAM))
+    const decoded = decodeResult(searchParams.get(RESULT_PARAM))
+    const sharedType = decoded?.type ?? null
     const type = ownType ?? sharedType
     const isSharedVisitor = ownType === null && sharedType !== null
 
@@ -49,7 +80,7 @@ export function ResultView() {
                     <button
                         type="button"
                         onClick={() => router.push('/')}
-                        className="result-restart"
+                        className="result-restart btn-candy--ghost"
                     >
                         처음으로
                     </button>
@@ -61,69 +92,106 @@ export function ResultView() {
     const info = getTypeInfo(type)
     const group = temperamentGroup(type)
 
+    // Axis bars: real tallies for the player, synthesized from URL strengths otherwise.
+    const axisScores =
+        result !== null && ownType !== null
+            ? result.axisScores
+            : scoresFromStrengths(type, decoded?.strengths ?? null)
+
+    // Per-type identity gradient is the primary hero visual ("동화숲 월드", ADR-0002);
+    // the temperament group is demoted to the badge label only.
+    const heroStyle = {
+        '--result-gradient': typeGradient(type),
+    } as CSSProperties
+
     return (
         <main data-testid="result-root" className="result-surface">
+            <Confetti />
+
             <div className="result-foliage" aria-hidden="true">
                 <span className="result-leaf result-leaf--tr" />
                 <span className="result-leaf result-leaf--bl" />
             </div>
 
             <div className="result-content">
-                <span
-                    className="result-badge"
-                    style={{ '--result-group': GROUP_CSS_VAR[group] } as CSSProperties}
-                >
-                    {GROUP_LABEL[group]}
-                </span>
+                <header className="result-hero" style={heroStyle}>
+                    <span className="result-badge">{GROUP_LABEL[group]}</span>
 
-                <div className="result-hero">
-                    <ParrotImage type={type} width={640} height={640} loading="eager" />
-                </div>
-
-                <p data-testid="result-type" className="result-type font-display">
-                    {type}
-                </p>
-
-                {info !== null && (
-                    <>
-                        <h1 className="result-name font-display">{info.name}</h1>
-                        <p className="result-report">{info.report}</p>
-                    </>
-                )}
-
-                {/* Photo input (#08) + share card (#09) — own results only. */}
-                {!isSharedVisitor && (
-                    <div className="result-share-slot">
-                        <PhotoInput
-                            objectUrl={photo.objectUrl}
-                            onPick={photo.setFile}
-                            onClear={photo.clear}
-                        />
-                        <ShareButton type={type} photoUrl={photo.objectUrl} />
+                    <div className="result-hero-art anim-float-up">
+                        <ParrotImage type={type} width={640} height={640} loading="eager" />
                     </div>
-                )}
 
-                <div className="result-actions">
-                    <AppCtaButton placement="result" />
-                    {isSharedVisitor ? (
-                        <button
-                            type="button"
-                            data-testid="retake-button"
-                            onClick={handleRestart}
-                            className="result-restart"
-                        >
-                            나도 테스트하기
-                        </button>
-                    ) : (
-                        <button
-                            type="button"
-                            data-testid="restart-button"
-                            onClick={handleRestart}
-                            className="result-restart"
-                        >
-                            다시하기
-                        </button>
+                    <p data-testid="result-type" className="result-type font-display">
+                        {type}
+                    </p>
+
+                    {info !== null && (
+                        <>
+                            <h1 className="result-name font-display">{info.name}</h1>
+                            <p className="result-tag">{info.report}</p>
+                        </>
                     )}
+                </header>
+
+                <div className="result-body">
+                    {info !== null && <p className="result-description">{info.description}</p>}
+
+                    <AxisBars axisScores={axisScores} />
+
+                    {/* Compatibility ("궁합") — best-match types, deep-linking to the dex. */}
+                    {info !== null && info.match.length > 0 && (
+                        <section className="result-match" aria-label="환상의 궁합">
+                            <h2 className="result-match-title">환상의 궁합</h2>
+                            <div className="chips result-match-chips">
+                                {info.match.map((matchCode) => (
+                                    <MatchChip key={matchCode} code={matchCode} />
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Photo input (#08) + share card (#09) — own results only. */}
+                    {!isSharedVisitor && (
+                        <div className="result-share-slot">
+                            <PhotoInput
+                                objectUrl={photo.objectUrl}
+                                onPick={photo.setFile}
+                                onClear={photo.clear}
+                            />
+                            <ShareButton type={type} photoUrl={photo.objectUrl} />
+                        </div>
+                    )}
+
+                    <div className="result-actions">
+                        <AppCtaButton placement="result" />
+                        <button
+                            type="button"
+                            data-testid="dex-link"
+                            onClick={() => router.push(`/dex?mine=${type}`)}
+                            className="result-restart btn-candy--ghost"
+                        >
+                            도감에서 보기
+                        </button>
+                        {isSharedVisitor ? (
+                            <button
+                                type="button"
+                                data-testid="retake-button"
+                                onClick={handleRestart}
+                                className="result-restart btn-candy--ghost"
+                            >
+                                나도 테스트하기
+                            </button>
+                        ) : (
+                            <button
+                                type="button"
+                                data-testid="restart-button"
+                                onClick={handleRestart}
+                                className="result-restart btn-candy--ghost"
+                            >
+                                다시하기
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         </main>

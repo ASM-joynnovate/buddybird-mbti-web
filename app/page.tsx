@@ -1,11 +1,69 @@
 'use client'
 
+// Intro (Landing) — a faithful recreation of the Claude Design bundle's Landing
+// screen ("동화숲 월드"), minus the iOS frame / topbar / language toggle (excluded
+// per the project scope: web-native, Korean-only). Structure mirrors the bundle:
+// headline → full-bleed forest band → type peek row → dex entry → stats → big CTA,
+// with the hero filling the viewport so the stats + CTA settle at the bottom.
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { useRouter } from 'next/navigation'
-import { AppCtaButton } from '@/components/app-cta-button'
-import { TypeCarousel } from '@/components/type-carousel'
-import { CAROUSEL_TYPES } from '@/content'
+import { ParrotImage } from '@/components/parrot-image'
+import { CAROUSEL_TYPES, typeGradient } from '@/content'
 import { track } from '@/lib/analytics'
+import type { TypeCode } from '@/lib/mbti'
 import { useTestProgress } from '@/lib/state/test-progress-context'
+import './page.css'
+
+// Peek order: a curated lead-in, then the remaining types (mirrors the bundle).
+const PEEK_LEAD: readonly TypeCode[] = [
+    'ENFP',
+    'INTJ',
+    'ESFP',
+    'ISFP',
+    'ENTP',
+    'INFJ',
+    'ENTJ',
+    'ISFJ',
+]
+const PEEK_POOL: readonly TypeCode[] = [
+    ...PEEK_LEAD,
+    ...CAROUSEL_TYPES.filter((code) => !PEEK_LEAD.includes(code)),
+]
+
+// A single row of type tiles that auto-fits as many as the width allows (bundle
+// PeekRow). The ResizeObserver callback is an external subscription, so its setState
+// is the sanctioned pattern (no cascading-render warning).
+function PeekRow({ pool }: { pool: readonly TypeCode[] }) {
+    const ref = useRef<HTMLDivElement>(null)
+    const [count, setCount] = useState(5)
+
+    useEffect(() => {
+        const el = ref.current
+        if (el === null) {
+            return
+        }
+        const TILE = 56
+        const GAP = 12
+        // ResizeObserver fires its callback once on observe() with the initial size,
+        // so we don't call recalc() synchronously in the effect body.
+        const observer = new ResizeObserver(() => {
+            const fit = Math.floor((el.clientWidth + GAP) / (TILE + GAP))
+            setCount(Math.max(3, Math.min(pool.length, fit)))
+        })
+        observer.observe(el)
+        return () => observer.disconnect()
+    }, [pool.length])
+
+    return (
+        <div className="peek-row" ref={ref}>
+            {pool.slice(0, count).map((code) => (
+                <span key={code} className="peek" style={{ background: typeGradient(code) }}>
+                    <ParrotImage type={code} width={56} height={56} />
+                </span>
+            ))}
+        </div>
+    )
+}
 
 export default function Home() {
     const router = useRouter()
@@ -18,30 +76,57 @@ export default function Home() {
         router.push('/test')
     }
 
+    const forestStyle = { backgroundImage: "url('/forest.webp')" } as CSSProperties
+
     return (
-        <main
-            data-testid="intro-root"
-            className="mx-auto flex w-full max-w-[480px] flex-1 flex-col items-center justify-center gap-6 px-6 py-10 text-center text-ink"
-        >
-            <header className="flex flex-col items-center gap-3">
-                <h1 className="font-display text-4xl tracking-tight text-ink">우리 앵무새 MBTI</h1>
-                <p className="max-w-sm text-base leading-relaxed text-ink-muted">
-                    간단한 질문에 답하면 우리 앵무새의 성격 유형을 알려드려요.
-                </p>
-            </header>
+        <main data-testid="intro-root" className="hero">
+            <div className="hero-first">
+                <h1 className="hero-title font-display">
+                    우리 앵무새
+                    <br />
+                    <span className="hl">진짜 성격</span>은?
+                </h1>
 
-            <TypeCarousel types={CAROUSEL_TYPES} />
+                <div
+                    className="hero-art"
+                    style={forestStyle}
+                    role="img"
+                    aria-label="동화숲 속 앵무새들"
+                />
 
-            <div className="flex flex-col items-center gap-3">
+                <PeekRow pool={PEEK_POOL} />
+
+                <button
+                    type="button"
+                    data-testid="dex-button"
+                    onClick={() => router.push('/dex')}
+                    className="btn btn--ghost btn--sm hero-dex"
+                >
+                    16유형 도감 보기
+                </button>
+
+                <div className="hero-stats">
+                    <div>
+                        <b>16</b>유형
+                    </div>
+                    <span className="hero-stats-div" aria-hidden="true" />
+                    <div>
+                        <b>12</b>질문
+                    </div>
+                    <span className="hero-stats-div" aria-hidden="true" />
+                    <div>
+                        <b>1분</b>소요
+                    </div>
+                </div>
+
                 <button
                     type="button"
                     data-testid="start-button"
                     onClick={handleStart}
-                    className="rounded-full bg-primary px-8 py-4 text-base font-bold text-on-primary shadow-[0_14px_32px_-12px_rgba(27,94,52,0.45)] transition-transform focus-visible:[outline:3px_solid_var(--color-primary)] focus-visible:[outline-offset:2px] active:scale-[0.98]"
+                    className="btn btn--lg hero-cta"
                 >
-                    테스트 시작하기
+                    테스트 시작하기 <span aria-hidden="true">→</span>
                 </button>
-                <AppCtaButton placement="intro" />
             </div>
         </main>
     )
