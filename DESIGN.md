@@ -194,9 +194,10 @@ shared result card must look identical for every viewer.
 The Test 문항 화면 — the highest-density surface — was prototyped in three
 executions and the **editorial trail** was chosen for its calm and legibility:
 
-- **Backdrop.** A green daylight gradient (highlight → pale leaf → sunken) with a
-  few **low-opacity layered foliage leaves** behind the content — atmosphere, never
-  competing with the text.
+- **Backdrop.** The app-wide **PNG layered forest** (ADR-0004), a single fixed
+  layer behind every surface (`<MobileForestBackground>`). A **cream legibility
+  veil** washes the central content band so the forest is atmosphere, never
+  competing with the text. (Superseded the former SVG leaf + gradient backdrop.)
 - **Progress trail.** A horizontal band of step markers (`done`/`current`/upcoming)
   plus an `N / 12` count, across the top.
 - **Photo card.** A surface card **above the question** holding the user's parrot

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Jua, Noto_Sans_KR } from 'next/font/google'
-import { LeafField } from '@/components/leaf-field'
+import { MobileForestBackground } from '@/components/mobile-forest-background'
 import { TestProgressProvider } from '@/lib/state/test-progress-context'
 import './globals.css'
 
@@ -33,9 +33,11 @@ export default function RootLayout({
     return (
         <html lang="ko" className={`${jua.variable} ${notoSansKr.variable} h-full antialiased`}>
             <body className="flex min-h-full flex-col">
-                {/* App-wide low-poly leaf backdrop (동화숲) — fixed, behind every screen. */}
-                <LeafField />
-                <TestProgressProvider>{children}</TestProgressProvider>
+                {/* App-wide PNG forest backdrop — a single fixed layer behind every
+                 * screen, pinned to the viewport (stays put on scroll). */}
+                <MobileForestBackground>
+                    <TestProgressProvider>{children}</TestProgressProvider>
+                </MobileForestBackground>
             </body>
         </html>
     )

@@ -121,17 +121,13 @@
 /* Single fixed theme: NO automatic prefers-color-scheme dark mode (ADR-0001) —
  * the shared result card must look identical for every viewer.
  *
- * Fairytale-forest ambient: a layered radial wash over the cream parchment —
- * sky-blue at the top, meadow-green at the bottom, a hint of stream at the lower
- * left. Fixed attachment so it reads as a world the funnel sits inside. Korean
- * wraps on word boundaries only (no mid-word breaks). */
+ * The world backdrop is now the PNG forest layer (ADR-0004), mounted once via
+ * <MobileForestBackground> in app/layout.tsx and fixed to the viewport. The body
+ * keeps only a warm cream fallback color (shown behind the forest while it loads,
+ * and on any surface the forest does not reach). Korean wraps on word boundaries
+ * only (no mid-word breaks). */
 body {
     background-color: var(--color-bg);
-    background-image:
-        radial-gradient(135% 70% at 50% -16%, rgba(127, 196, 236, 0.3), transparent 46%),
-        radial-gradient(150% 58% at 50% 116%, rgba(91, 158, 58, 0.26), transparent 52%),
-        radial-gradient(90% 40% at 12% 88%, rgba(63, 184, 216, 0.1), transparent 60%);
-    background-attachment: fixed;
     color: var(--color-ink);
     word-break: keep-all;
     font-family:
@@ -287,8 +283,9 @@ body {
     gap: 7px;
 }
 
-/* The app-wide leaf backdrop (동화숲) now lives in components/leaf-field.{tsx,css}
- * as faceted low-poly SVG leaves, mounted once via <LeafField /> in app/layout.tsx. */
+/* The app-wide backdrop is the PNG forest layer in
+ * components/mobile-forest-background.{tsx,css}, mounted once via
+ * <MobileForestBackground> in app/layout.tsx (ADR-0004). */
 
 /* ── Shared entrance/idle keyframes (playful spring motion). ── */
 @keyframes pop {

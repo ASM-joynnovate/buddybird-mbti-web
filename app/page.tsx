@@ -5,7 +5,7 @@
 // per the project scope: web-native, Korean-only). Structure mirrors the bundle:
 // headline → full-bleed forest band → type peek row → dex entry → stats → big CTA,
 // with the hero filling the viewport so the stats + CTA settle at the bottom.
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ParrotImage } from '@/components/parrot-image'
 import { CAROUSEL_TYPES, QUESTION_COUNT, typeGradient } from '@/content'
@@ -76,8 +76,6 @@ export default function Home() {
         router.push('/test')
     }
 
-    const forestStyle = { backgroundImage: "url('/forest.webp')" } as CSSProperties
-
     return (
         <main data-testid="intro-root" className="hero">
             <div className="hero-first">
@@ -86,13 +84,6 @@ export default function Home() {
                     <br />
                     <span className="hl">진짜 성격</span>은?
                 </h1>
-
-                <div
-                    className="hero-art"
-                    style={forestStyle}
-                    role="img"
-                    aria-label="동화숲 속 앵무새들"
-                />
 
                 <PeekRow pool={PEEK_POOL} />
 
