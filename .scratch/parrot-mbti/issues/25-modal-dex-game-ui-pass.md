@@ -67,3 +67,12 @@ Status: ready-for-agent
       (Motion 소유로 이관).
 - **이슈 27 이관 기록**: `@keyframes modal-fade`/`modal-in`은 globals.css에 보존
   (사용처 0 — 삭제 후보).
+
+**페이즈 3 게이트 수정 (재오픈, ui-core/page-a):**
+
+- [C · 가독성] /dex 헤더 키커("16 유형 도감")·캡션("카드를 탭하면 자세히 볼 수
+  있어요")이 어두운 캐노피 PNG 위 저대비로 묻히는 결함(기존부터 존재, 회귀 아님).
+  `app/dex/dex.css` `.dex-head`에 인트로 `.hero-stats`와 동일한 어휘의 세미솔리드
+  크림 스크림(82% 크림 + 리프 보더 + 미니 깊이바, radius-lg)을 적용 — 타이틀 포함
+  세 줄 모두 360–430px에서 가독 확보. 마크업 변경 없음(dex.css 단독).
+  최종 빌드+재검증은 리드가 page-b 수정과 묶어 1회 수행.
