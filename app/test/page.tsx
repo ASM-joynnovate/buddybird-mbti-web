@@ -176,11 +176,13 @@ export default function TestPage() {
     return (
         <main data-testid="test-root" className="test-surface">
             <div className="quiz-meta">
+                {/* secondary --sm (not ghost): the transparent ghost skin was
+                    unreadable over the dark canopy backdrop (issue #27 gate). */}
                 <GameButton
-                    variant="ghost"
+                    variant="secondary"
+                    size="sm"
                     data-testid="back-button"
                     onClick={handleBack}
-                    className="quiz-back"
                 >
                     <span aria-hidden="true">←</span>
                     {currentIndex === 0 ? '나가기' : '이전'}

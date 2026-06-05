@@ -74,3 +74,27 @@ Status: ready-for-agent
   결정에 따라 #10(이슈 18) 전체 `yarn e2e:run`에 위임 — e2e 플로우 자체가 #10
   에서 재작성 중이라 개별 실행은 스퓨리어스 실패 위험. 해당 런에서 이 페이지
   관련 실패가 나오면 본 이슈 재오픈.
+
+### 이슈 27 게이트 결함 수정 (page-b, 재오픈 → 재완료)
+
+- **[A] q-emoji가 문항 첫 줄을 덮는 회귀 (ed90cc8)**: 근본 원인은 패딩이 아니라
+  **transform 소유권 충돌** — `.q-emoji`를 popIn(scale)을 애니메이트하는 `m.div`
+  로 바꾸면서 Motion이 인라인 transform을 전유, CSS의 `translate(-50%, -50%)`
+  센터링이 클로버되어 칩이 프롬프트 상단 모서리에 걸치지 못하고 카드 안쪽
+  (top:0~76px)으로 내려앉아 q-text와 겹침. 수정: CSS transform 제거 →
+  `top: -38px; left: 50%; margin-left: -38px`(76px 칩의 절반) 오프셋 센터링.
+  `.q-prompt`의 padding-top 50px은 원래부터 유지되고 있었고, 이제 칩 하단
+  절반(38px) + 12px 클리어런스로 이슈 26 아카이브와 동일 레이아웃 복원.
+  reduced-motion(fadeOnly, transform 비사용)에서도 동일하게 동작.
+- **[B] 뒤로가기 가독성**: ghost 변형(투명 배경 + ink-muted)이 어두운 캐노피
+  배경에서 소실 → `GameButton variant="secondary" size="sm"`(크림 필 + leaf
+  보더, 44px 터치 타깃)로 교체하고 충돌하던 `.quiz-back` 로컬 스킨(배경/색/
+  패딩/포커스 오버라이드) 전부 제거 — 스킨·포커스 스타일은 globals의
+  `.game-btn--secondary/--sm` 단일 출처. ghost 변형 정의 자체는 미변경(밝은
+  서피스용으로 존속). `back-button` testid 보존.
+- **동류 결함 감사**: 소유 파일 전체에서 CSS transform × Motion 요소 충돌을
+  전수 점검 — `.axis-knob`(m.span)은 Motion이 `left`만 애니메이트해 안전하나
+  취약 지점이라 axis-bars.css에 경고 주석 추가. 그 외(.result-leaf,
+  .axis-track::before)는 비Motion 요소로 안전.
+- 검증: `yarn type-check`·`yarn lint` 그린. build/e2e/시각 재검증은 리드가
+  페이즈 3에서 일괄 수행(지시에 따라 미실행).

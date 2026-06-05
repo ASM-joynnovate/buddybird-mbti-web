@@ -85,7 +85,10 @@
     background: var(--axis-color);
 }
 
-/* left set inline by Motion (AxisBars). */
+/* left set inline by Motion (AxisBars). CAUTION: the CSS transform below
+ * centers the knob; it survives only because Motion animates `left` (a
+ * non-transform property). Animating x/scale on this element would clobber
+ * it — switch to top/margin offsets first (see .q-emoji, issue #27 gate). */
 .axis-knob {
     position: absolute;
     top: 50%;

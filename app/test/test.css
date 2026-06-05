@@ -39,30 +39,10 @@
     color: var(--color-ink-muted);
 }
 
-.quiz-back {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 4px;
-    border: 0;
-    background: none;
-    color: var(--color-ink-muted);
-    font: inherit;
-    font-weight: 700;
-    font-size: 15px;
-    white-space: nowrap;
-    cursor: pointer;
-}
-
-.quiz-back:hover {
-    color: var(--color-ink);
-}
-
-.quiz-back:focus-visible {
-    outline: 3px solid var(--color-primary);
-    outline-offset: 2px;
-    border-radius: 6px;
-}
+/* Back/exit is a GameButton secondary --sm (issue #27 gate fix B): the former
+ * ghost skin (transparent bg + muted ink) was unreadable over the dark canopy
+ * backdrop; the cream pill guarantees contrast at 360–430px. Skin/focus/touch
+ * target all come from .game-btn--secondary/--sm in globals — nothing local. */
 
 /* --- Segmented progress (fills with the answered axis hue) --- */
 /* The fill width is animated by Motion in page.tsx (one-shot tween); CSS only
@@ -108,15 +88,18 @@
     text-align: center;
 }
 
-/* Entrance pop is Motion (popIn) in page.tsx. */
+/* Entrance pop is Motion (popIn) in page.tsx — Motion owns this element's
+ * inline transform (it animates scale), which CLOBBERS any CSS transform.
+ * Issue #27 gate fix A: center via top/margin offsets (half of the 76px chip)
+ * instead of translate(-50%,-50%) so the chip keeps straddling the prompt's
+ * top edge; .q-prompt's 50px padding-top then clears the lower half (38px). */
 .q-emoji {
     position: absolute;
-    top: 0;
+    top: -38px;
     left: 50%;
-    transform: translate(-50%, -50%);
     width: 76px;
     height: 76px;
-    margin: 0;
+    margin: 0 0 0 -38px;
     border-radius: 50%;
     background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
     box-shadow: var(--sh-sm);
