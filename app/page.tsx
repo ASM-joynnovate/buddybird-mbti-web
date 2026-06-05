@@ -6,6 +6,7 @@
 // headline → full-bleed forest band → type peek row → dex entry → stats → big CTA,
 // with the hero filling the viewport so the stats + CTA settle at the bottom.
 import { useRouter } from 'next/navigation'
+import { GameButton } from '@/components/game-button'
 import { TypeShowcase } from '@/components/type-showcase'
 import { CAROUSEL_TYPES, QUESTION_COUNT } from '@/content'
 import { track } from '@/lib/analytics'
@@ -82,14 +83,13 @@ export default function Home() {
 
                 {/* Group 3 — primary CTA (bottom of the screen). */}
                 <div className="hero-group hero-group--bottom">
-                    <button
-                        type="button"
+                    <GameButton
                         data-testid="start-button"
                         onClick={handleStart}
-                        className="btn btn--lg hero-cta"
+                        className="hero-cta"
                     >
                         테스트 시작하기 <span aria-hidden="true">→</span>
-                    </button>
+                    </GameButton>
                 </div>
             </div>
         </main>

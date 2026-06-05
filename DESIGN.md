@@ -311,6 +311,37 @@ simple for compositor performance.
   short copy, BuddyBird logo/CTA) in the group color. Text lives in the controlled
   band, never overlaid on the unpredictable user photo.
 
+# Game UI layer (ADR-0006)
+
+The foreground UI reads as a **cozy forest mobile game** (issues #19–#27): soft
+raised buttons, papercut quest-card panels, and a restrained idle-motion layer
+over the PNG forest. This extends the system above; the live token binding is
+`app/globals.css` `@theme` (see the ADR-0005 note — this file's frontmatter
+predates the 동화숲 pivot and values come from `globals.css`).
+
+- **CTA stays bell orange** (`--color-primary` #E8772E — ADR-0001 reinforced).
+  The lime family (`--color-accent` #AFF729 / `--color-accent-deep` #518D00)
+  is **support only**: decor accents, progress flourishes, semantic fills.
+  Never on an action button.
+- **Surfaces.** Game panels use cream / mint / pale-leaf
+  (`--color-surface-cream` #FFF8E3, `--color-surface-mint` #EAFBD8,
+  `--color-surface-leaf` #DDF7B8) — no untreated pure-white cards. Content on
+  green surfaces uses deep-green ink (`--color-ink-forest`) and soft green
+  borders (`--color-border-leaf`).
+- **Semantics.** reward #FFD966 · warning #FFB84D · soft error #FF7B72 ·
+  info #54C7D8.
+- **Shape.** Buttons/chips ride the pill; cards 24 px (`--radius-lg`); panels
+  28 px (`--radius-panel`).
+- **Elevation.** Forest-toned only (`--shadow-raised-button`,
+  `--shadow-game-card`, `--shadow-floating`); raised buttons add a bottom
+  depth bar in their own pressed shade. Hard black shadows stay banned.
+- **Motion.** Motion for React via the `m` + LazyMotion convention; the shared
+  vocabulary lives in `lib/motion/` (entrances 0.2–0.45 s on
+  `--ease-leaf`/`--ease-spring`; decorative idle loops 3–7 s, mirrored,
+  transform/opacity only). Durations: fast 160 ms · base 260 ms · slow 420 ms.
+  Reduced motion: entrances degrade to opacity-only, taps and idle loops drop
+  entirely.
+
 # Do's and Don'ts
 
 **Do**

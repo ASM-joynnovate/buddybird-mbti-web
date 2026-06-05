@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Jua, Noto_Sans_KR } from 'next/font/google'
 import { MobileForestBackground } from '@/components/mobile-forest-background'
+import { MotionProvider } from '@/components/motion-provider'
 import { TestProgressProvider } from '@/lib/state/test-progress-context'
 import './globals.css'
 
@@ -36,7 +37,9 @@ export default function RootLayout({
                 {/* App-wide PNG forest backdrop — a single fixed layer behind every
                  * screen, pinned to the viewport (stays put on scroll). */}
                 <MobileForestBackground>
-                    <TestProgressProvider>{children}</TestProgressProvider>
+                    <MotionProvider>
+                        <TestProgressProvider>{children}</TestProgressProvider>
+                    </MotionProvider>
                 </MobileForestBackground>
             </body>
         </html>

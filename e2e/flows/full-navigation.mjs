@@ -61,6 +61,18 @@ export async function run() {
             resultVisible = evalJs(RESULT_VISIBLE_EXPR) === true
             if (resultVisible) break
 
+            // Transition tolerance: after the final answer the router swaps Test for
+            // Result, and the Result route's Suspense fallback (result-loading) shows
+            // neither the progress indicator nor result-root yet. Keep polling through
+            // that window instead of asserting progress mid-transition.
+            const inTransition =
+                evalJs(`!!document.querySelector('[data-testid="result-loading"]')`) === true
+            if (inTransition) {
+                await new Promise((r) => setTimeout(r, 200))
+                attempts++
+                continue
+            }
+
             // Confirm progress indicator is present before clicking.
             assert(
                 !!evalJs(`!!document.querySelector('[data-testid="progress"]')`),

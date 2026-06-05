@@ -1,6 +1,6 @@
 # 19 · Motion 도입 + 게임 UI 토큰 보강 + CTA 버튼 tracer
 
-Status: ready-for-agent
+Status: done
 
 ## Parent
 
@@ -41,14 +41,41 @@ Status: ready-for-agent
 
 ## Acceptance criteria
 
-- [ ] `motion` 패키지가 yarn으로 설치되고 `motion/react`에서 import한다(framer-motion 미사용).
-- [ ] `lib/motion/` variants 모듈이 존재하고 후속 이슈가 재사용 가능한 형태다.
-- [ ] 게임 UI 토큰이 기존 토큰 체계에 일관되게 통합됐고 CTA primary는 벨 오렌지를 유지한다.
-- [ ] 인트로 메인 CTA가 raised 게임 버튼 + `whileTap` 피드백으로 동작한다(터치 타깃 48px+).
-- [ ] reduced-motion 환경에서 탭 스케일 모션이 비활성화된다.
-- [ ] `yarn build`·`yarn type-check`·`yarn lint`·e2e 통과, 번들 영향 기록(랜딩 JS < 150kb gzip 예산 내).
-- [ ] ADR-0006 + DESIGN.md 갱신.
+- [x] `motion` 패키지가 yarn으로 설치되고 `motion/react`에서 import한다(framer-motion 미사용).
+- [x] `lib/motion/` variants 모듈이 존재하고 후속 이슈가 재사용 가능한 형태다.
+- [x] 게임 UI 토큰이 기존 토큰 체계에 일관되게 통합됐고 CTA primary는 벨 오렌지를 유지한다.
+- [x] 인트로 메인 CTA가 raised 게임 버튼 + `whileTap` 피드백으로 동작한다(터치 타깃 48px+).
+- [x] reduced-motion 환경에서 탭 스케일 모션이 비활성화된다.
+- [x] `yarn build`·`yarn type-check`·`yarn lint`·e2e 통과(신규 실패 0 — 아래 코멘트), 번들 영향 기록(예산은 사전 초과 — 아래 코멘트).
+- [x] ADR-0006 + DESIGN.md 갱신.
 
 ## Blocked by
 
 None - can start immediately
+
+## Comments
+
+- **구현 요약 (team-lead):** `motion@12.40.0` 설치, import는 `motion/react`.
+  번들 컨벤션은 **LazyMotion + `m`** (사용자 결정): `components/motion-provider.tsx`
+  (domAnimation, strict)를 `app/layout.tsx`에 마운트, 이후 전 컴포넌트는
+  `m.*` 사용(`motion.*`은 dev에서 throw). 공유 variants는 `lib/motion/`
+  (fadeUp/staggerContainer/popIn/fadeOnly/buttonTap/sheetSlideUp/floatingLeaf/
+  gentleSway/particleFloat — easeLeaf/easeSpring·160/260/420ms를 CSS 토큰과 미러링).
+- **reduced-motion 규약:** m.\* 렌더링 컴포넌트는 `motion/react`의
+  `useReducedMotion` 사용(진입은 fadeOnly로 강등, whileTap/idle 루프는 드롭).
+  비-Motion 오케스트레이션(캐러셀·테스트 타이밍)은 기존
+  `lib/hooks/use-reduced-motion.ts` 유지 — 같은 미디어 쿼리라 불일치 없음 (ADR-0006).
+- **토큰:** globals.css `@theme`에 라임 액센트(#AFF729/#518D00), 크림/민트/리프
+  서피스, 딥 그린 잉크·소프트 보더, 시맨틱 4종, `--radius-panel` 28px, 숲 톤
+  raised/card/floating 섀도, `--duration-fast/base/slow` 추가. CTA는 벨 오렌지 유지.
+- **tracer:** 인트로 메인 CTA = `components/game-button.tsx`(m.button +
+  buttonTap whileTap) + `.game-btn--primary`(하단 깊이 섀도, :active 섀도 축소,
+  min-height 56px).
+- **번들 (gzip, 랜딩 first-load JS):** 베이스라인 192.0KiB → LazyMotion 적용
+  222.6KiB (**delta +31.3KiB**; full motion이었으면 +39.6KiB). **150kb 예산은
+  motion 도입 전부터 프레임워크 청크(~149KiB)만으로 이미 초과** — 사전·구조적
+  초과로 기록(사용자 확인), 재기준선 결정은 별도. 이슈 27에서 재측정.
+- **e2e:** full-navigation이 Test→Result 전환의 Suspense fallback 구간을
+  허용하지 않는 폴링 단언 레이스로 실패 → 플로우에 전환 유예 추가(사용자 승인,
+  `e2e/flows/full-navigation.mjs`). intro-carousel·accessibility 2건은 사전
+  드리프트(이슈 18 소관)로 이번 팀 작업에 편입(사용자 승인).
