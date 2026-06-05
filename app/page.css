@@ -16,20 +16,43 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 30px 20px 24px;
+    /* Top/bottom padding shrinks on short viewports so the three groups + CTA stay
+     * on-screen; horizontal padding is fixed. */
+    padding: clamp(16px, 3vh, 30px) 20px clamp(10px, 2vh, 20px);
     text-align: center;
 }
 
+/* Three vertical groups distributed across the screen: (1) headline + showcase at
+ * the top, (2) dex entry + stats in the middle, (3) CTA at the bottom. */
 .hero-first {
     display: flex;
     flex: 1;
     flex-direction: column;
     align-items: center;
-    padding-bottom: 40px;
+    justify-content: space-between;
+}
+
+.hero-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* Group 1: the headline keeps its position; the gap drops the showcase lower so it
+ * reads as its own block under the title. The gap shrinks on short viewports so the
+ * CTA in group 3 stays on-screen. */
+.hero-group--top {
+    gap: clamp(20px, 6vh, 96px);
+}
+
+/* Group 2: dex entry sits just above the stats row. */
+.hero-group--mid {
+    gap: 16px;
 }
 
 .hero-title {
-    margin: clamp(24px, 7vh, 72px) 0 16px;
+    margin: clamp(24px, 12vh, 96px) 0 0;
     font-size: clamp(40px, 11vw, 68px);
     line-height: 1.02;
     letter-spacing: -0.01em;
@@ -65,16 +88,15 @@
 
 /* --- Dex entry --- */
 .hero-dex {
-    margin: 14px 0 34px;
+    margin: 0;
 }
 
-/* --- Stats row (pinned toward the bottom) --- */
+/* --- Stats row (lives in the middle group, below the dex entry) --- */
 .hero-stats {
     display: flex;
     justify-content: center;
     align-items: stretch;
     gap: 22px;
-    margin-top: auto;
     color: var(--color-ink-muted);
     font-size: 14px;
     font-weight: 600;
@@ -97,7 +119,7 @@
     background: var(--color-outline);
 }
 
-/* --- Big CTA --- */
+/* --- Big CTA (bottom group) --- */
 .hero-cta {
-    margin-top: 14px;
+    margin: 0;
 }

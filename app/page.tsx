@@ -43,45 +43,54 @@ export default function Home() {
     return (
         <main data-testid="intro-root" className="hero">
             <div className="hero-first">
-                <h1 className="hero-title font-display">
-                    우리 앵무새
-                    <br />
-                    <span className="hl">진짜 성격</span>은?
-                </h1>
+                {/* Group 1 — headline + type showcase (top of the screen). */}
+                <div className="hero-group hero-group--top">
+                    <h1 className="hero-title font-display">
+                        우리 앵무새
+                        <br />
+                        <span className="hl">진짜 성격</span>은?
+                    </h1>
 
-                <TypeShowcase pool={PEEK_POOL} intervalMs={3000} />
+                    <TypeShowcase pool={PEEK_POOL} intervalMs={3000} />
+                </div>
 
-                <button
-                    type="button"
-                    data-testid="dex-button"
-                    onClick={() => router.push('/dex')}
-                    className="btn btn--ghost btn--sm hero-dex"
-                >
-                    16유형 도감 보기
-                </button>
+                {/* Group 2 — dex entry + stats (middle of the screen). */}
+                <div className="hero-group hero-group--mid">
+                    <button
+                        type="button"
+                        data-testid="dex-button"
+                        onClick={() => router.push('/dex')}
+                        className="btn btn--ghost btn--sm hero-dex"
+                    >
+                        16유형 도감 보기
+                    </button>
 
-                <div className="hero-stats">
-                    <div>
-                        <b>16</b>유형
-                    </div>
-                    <span className="hero-stats-div" aria-hidden="true" />
-                    <div>
-                        <b>{QUESTION_COUNT}</b>질문
-                    </div>
-                    <span className="hero-stats-div" aria-hidden="true" />
-                    <div>
-                        <b>1분</b>소요
+                    <div className="hero-stats">
+                        <div>
+                            <b>16</b>유형
+                        </div>
+                        <span className="hero-stats-div" aria-hidden="true" />
+                        <div>
+                            <b>{QUESTION_COUNT}</b>질문
+                        </div>
+                        <span className="hero-stats-div" aria-hidden="true" />
+                        <div>
+                            <b>1분</b>소요
+                        </div>
                     </div>
                 </div>
 
-                <button
-                    type="button"
-                    data-testid="start-button"
-                    onClick={handleStart}
-                    className="btn btn--lg hero-cta"
-                >
-                    테스트 시작하기 <span aria-hidden="true">→</span>
-                </button>
+                {/* Group 3 — primary CTA (bottom of the screen). */}
+                <div className="hero-group hero-group--bottom">
+                    <button
+                        type="button"
+                        data-testid="start-button"
+                        onClick={handleStart}
+                        className="btn btn--lg hero-cta"
+                    >
+                        테스트 시작하기 <span aria-hidden="true">→</span>
+                    </button>
+                </div>
             </div>
         </main>
     )
