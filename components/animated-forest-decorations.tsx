@@ -20,16 +20,13 @@
 // Motion animates the inner img (.forest-decal__img) so the two transforms
 // never fight over the same element.
 //
-// Provider note: app/layout.tsx mounts <MobileForestBackground> OUTSIDE the
-// app-wide <MotionProvider>, so the background's m.* elements would silently
-// render without animation features (LazyMotion context missing). Each layer
-// therefore wraps itself in <MotionProvider>; LazyMotion nests safely and
-// domAnimation is the same statically-imported feature bundle, so this adds
-// no extra JS weight.
+// Provider note: these layers rely on the app-wide <MotionProvider> in
+// app/layout.tsx, which (since commit 22ab364) mounts ABOVE
+// <MobileForestBackground> — m.* elements silently render static without
+// LazyMotion context, so that ordering is load-bearing.
 import type { CSSProperties } from 'react'
 import { m, useReducedMotion, type TargetAndTransition, type Variants } from 'motion/react'
 import { fadeOnly, floatingLeaf, gentleSway, particleFloat, popIn } from '@/lib/motion'
-import { MotionProvider } from './motion-provider'
 
 const ASSET_BASE = '/assets/mbti'
 
@@ -148,7 +145,7 @@ export function AnimatedForestDecals() {
     const reducedMotion = useReducedMotion()
 
     return (
-        <MotionProvider>
+        <>
             {ANIMATED_DECALS.map((d) => {
                 const entrance = d.kind === 'entrance'
                 // Idle loops are fully disabled under reduced motion (held at
@@ -177,7 +174,7 @@ export function AnimatedForestDecals() {
                     </div>
                 )
             })}
-        </MotionProvider>
+        </>
     )
 }
 
@@ -185,17 +182,15 @@ export function AnimatedForestParticles() {
     const reducedMotion = useReducedMotion()
 
     return (
-        <MotionProvider>
-            <m.img
-                className="forest-particles"
-                src={`${ASSET_BASE}/forest-light-particles.png`}
-                alt=""
-                loading="lazy"
-                decoding="async"
-                variants={particleStill}
-                initial="rest"
-                animate={reducedMotion ? 'still' : 'drift'}
-            />
-        </MotionProvider>
+        <m.img
+            className="forest-particles"
+            src={`${ASSET_BASE}/forest-light-particles.png`}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            variants={particleStill}
+            initial="rest"
+            animate={reducedMotion ? 'still' : 'drift'}
+        />
     )
 }

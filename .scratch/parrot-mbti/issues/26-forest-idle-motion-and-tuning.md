@@ -75,7 +75,10 @@ idle 모션을 더하고, 새 전경 UI(이슈 20–25) 기준으로 장식 배�
   조용히 정적으로 렌더되는 문제 발견(검증 중 실제 재현). 파일 경계상 layout.tsx 수정 불가 →
   두 장식 컴포넌트가 자체 `<MotionProvider>`로 감쌈(LazyMotion 중첩 안전, domAnimation은
   동일 정적 import라 번들 증가 없음). 추후 layout에서 MotionProvider를 최상위로 올리면 자체
-  래핑은 제거 가능 — team-lead에 보고됨.
+  래핑은 제거 가능 — team-lead에 보고됨. → **후속 결정·완료**: 리드가 22ab364로
+  `<MotionProvider>`를 `<MobileForestBackground>` 바깥(최상위)으로 올렸고, 그에 따라 장식
+  컴포넌트의 자체 래핑은 제거됨(레이어링은 이제 layout의 provider 순서에 의존 — 컴포넌트
+  주석에 load-bearing으로 명시).
 - **veil 강도 재점검 결과: 54% 유지(변경 없음).** 이슈 20·21에서 전경이 불투명
   cream/mint 게임 패널로 바뀌어 본문 가독성이 카드 자체에서 확보되고, veil은 중앙 밴드의
   배경 톤다운 역할로 충분. intro(320/360/390/430)·test(360/390)·dex(390) 스크린샷에서
