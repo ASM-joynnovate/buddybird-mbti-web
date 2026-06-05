@@ -86,7 +86,9 @@ idle 모션을 더하고, 새 전경 UI(이슈 20–25) 기준으로 장식 배�
   절제 유지.
 - **e2e**: build/type-check/lint 그린. e2e 전체 그린은 intro-carousel·accessibility 플로우
   노후화(이슈 18)와 묶여 있어, 같은 브랜치의 이슈 18 작업에서 `yarn e2e:run` 전 플로우
-  그린으로 마감 확인 예정.
+  그린으로 마감 확인 예정. → **확인 완료**: 이슈 18 마감에서 `yarn e2e:run` 7개 플로우
+  2회 연속 전부 그린(accessibility의 img-alt 단언은 장식 배경의 alt="" + aria-hidden을
+  올바르게 통과시키도록 갱신됨).
 - **검증 인프라 노트**: 이 저장소는 `output: standalone`이라 `next start`로는 일부 라우트가
   500(client reference manifest invariant) — 검증/서빙은 e2e 하니스처럼
   `node .next/standalone/server.js` + public/static 복사로 해야 함. 또한 공유 워킹트리에서

@@ -4,15 +4,7 @@
 // for either new choices to appear or result-root to become visible.
 // Does not hardcode the question count. Asserts each surface transition via sentinel.
 
-import {
-    assert,
-    clickTestId,
-    evalJs,
-    findAndClickFirstChoice,
-    getText,
-    openUrl,
-    waitForSurface,
-} from '../helpers.mjs'
+import { assert, clickTestId, evalJs, getText, openUrl, waitForSurface } from '../helpers.mjs'
 
 // Maximum questions we will answer before giving up — a safety ceiling, not a timing
 // assumption. The real engine has 13 (ADR-0003); this leaves headroom for growth.
@@ -73,14 +65,27 @@ export async function run() {
                 continue
             }
 
-            // Confirm progress indicator is present before clicking.
-            assert(
-                !!evalJs(`!!document.querySelector('[data-testid="progress"]')`),
-                `progress indicator must be visible on question ${questionIndex + 1}`,
+            // Find-and-click the first choice AND read the progress indicator in the
+            // SAME eval: a question is only "on screen" when its choices are, and the
+            // Test page's post-final empty state (test-root without progress, before
+            // the /result navigation lands) renders no choices — that window must be
+            // polled through, not asserted on. The combined read also can't straddle
+            // the answer auto-advance.
+            const step = evalJs(
+                `(function(){` +
+                    `var els=document.querySelectorAll('[data-testid^="choice-"]');` +
+                    `if(!els.length)return 'NO_CHOICES';` +
+                    `var progress=!!document.querySelector('[data-testid="progress"]');` +
+                    `var id=els[0].getAttribute('data-testid');` +
+                    `els[0].click();` +
+                    `return (progress?'P':'-')+'|'+id;` +
+                    `})()`,
             )
-
-            const clickedId = findAndClickFirstChoice()
-            if (clickedId) {
+            if (typeof step === 'string' && step.includes('|')) {
+                assert(
+                    step.startsWith('P|'),
+                    `progress indicator must be visible on question ${questionIndex + 1}`,
+                )
                 clicked = true
                 break
             }

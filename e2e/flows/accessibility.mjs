@@ -1,7 +1,9 @@
-// Flow: accessibility — key semantics for screen-reader and keyboard users (issue
-// #13): the carousel is a labelled group, the app CTA has an accessible name, every
-// <img> carries alt text, the Test progress is a progressbar with live values, and
-// choices are labelled native buttons.
+// Flow: accessibility — key semantics for screen-reader and keyboard users, updated
+// for the TypeShowcase intro (issue #18): showcase peek tiles are labelled native
+// buttons with a single pressed state, the caption is a polite live region, intro
+// action buttons have accessible names, image alt discipline holds across the page
+// (decorative images may use alt="" only inside an aria-hidden subtree), the Test
+// progress is a progressbar with live values, and choices are labelled native buttons.
 
 import { assert, clickTestId, evalJs, openUrl, waitForSurface } from '../helpers.mjs'
 
@@ -9,36 +11,47 @@ export async function run() {
     openUrl('/')
     await waitForSurface('intro-root')
 
+    // Showcase: every peek tile is a labelled native button; exactly one is pressed.
     assert(
         evalJs(
-            '(function(){var c=document.querySelector(\'[data-testid="intro-carousel"]\');return !!c && c.getAttribute("role")==="group" && !!c.getAttribute("aria-label");})()',
+            '(function(){var t=document.querySelectorAll(".showcase-peek-track .peek");if(!t.length)return false;var pressed=0;for(var i=0;i<t.length;i++){if(t[i].tagName!=="BUTTON")return false;var l=t[i].getAttribute("aria-label");if(!l||!l.length)return false;if(t[i].getAttribute("aria-pressed")==="true")pressed++;}return pressed===1;})()',
         ) === true,
-        'carousel must be a labelled group',
+        'showcase peek tiles must be labelled native buttons with exactly one pressed',
     )
 
+    // The caption announcing the active type is a polite live region.
     assert(
         evalJs(
-            '(function(){var a=document.querySelector(\'[data-testid="app-cta-intro"]\');return !!a && a.textContent.trim().length>0;})()',
+            '(function(){var c=document.querySelector(\'[data-testid="showcase-caption"]\');return !!c && c.getAttribute("aria-live")==="polite";})()',
         ) === true,
-        'intro app CTA must have an accessible name',
+        'showcase caption must be an aria-live=polite region',
     )
 
-    // Every rendered <img> must have non-empty alt (the parrot fallback uses role=img
-    // + aria-label instead, so this only constrains real images).
+    // Intro action buttons (start + dex) must expose accessible names.
     assert(
         evalJs(
-            '(function(){var a=[].slice.call(document.images);return a.every(function(im){var alt=im.getAttribute("alt");return alt!==null && alt.length>0;});})()',
+            '(function(){var ids=["start-button","dex-button"];for(var i=0;i<ids.length;i++){var b=document.querySelector(\'[data-testid="\'+ids[i]+\'"]\');if(!b)return false;var name=(b.getAttribute("aria-label")||b.textContent||"").trim();if(!name.length)return false;}return true;})()',
         ) === true,
-        'all <img> elements must have non-empty alt text',
+        'intro start/dex buttons must have accessible names',
     )
 
-    // The visible carousel slide must expose an accessible image name (img alt or the
-    // fallback's role=img aria-label).
+    // Image alt discipline: every <img> carries an alt attribute; an EMPTY alt is
+    // allowed only for decorative images inside an aria-hidden subtree (the PNG
+    // forest background); all other images need a non-empty alt.
     assert(
         evalJs(
-            '(function(){var f=document.querySelector(".carousel-frame");if(!f)return false;var img=f.querySelector("img");if(img)return !!img.getAttribute("alt");var fb=f.querySelector(\'[role="img"]\');return !!fb && !!fb.getAttribute("aria-label");})()',
+            '(function(){var a=[].slice.call(document.images);return a.every(function(im){var alt=im.getAttribute("alt");if(alt===null)return false;if(alt.length>0)return true;return !!im.closest(\'[aria-hidden="true"]\');});})()',
         ) === true,
-        'carousel slide must have an accessible image name',
+        'every <img> must have alt text (empty alt only inside aria-hidden decoration)',
+    )
+
+    // The active showcase card must expose an accessible image name (img alt or the
+    // parrot fallback's role=img + aria-label).
+    assert(
+        evalJs(
+            '(function(){var f=document.querySelector(\'[data-testid="showcase-active-card"]\');if(!f)return false;var img=f.querySelector("img");if(img)return !!img.getAttribute("alt");var fb=f.querySelector(\'[role="img"]\');return !!fb && !!fb.getAttribute("aria-label");})()',
+        ) === true,
+        'showcase active card must have an accessible image name',
     )
 
     // --- Test surface ---
