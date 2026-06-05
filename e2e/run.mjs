@@ -16,11 +16,10 @@ import { run as runFunnelEvents } from './flows/funnel-events.mjs'
 import { run as runIntroCarousel } from './flows/intro-carousel.mjs'
 import { run as runKnownAnswerType } from './flows/known-answer-type.mjs'
 import { run as runResponsive } from './flows/responsive.mjs'
-import { settle, setViewport, startStaticServer, stopServer } from './helpers.mjs'
+import { settle, setViewport, startAppServer, stopServer } from './helpers.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
-const OUT_DIR = join(ROOT, 'out')
 
 // ---------------------------------------------------------------------------
 // Flow registry
@@ -49,11 +48,11 @@ async function main() {
     setViewport(390, 844, 2)
 
     try {
-        console.log(`\nStarting static server on port 3779 from ${OUT_DIR} ...`)
-        await startStaticServer(OUT_DIR)
+        console.log(`\nStarting Next standalone server on port 3779 ...`)
+        await startAppServer(ROOT)
         console.log('Server ready.\n')
     } catch (err) {
-        console.error(`FATAL: could not start static server — ${err.message}`)
+        console.error(`FATAL: could not start app server — ${err.message}`)
         process.exit(1)
     }
 

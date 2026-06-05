@@ -3,7 +3,8 @@
 // No Playwright, no jest, no vitest.
 
 import { execSync, spawn } from 'child_process'
-import { existsSync } from 'fs'
+import { cpSync, existsSync } from 'fs'
+import { join } from 'path'
 
 // ---------------------------------------------------------------------------
 // Config
@@ -28,7 +29,7 @@ export function assert(condition, message) {
 }
 
 // ---------------------------------------------------------------------------
-// Static file server
+// App server (Next standalone — mirrors the deployed container runtime)
 // ---------------------------------------------------------------------------
 
 let serverProcess = null
@@ -50,10 +51,10 @@ async function pollUntilReady() {
         if (ok) return
         await sleep(200)
     }
-    throw new Error(`Static server did not become ready on port ${PORT} within 10 s`)
+    throw new Error(`App server did not become ready on port ${PORT} within 10 s`)
 }
 
-/** Kill the static server. Safe to call multiple times. */
+/** Kill the app server. Safe to call multiple times. */
 export function stopServer() {
     if (serverProcess) {
         try {
@@ -65,15 +66,33 @@ export function stopServer() {
     }
 }
 
-// Re-export startServer that uses the curl probe.
-export async function startStaticServer(outDir) {
-    assert(existsSync(outDir), `out/ directory not found at ${outDir} — run yarn build first`)
-
-    serverProcess = spawn(
-        'npx',
-        ['-y', 'serve', outDir, '--listen', String(PORT), '--no-clipboard', '--single'],
-        { stdio: 'pipe', detached: false },
+/**
+ * Start the Next standalone server, the same artifact the container runs.
+ * `next build` (output:'standalone') emits `.next/standalone/server.js` but does
+ * NOT copy `public` or `.next/static` — we copy them in (idempotent), exactly as
+ * the Dockerfile does, then launch the minimal server bound to localhost.
+ *
+ * @param {string} rootDir  Project root containing `.next/standalone`.
+ */
+export async function startAppServer(rootDir) {
+    const standaloneDir = join(rootDir, '.next', 'standalone')
+    const serverEntry = join(standaloneDir, 'server.js')
+    assert(
+        existsSync(serverEntry),
+        `.next/standalone/server.js not found at ${serverEntry} — run yarn build first`,
     )
+
+    // Mirror the Dockerfile asset copy so CSS/JS/images/fonts resolve.
+    cpSync(join(rootDir, 'public'), join(standaloneDir, 'public'), { recursive: true })
+    cpSync(join(rootDir, '.next', 'static'), join(standaloneDir, '.next', 'static'), {
+        recursive: true,
+    })
+
+    serverProcess = spawn('node', [serverEntry], {
+        stdio: 'pipe',
+        detached: false,
+        env: { ...process.env, PORT: String(PORT), HOSTNAME: '127.0.0.1' },
+    })
 
     serverProcess.stderr.on('data', () => {})
     serverProcess.stdout.on('data', () => {})
