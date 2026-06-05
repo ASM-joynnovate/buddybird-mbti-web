@@ -35,12 +35,15 @@ export default function RootLayout({
         <html lang="ko" className={`${jua.variable} ${notoSansKr.variable} h-full antialiased`}>
             <body className="flex min-h-full flex-col">
                 {/* App-wide PNG forest backdrop — a single fixed layer behind every
-                 * screen, pinned to the viewport (stays put on scroll). */}
-                <MobileForestBackground>
-                    <MotionProvider>
+                 * screen, pinned to the viewport (stays put on scroll). MotionProvider
+                 * sits outermost so the forest's own m.* decorations (issue #26) get
+                 * the LazyMotion context too; the background stays a Server Component
+                 * (passed as children to the client provider). */}
+                <MotionProvider>
+                    <MobileForestBackground>
                         <TestProgressProvider>{children}</TestProgressProvider>
-                    </MotionProvider>
-                </MobileForestBackground>
+                    </MobileForestBackground>
+                </MotionProvider>
             </body>
         </html>
     )
