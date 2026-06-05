@@ -8,11 +8,13 @@
 // frame) jumps the position back into the middle copy at an identical cell, so the
 // wrap is invisible. Tap interaction + the remaining a11y affordances land in #16.
 import { useEffect, useState, type CSSProperties, type TransitionEvent } from 'react'
+import { m, useReducedMotion as useMotionReducedMotion } from 'motion/react'
 import { ParrotImage } from '@/components/parrot-image'
 import { getTypeInfo, typeGradient } from '@/content'
 import { useReducedMotion } from '@/lib/hooks/use-reduced-motion'
 import type { TypeCode } from '@/lib/mbti'
 import { GROUP_CSS_VAR, temperamentGroup } from '@/lib/mbti/temperament'
+import { fadeOnly, fadeUp } from '@/lib/motion'
 import './type-showcase.css'
 
 interface TypeShowcaseProps {
@@ -26,7 +28,11 @@ const PEEK_PITCH = 68
 const PEEK_HALF = 28
 
 export function TypeShowcase({ pool, intervalMs = 3000 }: TypeShowcaseProps) {
+    // Two reduced-motion hooks by convention (ADR-0006): the local hook drives
+    // non-Motion orchestration (auto-advance pause), Motion's own hook drives the
+    // m.* entrance variants. Both read the same media query and cannot disagree.
     const reduced = useReducedMotion()
+    const motionReduced = useMotionReducedMotion()
     const len = pool.length
     // Triple the pool so the active (centre) cell always has neighbours to peek on
     // both sides, and the silent reset has an identical cell to jump to.
@@ -106,7 +112,19 @@ export function TypeShowcase({ pool, intervalMs = 3000 }: TypeShowcaseProps) {
             onFocusCapture={() => setPaused(true)}
             onBlurCapture={() => setPaused(false)}
         >
-            <div className="showcase-card" data-testid="showcase-active-card" key={active}>
+            {/* Active-card swap entrance (issue #22): the card is keyed by type, so
+             * each swap remounts it and replays the shared fadeUp (opacity-only
+             * under reduced motion) — replacing the old showcase-card-fade
+             * keyframe. The carousel track below stays CSS-transition driven
+             * (ADR-0005: setInterval + silent reset are NOT Motion's concern). */}
+            <m.div
+                className="showcase-card"
+                data-testid="showcase-active-card"
+                key={active}
+                variants={motionReduced ? fadeOnly : fadeUp}
+                initial="hidden"
+                animate="visible"
+            >
                 <figure className="showcase-card-figure">
                     <span
                         className="showcase-card-thumb"
@@ -126,7 +144,7 @@ export function TypeShowcase({ pool, intervalMs = 3000 }: TypeShowcaseProps) {
                     </p>
                     {info !== null && <p className="showcase-card-desc">{info.report}</p>}
                 </div>
-            </div>
+            </m.div>
 
             <div className="showcase-peek-viewport">
                 <div

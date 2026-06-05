@@ -23,23 +23,24 @@
 
 /* --- Active type card (5:9 inner columns) --- *
  * Height follows content (a compact band), not a fixed ratio: the card is the
- * taller of its 1:1 image tile and the right-hand text. A springy fade-and-rise
- * plays on each active-type swap (the card is keyed by type); a group-tinted spine
- * runs down the leading edge. Both are disabled under reduced motion. */
+ * taller of its 1:1 image tile and the right-hand text. Game quest-card skin
+ * (issue #21 vocabulary): cream surface + leaf border + papercut shadow; the
+ * group-tinted spine down the leading edge keeps the "faction" identity. The
+ * swap entrance is Motion's fadeUp (type-showcase.tsx) — the old
+ * showcase-card-fade keyframe is gone. */
 .showcase-card {
     position: relative;
     display: flex;
     align-items: stretch;
     width: 100%;
-    background: var(--color-surface);
-    border: 1px solid color-mix(in srgb, var(--color-outline) 80%, transparent);
+    background: var(--color-surface-cream);
+    border: 2px solid var(--color-border-leaf);
     border-radius: var(--radius-lg);
     box-shadow:
-        var(--shadow-leaf-card),
+        var(--shadow-game-card),
         inset 0 2px 0 color-mix(in srgb, #ffffff 65%, transparent),
         inset 0 0 0 1px color-mix(in srgb, var(--showcase-accent, transparent) 16%, transparent);
     overflow: hidden;
-    animation: showcase-card-fade 360ms var(--ease-spring);
 }
 
 /* Group-feather spine down the leading edge — the card's "faction" marker. */
@@ -50,17 +51,6 @@
     width: 5px;
     background: var(--showcase-accent, var(--color-foliage-near));
     z-index: 1;
-}
-
-@keyframes showcase-card-fade {
-    from {
-        opacity: 0;
-        transform: translateY(6px) scale(0.97);
-    }
-    to {
-        opacity: 1;
-        transform: none;
-    }
 }
 
 /* Left column (5): padding keeps the gradient tile off the card edges. */
@@ -263,12 +253,9 @@
     white-space: nowrap;
 }
 
-/* Reduced motion: no auto-advance (handled in JS), no slide/scale/fade tweens. */
+/* Reduced motion: no auto-advance (handled in JS), no slide/scale tweens; the
+ * card swap entrance degrades to opacity-only in type-showcase.tsx (Motion). */
 @media (prefers-reduced-motion: reduce) {
-    .showcase-card {
-        animation: none;
-    }
-
     .showcase-peek-track {
         transition: none;
     }

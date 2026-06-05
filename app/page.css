@@ -57,6 +57,13 @@
     line-height: 1.02;
     letter-spacing: -0.01em;
     text-wrap: balance;
+    /* Readability over the PNG forest (issue #22): warm-dark ink + a soft cream
+     * halo so the headline separates from busy foliage at every width. */
+    color: var(--color-ink);
+    text-shadow:
+        0 1px 0 color-mix(in srgb, var(--color-surface-cream) 85%, transparent),
+        0 0 14px color-mix(in srgb, var(--color-surface-cream) 80%, transparent),
+        0 4px 22px color-mix(in srgb, var(--color-surface-cream) 60%, transparent);
 }
 
 /* Gold highlight marker behind the keyword. */
@@ -91,12 +98,19 @@
     margin: 0;
 }
 
-/* --- Stats row (lives in the middle group, below the dex entry) --- */
+/* --- Stats row (lives in the middle group, below the dex entry) --- *
+ * Semi-solid cream scrim pill (issue #22): the stats sit straight on the forest
+ * backdrop, so they get a translucent game-panel surface for contrast. */
 .hero-stats {
     display: flex;
     justify-content: center;
     align-items: stretch;
     gap: 22px;
+    padding: 10px 22px;
+    border-radius: var(--r-pill);
+    background: color-mix(in srgb, var(--color-surface-cream) 82%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-border-leaf) 75%, transparent);
+    box-shadow: 0 2px 0 color-mix(in srgb, var(--color-border-leaf) 45%, transparent);
     color: var(--color-ink-muted);
     font-size: 14px;
     font-weight: 600;

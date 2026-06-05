@@ -6,11 +6,13 @@
 // headline → full-bleed forest band → type peek row → dex entry → stats → big CTA,
 // with the hero filling the viewport so the stats + CTA settle at the bottom.
 import { useRouter } from 'next/navigation'
+import { m, useReducedMotion } from 'motion/react'
 import { GameButton } from '@/components/game-button'
 import { TypeShowcase } from '@/components/type-showcase'
 import { CAROUSEL_TYPES, QUESTION_COUNT } from '@/content'
 import { track } from '@/lib/analytics'
 import type { TypeCode } from '@/lib/mbti'
+import { fadeOnly, fadeUp, staggerContainer } from '@/lib/motion'
 import { useTestProgress } from '@/lib/state/test-progress-context'
 import './page.css'
 
@@ -33,6 +35,11 @@ const PEEK_POOL: readonly TypeCode[] = [
 export default function Home() {
     const router = useRouter()
     const { reset, setIndex } = useTestProgress()
+    const reducedMotion = useReducedMotion()
+
+    // Intro entrance (issue #22): the three hero groups stagger in with the
+    // shared fadeUp; degrades to opacity-only under prefers-reduced-motion.
+    const entrance = reducedMotion ? fadeOnly : fadeUp
 
     const handleStart = () => {
         reset()
@@ -43,9 +50,14 @@ export default function Home() {
 
     return (
         <main data-testid="intro-root" className="hero">
-            <div className="hero-first">
+            <m.div
+                className="hero-first"
+                variants={staggerContainer}
+                initial="hidden"
+                animate="visible"
+            >
                 {/* Group 1 — headline + type showcase (top of the screen). */}
-                <div className="hero-group hero-group--top">
+                <m.div className="hero-group hero-group--top" variants={entrance}>
                     <h1 className="hero-title font-display">
                         우리 앵무새
                         <br />
@@ -53,10 +65,10 @@ export default function Home() {
                     </h1>
 
                     <TypeShowcase pool={PEEK_POOL} intervalMs={3000} />
-                </div>
+                </m.div>
 
                 {/* Group 2 — dex entry + stats (middle of the screen). */}
-                <div className="hero-group hero-group--mid">
+                <m.div className="hero-group hero-group--mid" variants={entrance}>
                     <GameButton
                         variant="secondary"
                         size="sm"
@@ -80,10 +92,10 @@ export default function Home() {
                             <b>1분</b>소요
                         </div>
                     </div>
-                </div>
+                </m.div>
 
                 {/* Group 3 — primary CTA (bottom of the screen). */}
-                <div className="hero-group hero-group--bottom">
+                <m.div className="hero-group hero-group--bottom" variants={entrance}>
                     <GameButton
                         data-testid="start-button"
                         onClick={handleStart}
@@ -91,8 +103,8 @@ export default function Home() {
                     >
                         테스트 시작하기 <span aria-hidden="true">→</span>
                     </GameButton>
-                </div>
-            </div>
+                </m.div>
+            </m.div>
         </main>
     )
 }
