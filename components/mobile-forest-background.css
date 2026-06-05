@@ -39,17 +39,31 @@
 }
 
 /* z1 — side decals. Shared placement via CSS variables set inline per decal:
- * percentage anchor, clamp() responsive width, optional rotation. */
+ * percentage anchor, clamp() responsive width, optional rotation. The decal is a
+ * wrapper div carrying the anchor transform; the inner img is the element Motion
+ * animates (issue #26 idle loops), so the placement transform and the animated
+ * transform never fight over the same element. */
 .forest-decal {
     position: absolute;
     left: var(--x);
     top: var(--y);
     width: var(--w);
-    height: auto;
     transform: translate(-50%, -50%) rotate(var(--r, 0deg));
     pointer-events: none;
     user-select: none;
+}
+
+.forest-decal__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    user-select: none;
     filter: drop-shadow(0 6px 12px rgba(46, 36, 20, 0.16));
+}
+
+/* Vine sway (gentleSway) should pivot from where it hangs, not its center. */
+.forest-decal--vine .forest-decal__img {
+    transform-origin: top center;
 }
 
 /* z2 — top canopy + bottom ground overlays (full-width bands). */
@@ -71,12 +85,16 @@
     bottom: 0;
 }
 
-/* z3 — light particles. Subtle full-viewport glints over the forest. */
+/* z3 — light particles. Subtle full-viewport glints over the forest. Slight
+ * overscan (±12px) so the particleFloat micro drift (y -8 / x 4, issue #26)
+ * never slides the glint sheet off a viewport edge. The 0.55 opacity is the
+ * static (reduced-motion / pre-hydration) level; the Motion opacity pulse
+ * animates between 0.35 and 0.8 inline. */
 .forest-particles {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    inset: -12px;
+    width: calc(100% + 24px);
+    height: calc(100% + 24px);
     object-fit: cover;
     object-position: center center;
     opacity: 0.55;

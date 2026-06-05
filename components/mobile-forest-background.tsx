@@ -3,17 +3,25 @@
 // forest world. Replaces the former <LeafField> SVG backdrop + the globals.css
 // body gradient washes. The container is position:fixed (z-index -1), so the
 // forest stays pinned to the viewport and does NOT move on scroll — only the page
-// content scrolls above it. Server component: static markup, no JS ships.
+// content scrolls above it.
 //
-// Layer order (low → high paint): main base → side decals → canopy / ground
-// overlays → light particles → cream legibility veil → page content (normal flow,
-// painted above the negative-z layer). DOM order defines paint order, so no
-// per-layer z-index is needed inside the container.
+// Server/client split (issue #26): this wrapper stays a Server Component — the
+// full-screen PNGs (base / canopy / ground) and the static decals (general leaf,
+// rock) render with zero client JS. Only the decals that actually move are
+// delegated to the client components in animated-forest-decorations.tsx
+// (monstera/palm float, vine sway, mushroom pop-in, particle pulse), keeping the
+// idle motion restrained and the big layers permanently static.
+//
+// Layer order (low → high paint): main base → side decals (static + animated) →
+// canopy / ground overlays → light particles → cream legibility veil → page
+// content (normal flow, painted above the negative-z layer). DOM order defines
+// paint order, so no per-layer z-index is needed inside the container.
 //
 // Asset note: the design brief also expected a "tree branch" and a "bush cluster"
 // PNG; neither exists in the asset set, so both are intentionally omitted (no
 // broken paths). Only files present under /public/assets/mbti are referenced.
 import type { CSSProperties, ReactNode } from 'react'
+import { AnimatedForestDecals, AnimatedForestParticles } from './animated-forest-decorations'
 import './mobile-forest-background.css'
 
 const ASSET_BASE = '/assets/mbti'
@@ -27,24 +35,11 @@ interface Decal {
     vars: { x: string; y: string; w: string; r: string }
 }
 
-// Only decals whose PNG actually exists. Positioned toward the edges/corners so the
-// central content column (headline, cards, CTA) is never crowded.
-const DECALS: readonly Decal[] = [
-    {
-        name: 'monstera',
-        src: `${ASSET_BASE}/leaf-monstera.png`,
-        vars: { x: '6%', y: '15%', w: 'clamp(72px, 26vw, 170px)', r: '-10deg' },
-    },
-    {
-        name: 'palm',
-        src: `${ASSET_BASE}/leaf-palm.png`,
-        vars: { x: '95%', y: '12%', w: 'clamp(96px, 32vw, 220px)', r: '-14deg' },
-    },
-    {
-        name: 'vine',
-        src: `${ASSET_BASE}/vine-hanging.png`,
-        vars: { x: '97%', y: '24%', w: 'clamp(70px, 22vw, 150px)', r: '0deg' },
-    },
+// Static decals only (never animated — issue #26 keeps rock/ground-level anchors
+// still). The moving decals live in animated-forest-decorations.tsx. Positioned
+// toward the edges/corners so the central content column (headline, cards, CTA)
+// is never crowded.
+const STATIC_DECALS: readonly Decal[] = [
     {
         name: 'general',
         src: `${ASSET_BASE}/leaf-general.png`,
@@ -55,11 +50,6 @@ const DECALS: readonly Decal[] = [
         src: `${ASSET_BASE}/rock-cluster.png`,
         vars: { x: '15%', y: '96%', w: 'clamp(96px, 30vw, 200px)', r: '0deg' },
     },
-    {
-        name: 'mushroom',
-        src: `${ASSET_BASE}/mushroom-flower-cluster.png`,
-        vars: { x: '86%', y: '95%', w: 'clamp(60px, 20vw, 130px)', r: '0deg' },
-    },
 ]
 
 export function MobileForestBackground({ children }: { children: ReactNode }) {
@@ -67,7 +57,8 @@ export function MobileForestBackground({ children }: { children: ReactNode }) {
         <>
             <div className="forest-bg" aria-hidden="true">
                 {/* z0 — main forest base: covers the viewport (cover, never stretched),
-                 * eager + high priority as the largest above-the-fold visual (LCP). */}
+                 * eager + high priority as the largest above-the-fold visual (LCP).
+                 * Always static (full-screen PNG — never animated). */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                     className="forest-base"
@@ -77,16 +68,12 @@ export function MobileForestBackground({ children }: { children: ReactNode }) {
                     decoding="async"
                 />
 
-                {/* z1 — side decals (only assets that exist). */}
-                {DECALS.map((d) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
+                {/* z1 — side decals: static ones here (server-rendered, no JS),
+                 * animated ones via the client component below (same layer). */}
+                {STATIC_DECALS.map((d) => (
+                    <div
                         key={d.name}
                         className={`forest-decal forest-decal--${d.name}`}
-                        src={d.src}
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
                         style={
                             {
                                 '--x': d.vars.x,
@@ -95,10 +82,20 @@ export function MobileForestBackground({ children }: { children: ReactNode }) {
                                 '--r': d.vars.r,
                             } as CSSProperties
                         }
-                    />
+                    >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            className="forest-decal__img"
+                            src={d.src}
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                        />
+                    </div>
                 ))}
+                <AnimatedForestDecals />
 
-                {/* z2 — top canopy + bottom ground overlays. */}
+                {/* z2 — top canopy + bottom ground overlays (static). */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                     className="forest-canopy"
@@ -116,15 +113,8 @@ export function MobileForestBackground({ children }: { children: ReactNode }) {
                     decoding="async"
                 />
 
-                {/* z3 — subtle light particles. */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                    className="forest-particles"
-                    src={`${ASSET_BASE}/forest-light-particles.png`}
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                />
+                {/* z3 — subtle light particles (opacity pulse + micro drift). */}
+                <AnimatedForestParticles />
 
                 {/* z4 — cream legibility veil (keeps content readable over the forest). */}
                 <div className="forest-veil" />
