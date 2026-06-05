@@ -397,3 +397,6 @@ $RECYCLE.BIN/
 # .pnp.*
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,jetbrains,windows,linux,macos,nextjs,node,dotenv,yarn
+
+# Claude Code harness — transient scheduler lock (not a project artifact)
+.claude/scheduled_tasks.lock
