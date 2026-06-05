@@ -25,7 +25,7 @@ Status: ready-for-agent
 
 ## Acceptance criteria
 
-- [x] 문항 카드 전환이 AnimatePresence로 동작하고 13문항 전체 플로우가 e2e에서 그린이다. (구현 완료 — e2e full run은 리드와 조율 후 실행 예정, Comments 참조)
+- [x] 문항 카드 전환이 AnimatePresence로 동작하고 13문항 전체 플로우가 e2e에서 그린이다. (구현 완료 — e2e 확인은 #10(이슈 18) 전체 런에 위임, Comments 참조)
 - [x] 선택 → 자동 진행 타이밍이 기존(420ms / reduced-motion 120ms)과 동등하다.
 - [x] 선택지 버튼이 게임 스타일 + Motion 피드백(`whileTap`, 선택 bounce, 체크 pop)을 사용한다.
 - [x] 진행 바 fill이 Motion으로 애니메이션되고 레이아웃 흔들림이 없다.
@@ -70,5 +70,7 @@ Status: ready-for-agent
 - **이슈 27 정리 대상 (globals.css — 수정 금지 경계)**: `@keyframes pop`,
   `@keyframes bounce`는 test.css 소비처가 사라짐. 다른 표면의 잔존 사용 여부
   확인 후 이슈 27에서 일괄 정리할 것.
-- **검증**: `yarn build`·`yarn type-check`·`yarn lint` 그린. e2e full run은
-  포트/브라우저 데몬 공유 충돌 방지 규칙에 따라 리드와 조율 후 실행.
+- **검증**: `yarn build`·`yarn type-check`·`yarn lint` 그린. e2e 확인은 리드
+  결정에 따라 #10(이슈 18) 전체 `yarn e2e:run`에 위임 — e2e 플로우 자체가 #10
+  에서 재작성 중이라 개별 실행은 스퓨리어스 실패 위험. 해당 런에서 이 페이지
+  관련 실패가 나오면 본 이슈 재오픈.

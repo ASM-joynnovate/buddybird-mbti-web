@@ -30,7 +30,7 @@ Status: ready-for-agent
 - [x] Confetti 수명이 AnimatePresence로 관리되고 채택한 파티클 전략(Motion vs CSS 유지)이 기록됐다.
 - [x] reduced-motion에서 콘페티·reveal이 강등되어도 결과 확인이 완전히 가능하다.
 - [x] `?t=` 딥링크/공유/사진 등 기존 결과 페이지 동작이 보존된다.
-- [x] `yarn build`·`yarn type-check`·`yarn lint`·e2e 통과, 360–430px 가독 유지. (build/type-check/lint 그린 — e2e full run은 리드와 조율 후 실행 예정, Comments 참조)
+- [x] `yarn build`·`yarn type-check`·`yarn lint`·e2e 통과, 360–430px 가독 유지. (build/type-check/lint 그린 — e2e 확인은 #10(이슈 18) 전체 런에 위임, Comments 참조)
 
 ## Blocked by
 
@@ -73,5 +73,7 @@ Status: ready-for-agent
 - **이슈 27 정리 대상 (globals.css — 수정 금지 경계)**: `@keyframes float-up` +
   `.anim-float-up` 유틸리티는 이 패스로 소비처 0(주석 외). `confetti-fall`은
   유지(파티클 전략상 존속). 이슈 23에서 기록한 `pop`/`bounce`와 함께 일괄 정리.
-- **검증**: `yarn build`·`yarn type-check`·`yarn lint` 그린. e2e full run은
-  포트/브라우저 데몬 공유 충돌 방지 규칙에 따라 리드와 조율 후 실행.
+- **검증**: `yarn build`·`yarn type-check`·`yarn lint` 그린. e2e 확인은 리드
+  결정에 따라 #10(이슈 18) 전체 `yarn e2e:run`에 위임 — e2e 플로우 자체가 #10
+  에서 재작성 중이라 개별 실행은 스퓨리어스 실패 위험. 해당 런에서 이 페이지
+  관련 실패가 나오면 본 이슈 재오픈.
