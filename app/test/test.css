@@ -2,8 +2,14 @@
  * Test (Quiz) surface — faithful recreation of the Claude Design bundle Quiz
  * ("동화숲 월드"): a segmented progress bar (each answered segment fills with its axis
  * hue), a back/exit meta row, an emoji-led question card, and two big 🅰/🅱 option
- * cards tinted by their axis-letter color (--ax). Selecting bounces the card and
- * stamps a check before auto-advancing. Ported from styles.css; tokens: globals.css.
+ * cards tinted by their axis-letter color (--ax). Ported from styles.css; tokens:
+ * globals.css.
+ *
+ * Motion pass (issue #23): question-card slide (was slideInL/R keyframes), the
+ * selection bounce, the check-stamp pop and the progress fill are Motion-owned in
+ * page.tsx — this file no longer animates transform/width. Option cards consume the
+ * .game-card / .game-card--selectable vocabulary (issue #21) for their surface;
+ * only quiz-specific layout and the per-option --ax accent live here.
  */
 
 .test-surface {
@@ -59,6 +65,8 @@
 }
 
 /* --- Segmented progress (fills with the answered axis hue) --- */
+/* The fill width is animated by Motion in page.tsx (one-shot tween); CSS only
+ * shapes the track. */
 .progress {
     display: flex;
     gap: 6px;
@@ -78,7 +86,6 @@
     height: 100%;
     width: 0;
     border-radius: var(--r-pill);
-    transition: width 0.5s var(--ease-spring);
 }
 
 /* --- Question card --- */
@@ -101,6 +108,7 @@
     text-align: center;
 }
 
+/* Entrance pop is Motion (popIn) in page.tsx. */
 .q-emoji {
     position: absolute;
     top: 0;
@@ -116,7 +124,6 @@
     place-items: center;
     font-size: 42px;
     line-height: 1;
-    animation: pop 0.5s var(--ease-spring);
 }
 
 .q-text {
@@ -137,6 +144,9 @@
     margin-top: auto;
 }
 
+/* Surface (cream bg, leaf border, papercut shadow, hover lift) comes from
+ * .game-card.game-card--selectable; transform is Motion-owned (whileHover /
+ * whileTap / selection bounce in page.tsx) so CSS never touches it. */
 .opt {
     position: relative;
     display: flex;
@@ -145,33 +155,21 @@
     width: 100%;
     padding: 24px 22px;
     text-align: left;
-    border: 3px solid transparent;
-    border-radius: var(--r-opt);
-    background: var(--color-surface);
-    box-shadow: var(--sh-sm);
     font: inherit;
     font-size: 18px;
     font-weight: 700;
     line-height: 1.35;
     color: var(--color-ink);
-    cursor: pointer;
-    transition:
-        transform 0.3s var(--ease-spring),
-        box-shadow 0.3s var(--ease-spring),
-        border-color 0.2s;
 }
 
-.opt:hover {
-    transform: translateY(-3px) scale(1.015);
-    box-shadow: var(--sh-md);
-}
-
-.opt:active {
-    transform: scale(0.98);
-}
-
-.opt:disabled {
+/* During the pick → auto-advance window both options are disabled, but this is
+ * flow pacing, not an unavailable state — neutralize the .game-card:disabled
+ * dimming (saturate/opacity) so the selected card stays vivid. The extra .opts
+ * ancestor wins the specificity tie against globals regardless of import order. */
+.opts .opt:disabled {
     cursor: default;
+    filter: none;
+    opacity: 1;
 }
 
 .opt:focus-visible {
@@ -193,12 +191,13 @@
     flex: 1;
 }
 
-.opt.is-selected {
+/* Picked option highlights with its 🅰/🅱 accent (overrides the generic
+ * .game-card--selectable.is-selected green; .opts ancestor wins the tie). */
+.opts .opt.is-selected {
     border-color: var(--ax);
-    animation: bounce 0.5s var(--ease-spring);
 }
 
-/* Check stamp on the picked option (top-right). */
+/* Check stamp on the picked option (top-right). Pop-in is Motion (popIn). */
 .opt-check {
     position: absolute;
     top: -12px;
@@ -212,51 +211,4 @@
     place-items: center;
     font-size: 20px;
     box-shadow: var(--sh-md);
-    animation: pop 0.4s var(--ease-spring);
-}
-
-/* --- Springy per-question slide --- */
-.slide-in-r {
-    animation: slideInR 0.45s var(--ease-spring);
-}
-
-.slide-in-l {
-    animation: slideInL 0.45s var(--ease-spring);
-}
-
-@keyframes slideInR {
-    from {
-        opacity: 0;
-        transform: translateX(60px);
-    }
-}
-
-@keyframes slideInL {
-    from {
-        opacity: 0;
-        transform: translateX(-60px);
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .q-emoji,
-    .opt.is-selected,
-    .opt-check,
-    .slide-in-r,
-    .slide-in-l {
-        animation: none;
-    }
-
-    .opt {
-        transition-duration: 0.08s;
-    }
-
-    .opt:hover,
-    .opt:active {
-        transform: none;
-    }
-
-    .progress .seg i {
-        transition-duration: 0.08s;
-    }
 }
