@@ -116,7 +116,8 @@
     letter-spacing: 0.02em;
 }
 
-/* Type hero image — floats over the gradient with a drop shadow + floatUp entrance. */
+/* Type hero image — floats over the gradient with a drop shadow; the rise
+ * entrance is Motion (heroArtRise in result-view.tsx, issue #24). */
 .result-hero-art {
     width: min(240px, 60vw);
     aspect-ratio: 1 / 1;
@@ -211,13 +212,21 @@
     justify-content: center;
 }
 
-/* Slot for photo input (#08) + share card (#09). */
+/* Full-width Motion reveal wrapper for embedded blocks (axis bars). */
+.result-block {
+    width: 100%;
+}
+
+/* Slot for photo input (#08) + share card (#09) — a mint game panel (issue #21)
+ * so the share moment reads as its own quest block. Surface comes from
+ * .game-panel.game-panel--mint; only layout + padding live here. */
 .result-share-slot {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 18px;
     width: 100%;
+    padding: 20px 18px 22px;
 }
 
 /* Share trigger (#09) — primary action of the result surface. */

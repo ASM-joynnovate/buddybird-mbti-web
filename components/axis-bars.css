@@ -1,9 +1,10 @@
 /*
  * Axis spectrum bars (result surface). Per-row CSS vars set inline by AxisBars:
  *   --axis-color  per-axis hue (globals.css token)
- *   --seg-start   colored segment left offset (% from track left)
- *   --seg-width   colored segment width (%)
- *   --knob-pos    knob center position (% from track left)
+ *
+ * The fill/knob positions (left/width) are Motion-owned mount animations set
+ * inline by AxisBars (issue #24) — no CSS transitions here anymore. The section
+ * surface comes from .game-panel (issue #21); only panel padding is local.
  */
 
 .axis-bars {
@@ -11,6 +12,7 @@
     flex-direction: column;
     gap: 16px;
     width: 100%;
+    padding: 22px 18px;
 }
 
 .axis-row {
@@ -74,23 +76,19 @@
     transform: translateX(-50%);
 }
 
+/* left/width set inline by Motion (AxisBars). */
 .axis-fill {
     position: absolute;
     top: 0;
     bottom: 0;
-    left: var(--seg-start);
-    width: var(--seg-width);
     border-radius: 9999px;
     background: var(--axis-color);
-    transition:
-        left 0.9s var(--ease-spring),
-        width 0.9s var(--ease-spring);
 }
 
+/* left set inline by Motion (AxisBars). */
 .axis-knob {
     position: absolute;
     top: 50%;
-    left: var(--knob-pos);
     width: 20px;
     height: 20px;
     border-radius: 50%;
@@ -98,12 +96,4 @@
     border: 4px solid #ffffff;
     box-shadow: var(--shadow-leaf-low);
     transform: translate(-50%, -50%);
-    transition: left 0.9s var(--ease-spring);
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .axis-fill,
-    .axis-knob {
-        transition-duration: 0.001ms;
-    }
 }

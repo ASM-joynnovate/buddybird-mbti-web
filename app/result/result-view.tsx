@@ -1,7 +1,13 @@
 'use client'
 
+// Result reveal (issue #24, ADR-0006): the hero and body sections enter once via
+// Motion variants (popIn/fadeUp + stagger) — important information animates a
+// single time, never loops. Under prefers-reduced-motion every entrance degrades
+// to the opacity-only fadeOnly variant; the page is fully readable without
+// motion. The ?t= deep-link / share / photo logic is untouched.
 import type { CSSProperties } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { m, useReducedMotion, type Variants } from 'motion/react'
 import { AppCtaButton } from '@/components/app-cta-button'
 import { AxisBars } from '@/components/axis-bars'
 import { Confetti } from '@/components/confetti'
@@ -20,10 +26,23 @@ import {
     type TemperamentGroup,
     type TypeCode,
 } from '@/lib/mbti'
+import { easeSpring, fadeOnly, fadeUp, popIn, staggerContainer } from '@/lib/motion'
 import { usePhotoSource } from '@/lib/photo/use-photo-source'
 import { decodeResult, RESULT_PARAM } from '@/lib/result-url'
 import { useTestProgress } from '@/lib/state/test-progress-context'
 import './result.css'
+
+// Hero-art entrance — replaces the `anim-float-up` CSS class (globals
+// `float-up` keyframe): same rise-from-below + scale envelope, Motion-owned.
+const heroArtRise: Variants = {
+    hidden: { opacity: 0, y: 40, scale: 0.9 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: { duration: 0.55, ease: easeSpring },
+    },
+}
 
 // Korean labels for the four temperament groups (CONTEXT.md domain concept).
 const GROUP_LABEL: Record<TemperamentGroup, string> = {
@@ -53,6 +72,13 @@ export function ResultView() {
     const searchParams = useSearchParams()
     const { result, reset } = useTestProgress()
     const photo = usePhotoSource()
+    const reducedMotion = useReducedMotion()
+
+    // One-shot reveal vocabulary; every entrance degrades to an opacity-only
+    // fade under reduced motion (ADR-0006 convention).
+    const rise = reducedMotion ? fadeOnly : fadeUp
+    const pop = reducedMotion ? fadeOnly : popIn
+    const art = reducedMotion ? fadeOnly : heroArtRise
 
     // Own result = the visitor finished the test this session (in-memory result).
     // Shared visitor = arrived via a shared URL with only the ?t= token. The Test
@@ -107,56 +133,87 @@ export function ResultView() {
                 <span className="result-leaf result-leaf--bl" />
             </div>
 
-            <div className="result-content">
-                <header className="result-hero" style={heroStyle}>
-                    <span className="result-badge">{GROUP_LABEL[group]}</span>
+            {/* One-shot staggered reveal: hero pieces first, then the body blocks.
+                Variant labels cascade from this container; children only declare
+                their own `variants`. */}
+            <m.div
+                className="result-content"
+                variants={staggerContainer}
+                initial="hidden"
+                animate="visible"
+            >
+                <m.header className="result-hero" style={heroStyle} variants={staggerContainer}>
+                    <m.span className="result-badge" variants={rise}>
+                        {GROUP_LABEL[group]}
+                    </m.span>
 
-                    <div className="result-hero-art anim-float-up">
+                    <m.div className="result-hero-art" variants={art}>
                         <ParrotImage type={type} width={640} height={640} loading="eager" />
-                    </div>
+                    </m.div>
 
-                    <p data-testid="result-type" className="result-type font-display">
+                    <m.p
+                        data-testid="result-type"
+                        className="result-type font-display"
+                        variants={pop}
+                    >
                         {type}
-                    </p>
+                    </m.p>
 
                     {info !== null && (
                         <>
-                            <h1 className="result-name font-display">{info.name}</h1>
-                            <p className="result-tag">{info.report}</p>
+                            <m.h1 className="result-name font-display" variants={rise}>
+                                {info.name}
+                            </m.h1>
+                            <m.p className="result-tag" variants={rise}>
+                                {info.report}
+                            </m.p>
                         </>
                     )}
-                </header>
+                </m.header>
 
-                <div className="result-body">
-                    {info !== null && <p className="result-description">{info.description}</p>}
+                <m.div className="result-body" variants={staggerContainer}>
+                    {info !== null && (
+                        <m.p className="result-description" variants={rise}>
+                            {info.description}
+                        </m.p>
+                    )}
 
-                    <AxisBars axisScores={axisScores} />
+                    <m.div className="result-block" variants={rise}>
+                        <AxisBars axisScores={axisScores} />
+                    </m.div>
 
                     {/* Compatibility ("궁합") — best-match types, deep-linking to the dex. */}
                     {info !== null && info.match.length > 0 && (
-                        <section className="result-match" aria-label="환상의 궁합">
+                        <m.section
+                            className="result-match"
+                            aria-label="환상의 궁합"
+                            variants={rise}
+                        >
                             <h2 className="result-match-title">환상의 궁합</h2>
                             <div className="chips result-match-chips">
                                 {info.match.map((matchCode) => (
                                     <MatchChip key={matchCode} code={matchCode} />
                                 ))}
                             </div>
-                        </section>
+                        </m.section>
                     )}
 
                     {/* Photo input (#08) + share card (#09) — own results only. */}
                     {!isSharedVisitor && (
-                        <div className="result-share-slot">
+                        <m.div
+                            className="result-share-slot game-panel game-panel--mint"
+                            variants={rise}
+                        >
                             <PhotoInput
                                 objectUrl={photo.objectUrl}
                                 onPick={photo.setFile}
                                 onClear={photo.clear}
                             />
                             <ShareButton type={type} photoUrl={photo.objectUrl} />
-                        </div>
+                        </m.div>
                     )}
 
-                    <div className="result-actions">
+                    <m.div className="result-actions" variants={rise}>
                         <AppCtaButton placement="result" />
                         <GameButton
                             variant="secondary"
@@ -182,9 +239,9 @@ export function ResultView() {
                                 다시하기
                             </GameButton>
                         )}
-                    </div>
-                </div>
-            </div>
+                    </m.div>
+                </m.div>
+            </m.div>
         </main>
     )
 }
