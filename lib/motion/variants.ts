@@ -76,6 +76,19 @@ export const buttonTap: TargetAndTransition = {
     transition: { duration: 0.14, ease: easeLeaf },
 }
 
+// Card / chip press — gentler than buttonTap (issue #21 vocabulary: tap 0.98).
+// Pair with `whileHover={cardHover}` on selectable cards; CSS keeps transform
+// untouched on these surfaces so Motion owns it exclusively.
+export const cardTap: TargetAndTransition = {
+    scale: 0.98,
+    transition: { duration: 0.2, ease: easeLeaf },
+}
+
+export const cardHover: TargetAndTransition = {
+    scale: 1.01,
+    transition: { duration: durationBase, ease: easeLeaf },
+}
+
 /* ── Sheets / modals (use with AnimatePresence for the exit leg) ── */
 
 export const sheetSlideUp: Variants = {

@@ -506,6 +506,95 @@ body {
     gap: 7px;
 }
 
+/* ── Game panel / card / chip primitives (issue #21) — quest-card surfaces for
+ * content sitting in the forest world. No untreated pure white: cream / mint
+ * game surfaces + soft leaf border + papercut layered shadow (--shadow-game-card)
+ * + a subtle inner top highlight. Page passes (issues #22–#25) adopt these for
+ * their own card surfaces.
+ *
+ * Motion convention for card surfaces (m.* + lib/motion): entrance fadeUp with
+ * staggerContainer when multiple cards mount, tap = cardTap (scale 0.98).
+ * Transform stays Motion-owned on interactive cards — the CSS states below only
+ * move border/shadow so the two never fight over `transform`. ── */
+.game-panel {
+    position: relative;
+    border-radius: var(--radius-panel);
+    background: var(--color-surface-cream);
+    border: 2px solid var(--color-border-leaf);
+    box-shadow:
+        var(--shadow-game-card),
+        inset 0 2px 0 rgba(255, 255, 255, 0.65);
+    color: var(--color-ink);
+}
+
+.game-panel--mint {
+    background: var(--color-surface-mint);
+    color: var(--color-ink-forest);
+}
+
+/* Empty state — a waiting slot, not a raised panel. */
+.game-panel--empty {
+    background: color-mix(in srgb, var(--color-surface-cream) 72%, transparent);
+    border-style: dashed;
+    box-shadow: none;
+    color: var(--color-ink-muted);
+}
+
+.game-card {
+    position: relative;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-cream);
+    border: 2px solid var(--color-border-leaf);
+    box-shadow:
+        var(--shadow-game-card),
+        inset 0 2px 0 rgba(255, 255, 255, 0.6);
+    color: var(--color-ink);
+}
+
+/* Selectable card (button/link cards) — border highlight + shadow lift on
+ * hover/selection; the grow/shrink itself is Motion (whileHover 1.01 /
+ * whileTap cardTap 0.98) so CSS never touches transform. */
+.game-card--selectable {
+    cursor: pointer;
+    transition:
+        border-color var(--duration-base) var(--ease-leaf),
+        box-shadow var(--duration-base) var(--ease-leaf);
+}
+
+.game-card--selectable:hover {
+    border-color: color-mix(in srgb, var(--color-border-leaf) 55%, var(--color-accent-deep));
+    box-shadow:
+        0 6px 0 rgba(101, 132, 60, 0.16),
+        0 16px 32px -10px rgba(58, 46, 26, 0.2),
+        inset 0 2px 0 rgba(255, 255, 255, 0.6);
+}
+
+.game-card--selectable.is-selected {
+    border-color: var(--color-accent-deep);
+}
+
+.game-card--disabled,
+.game-card:disabled {
+    cursor: not-allowed;
+    filter: saturate(0.4);
+    opacity: 0.65;
+}
+
+/* Game chip / badge — pill on a semi-solid mint surface (never floating text). */
+.game-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: var(--r-pill);
+    padding: 8px 14px;
+    background: var(--color-surface-mint);
+    border: 2px solid var(--color-border-leaf);
+    box-shadow: 0 2px 0 var(--color-border-leaf);
+    color: var(--color-ink-forest);
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
 /* ── Shared entrance/idle keyframes (playful spring motion). ── */
 @keyframes pop {
     from {
@@ -562,30 +651,35 @@ body {
     animation: float-up 0.7s var(--ease-spring) both;
 }
 
-/* ── Match chip (궁합) — cross-screen: result match section + type modal. Ported
- * from the bundle styles.css. The per-type gradient dot + border accent (--c1/--c2)
- * are injected inline by the MatchChip component. ── */
+/* ── Match chip (궁합) — cross-screen: result match section + type modal. Game
+ * chip skin (issue #21): semi-solid cream pill + leaf border + tiny depth bar
+ * (never floating text). The per-type gradient dot + border accent (--c1/--c2)
+ * are injected inline by the MatchChip component; transform is Motion-owned
+ * (whileTap cardTap via MatchChip), so CSS only moves border/shadow. ── */
 .chip {
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    background: var(--color-bg);
-    border: 2px solid var(--color-outline);
+    background: var(--color-surface-cream);
+    border: 2px solid var(--color-border-leaf);
     border-radius: var(--r-pill);
     padding: 9px 16px 9px 10px;
+    min-height: 44px;
+    box-shadow: 0 2px 0 var(--color-border-leaf);
     font: inherit;
     font-weight: 700;
     font-size: 0.875rem;
     color: var(--color-ink);
     cursor: pointer;
     transition:
-        transform 0.25s var(--ease-spring),
-        border-color 0.2s var(--ease-leaf);
+        border-color var(--duration-fast) var(--ease-leaf),
+        box-shadow var(--duration-fast) var(--ease-leaf);
 }
 
 .chip:hover {
-    transform: translateY(-2px);
     border-color: var(--c1, var(--color-primary));
+    box-shadow: 0 3px 0
+        color-mix(in srgb, var(--c1, var(--color-primary)) 35%, var(--color-border-leaf));
 }
 
 .chip:focus-visible {

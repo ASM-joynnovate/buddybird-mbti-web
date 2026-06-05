@@ -1,5 +1,7 @@
 export {
     buttonTap,
+    cardHover,
+    cardTap,
     durationBase,
     durationFast,
     durationSlow,

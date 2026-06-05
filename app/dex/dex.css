@@ -51,23 +51,28 @@
     }
 }
 
+/* Game collection-card skin (issue #21): cream quest-card surface + leaf
+ * border + papercut layered shadow. Transform is Motion-owned (whileHover
+ * 1.01 / whileTap 0.98 in dex-view.tsx) — CSS only moves border/shadow. */
 .dex-card {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    border: 3px solid transparent;
+    border: 3px solid var(--color-border-leaf);
     border-radius: var(--radius-lg);
     padding: 16px 14px 18px;
     text-align: center;
-    background: var(--color-surface);
-    box-shadow: var(--sh-sm);
+    background: var(--color-surface-cream);
+    box-shadow:
+        var(--shadow-game-card),
+        inset 0 2px 0 rgba(255, 255, 255, 0.6);
     cursor: pointer;
     overflow: hidden;
     transition:
-        transform 0.3s var(--ease-spring),
-        box-shadow 0.3s var(--ease-spring);
+        border-color 0.2s var(--ease-leaf),
+        box-shadow 0.2s var(--ease-leaf);
 }
 
 /* Identity gradient wash across the top half of the card. */
@@ -82,8 +87,11 @@
 }
 
 .dex-card:hover {
-    transform: translateY(-6px) scale(1.02);
-    box-shadow: var(--sh-lg);
+    border-color: color-mix(in srgb, var(--color-border-leaf) 55%, var(--color-accent-deep));
+    box-shadow:
+        0 6px 0 rgba(101, 132, 60, 0.16),
+        0 16px 32px -10px rgba(58, 46, 26, 0.2),
+        inset 0 2px 0 rgba(255, 255, 255, 0.6);
 }
 
 .dex-card:focus-visible {
@@ -144,9 +152,5 @@
 @media (prefers-reduced-motion: reduce) {
     .dex-card {
         transition-duration: 0.08s;
-    }
-
-    .dex-card:hover {
-        transform: none;
     }
 }

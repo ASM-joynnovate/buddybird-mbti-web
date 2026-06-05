@@ -7,17 +7,24 @@
 // (used by MatchChips) auto-opens that type's modal.
 import { useState, type CSSProperties } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { m, useReducedMotion } from 'motion/react'
 import { GameButton } from '@/components/game-button'
 import { ParrotImage } from '@/components/parrot-image'
 import { TypeModal } from '@/components/type-modal'
 import { CAROUSEL_TYPES, getTypeInfo, typeGradient } from '@/content'
+import { cardHover, cardTap, fadeOnly, fadeUp, staggerContainer } from '@/lib/motion'
 import './dex.css'
 
 export function DexView() {
     const router = useRouter()
     const searchParams = useSearchParams()
+    const reducedMotion = useReducedMotion()
     const mine = searchParams.get('mine')
     const focusParam = searchParams.get('focus')
+
+    // Card entrance: staggered fadeUp; degrades to opacity-only under
+    // prefers-reduced-motion (issue #21 convention, ADR-0006).
+    const cardEntrance = reducedMotion ? fadeOnly : fadeUp
 
     // The focused type drives the modal. It starts from the ?focus deep-link and
     // re-syncs when that param changes (a MatchChip navigating to /dex?focus=OTHER
@@ -41,18 +48,27 @@ export function DexView() {
                 <p className="dex-sub">카드를 탭하면 자세히 볼 수 있어요</p>
             </header>
 
-            <div className="dex-grid" data-testid="dex-grid">
+            <m.div
+                className="dex-grid"
+                data-testid="dex-grid"
+                variants={staggerContainer}
+                initial="hidden"
+                animate="visible"
+            >
                 {CAROUSEL_TYPES.map((code) => {
                     const info = getTypeInfo(code)
                     const isMine = code === mine
                     const style = { '--type-grad': typeGradient(code) } as CSSProperties
 
                     return (
-                        <button
+                        <m.button
                             key={code}
                             type="button"
                             className={isMine ? 'dex-card mine' : 'dex-card'}
                             style={style}
+                            variants={cardEntrance}
+                            whileHover={reducedMotion ? undefined : cardHover}
+                            whileTap={reducedMotion ? undefined : cardTap}
                             onClick={() => setFocused(code)}
                             data-testid={`dex-card-${code}`}
                         >
@@ -62,10 +78,10 @@ export function DexView() {
                             </span>
                             <span className="dex-card-code font-display">{code}</span>
                             <span className="dex-card-name">{info?.name}</span>
-                        </button>
+                        </m.button>
                     )
                 })}
-            </div>
+            </m.div>
 
             <div className="dex-actions">
                 <GameButton

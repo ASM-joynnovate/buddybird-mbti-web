@@ -36,6 +36,7 @@
     width: 100%;
 }
 
+/* Game card frame (issue #21): cream surface + leaf border + papercut shadow. */
 .photo-preview-frame {
     display: grid;
     place-items: stretch;
@@ -44,9 +45,9 @@
     aspect-ratio: 1 / 1;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    background: var(--color-surface);
-    border: 1px solid color-mix(in srgb, var(--color-outline) 80%, transparent);
-    box-shadow: var(--shadow-leaf-card);
+    background: var(--color-surface-cream);
+    border: 2px solid var(--color-border-leaf);
+    box-shadow: var(--shadow-game-card);
 }
 
 .photo-preview-frame img {
