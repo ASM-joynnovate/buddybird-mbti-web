@@ -709,7 +709,12 @@ body {
 }
 
 /* ── Type detail modal (도감 + result match → /dex?focus). Ported from the bundle
- * styles.css. Per-type gradient hero via --type-grad (injected inline by React). ── */
+ * styles.css. Per-type gradient hero via --type-grad (injected inline by React).
+ * Game panel skin (issue #25, lead-approved .modal*-scoped exception): cream
+ * surface + 28px panel radius + leaf border + floating shadow. Open/close motion
+ * is AnimatePresence-owned (type-modal.tsx) — the old `animation:` declarations
+ * are removed here because CSS animations beat Motion's inline styles in the
+ * cascade; the modal-fade/modal-in @keyframes below stay for the issue-27 sweep. ── */
 .modal-backdrop {
     position: fixed;
     inset: 0;
@@ -719,7 +724,6 @@ body {
     display: grid;
     place-items: center;
     padding: 20px;
-    animation: modal-fade 0.25s ease;
 }
 
 @keyframes modal-fade {
@@ -729,14 +733,16 @@ body {
 }
 
 .modal {
-    background: var(--color-surface);
-    border-radius: var(--r-card);
+    background: var(--color-surface-cream);
+    border: 2px solid var(--color-border-leaf);
+    border-radius: var(--radius-panel);
     max-width: 420px;
     width: 100%;
     max-height: 88dvh;
     overflow-y: auto;
-    box-shadow: var(--sh-lg);
-    animation: modal-in 0.4s var(--ease-spring);
+    box-shadow:
+        var(--shadow-floating),
+        inset 0 2px 0 rgba(255, 255, 255, 0.6);
 }
 
 @keyframes modal-in {
@@ -748,7 +754,7 @@ body {
 
 .modal-hero {
     position: relative;
-    border-radius: var(--r-card) var(--r-card) 0 0;
+    border-radius: calc(var(--radius-panel) - 2px) calc(var(--radius-panel) - 2px) 0 0;
     padding: 24px 24px 18px;
     text-align: center;
     color: #ffffff;
@@ -769,26 +775,13 @@ body {
     z-index: 1;
 }
 
+/* Positioning only — the skin comes from .game-btn--icon (issue #20 variant);
+ * the white focus ring stays for visibility on the gradient hero. */
 .modal-close {
     position: absolute;
     top: 14px;
     right: 14px;
     z-index: 2;
-    width: 36px;
-    height: 36px;
-    border: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.25);
-    color: #ffffff;
-    font-size: 18px;
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-    transition: background 0.2s var(--ease-leaf);
-}
-
-.modal-close:hover {
-    background: rgba(255, 255, 255, 0.4);
 }
 
 .modal-close:focus-visible {
@@ -828,16 +821,16 @@ body {
     padding: 22px 24px 26px;
 }
 
-/* Catchphrase pill — tinted with the type's primary color (set inline via --c1 by
- * callers is not needed here; the gradient hero already carries identity, so this
- * uses a soft surface-sunken fill). */
+/* Catchphrase pill — game-chip treatment (issue #21 vocabulary): semi-solid
+ * mint surface + leaf border on the cream panel body. */
 .modal-tag {
     display: inline-block;
     margin: 0 0 16px;
     padding: 9px 18px;
     border-radius: var(--r-pill);
-    background: var(--color-surface-sunken);
-    color: var(--color-ink);
+    background: var(--color-surface-mint);
+    border: 2px solid var(--color-border-leaf);
+    color: var(--color-ink-forest);
     font-weight: 700;
     font-size: 0.9375rem;
     line-height: 1.4;
@@ -860,11 +853,7 @@ body {
 /* Respect reduced-motion: neutralize the playful springs + idle drifts. The
  * carousel keeps its own guard; this covers the new buttons/entrances/decor. */
 @media (prefers-reduced-motion: reduce) {
-    .modal,
-    .modal-backdrop {
-        animation-duration: 0.001ms;
-    }
-
+    /* (Modal open/close reduced-motion handling is Motion-owned — issue #25.) */
     .chip,
     .btn,
     .game-btn {

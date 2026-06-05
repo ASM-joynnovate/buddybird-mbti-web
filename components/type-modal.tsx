@@ -6,11 +6,36 @@
 // Ported from the bundle TypeModal with real a11y: role="dialog" + aria-modal, Escape
 // + backdrop close, initial focus on the close button, a Tab focus trap, restored
 // focus on unmount, and a body scroll lock while open.
+//
+// Motion pass (issue #25, ADR-0006): open/close runs through AnimatePresence —
+// the caller (dex-view) wraps the conditional mount, this component declares
+// enter/exit variants (backdrop fade + sheetSlideUp panel; the exit leg is new,
+// the old modal-fade/modal-in keyframes had none). Under prefers-reduced-motion
+// both legs degrade to a quick opacity-only fade. The close button is the
+// issue-20 GameButton icon variant.
 import { useEffect, useRef, type CSSProperties } from 'react'
+import { m, useReducedMotion, type Variants } from 'motion/react'
+import { GameButton } from '@/components/game-button'
 import { ParrotImage } from '@/components/parrot-image'
 import { getTypeInfo, typeGradient } from '@/content'
 import type { TypeCode } from '@/lib/mbti'
+import { durationBase, durationFast, sheetSlideUp } from '@/lib/motion'
 import { MatchChip } from './match-chip'
+
+// Backdrop cross-fade with an explicit exit leg (paired with sheetSlideUp on
+// the panel; both consumed by the AnimatePresence wrapper in dex-view).
+const backdropFade: Variants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: durationBase } },
+    exit: { opacity: 0, transition: { duration: durationFast } },
+}
+
+// Reduced motion: opacity-only on both layers, exit included.
+const reducedFade: Variants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.12 } },
+    exit: { opacity: 0, transition: { duration: 0.08 } },
+}
 
 interface TypeModalProps {
     code: TypeCode
@@ -20,6 +45,7 @@ interface TypeModalProps {
 export function TypeModal({ code, onClose }: TypeModalProps) {
     const dialogRef = useRef<HTMLDivElement>(null)
     const closeRef = useRef<HTMLButtonElement>(null)
+    const reducedMotion = useReducedMotion()
 
     useEffect(() => {
         const previouslyFocused = document.activeElement as HTMLElement | null
@@ -70,8 +96,15 @@ export function TypeModal({ code, onClose }: TypeModalProps) {
     const style = { '--type-grad': typeGradient(code) } as CSSProperties
 
     return (
-        <div className="modal-backdrop" onClick={onClose}>
-            <div
+        <m.div
+            className="modal-backdrop"
+            onClick={onClose}
+            variants={reducedMotion ? reducedFade : backdropFade}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+        >
+            <m.div
                 ref={dialogRef}
                 className="modal"
                 role="dialog"
@@ -80,18 +113,19 @@ export function TypeModal({ code, onClose }: TypeModalProps) {
                 onClick={(event) => event.stopPropagation()}
                 style={style}
                 data-testid={`type-modal-${code}`}
+                variants={reducedMotion ? reducedFade : sheetSlideUp}
             >
                 <div className="modal-hero">
-                    <button
+                    <GameButton
                         ref={closeRef}
-                        type="button"
+                        variant="icon"
                         className="modal-close"
                         onClick={onClose}
                         aria-label="닫기"
                         data-testid="modal-close"
                     >
                         ✕
-                    </button>
+                    </GameButton>
                     <div className="modal-art">
                         <ParrotImage type={code} width={280} height={280} loading="eager" />
                     </div>
@@ -109,7 +143,7 @@ export function TypeModal({ code, onClose }: TypeModalProps) {
                         ))}
                     </div>
                 </div>
-            </div>
-        </div>
+            </m.div>
+        </m.div>
     )
 }

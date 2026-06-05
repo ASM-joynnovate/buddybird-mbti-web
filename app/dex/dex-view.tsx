@@ -7,7 +7,7 @@
 // (used by MatchChips) auto-opens that type's modal.
 import { useState, type CSSProperties } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { m, useReducedMotion } from 'motion/react'
+import { AnimatePresence, m, useReducedMotion } from 'motion/react'
 import { GameButton } from '@/components/game-button'
 import { ParrotImage } from '@/components/parrot-image'
 import { TypeModal } from '@/components/type-modal'
@@ -93,7 +93,14 @@ export function DexView() {
                 </GameButton>
             </div>
 
-            {focused !== null && <TypeModal code={focused} onClose={handleClose} />}
+            {/* AnimatePresence keeps the modal mounted through its exit leg
+                (issue #25) — open/close both animate; keyed by type so a
+                ?focus deep-link swap while open cross-fades cleanly. */}
+            <AnimatePresence>
+                {focused !== null && (
+                    <TypeModal key={focused} code={focused} onClose={handleClose} />
+                )}
+            </AnimatePresence>
         </main>
     )
 }

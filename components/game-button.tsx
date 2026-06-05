@@ -8,7 +8,7 @@
 // stance (primary = bell orange ONLY, lime never on actions) lives there.
 // Under prefers-reduced-motion the tap motion is dropped; the button stays
 // fully usable.
-import type { ReactNode } from 'react'
+import type { ReactNode, Ref } from 'react'
 import { m, useReducedMotion } from 'motion/react'
 import { buttonTap } from '@/lib/motion'
 
@@ -46,6 +46,8 @@ interface GameButtonProps extends GameButtonBaseProps {
     onClick?: () => void
     type?: 'button' | 'submit'
     disabled?: boolean
+    /** React 19 ref-as-prop — callers needing imperative focus (e.g. modal initial focus). */
+    ref?: Ref<HTMLButtonElement>
 }
 
 export function GameButton({
@@ -56,12 +58,14 @@ export function GameButton({
     className,
     type = 'button',
     disabled,
+    ref,
     ...rest
 }: GameButtonProps) {
     const reducedMotion = useReducedMotion()
 
     return (
         <m.button
+            ref={ref}
             type={type}
             onClick={onClick}
             disabled={disabled}
