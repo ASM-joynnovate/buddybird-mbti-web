@@ -4,6 +4,7 @@
 // `app_cta_click` emit in one place guarantees the funnel event fires with a correct
 // placement no matter where the CTA is rendered (issue #06/#07/#11). The link target
 // is a single placeholder constant swapped in issue #10.
+import { GameButtonLink } from '@/components/game-button'
 import { track } from '@/lib/analytics'
 import { APP_CTA_LABEL, APP_CTA_URL } from '@/lib/app-cta'
 
@@ -17,16 +18,17 @@ export function AppCtaButton({ placement }: AppCtaButtonProps) {
     }
 
     return (
-        <a
+        <GameButtonLink
+            variant="secondary"
+            size="sm"
             href={APP_CTA_URL}
             target="_blank"
             rel="noopener noreferrer"
             data-testid={`app-cta-${placement}`}
             onClick={handleClick}
-            className="btn-candy--ghost inline-flex items-center gap-2 rounded-full border border-outline bg-[var(--color-surface)] px-6 py-3 text-sm font-bold text-ink focus-visible:[outline:3px_solid_var(--color-primary)] focus-visible:[outline-offset:2px]"
         >
             <span aria-hidden="true">🐦</span>
             {APP_CTA_LABEL}
-        </a>
+        </GameButtonLink>
     )
 }

@@ -139,25 +139,7 @@
     margin-top: 32px;
 }
 
-.dex-back {
-    border: 1px solid var(--color-outline);
-    background: var(--color-surface);
-    color: var(--color-ink);
-    border-radius: var(--r-pill);
-    padding: 14px 28px;
-    font: inherit;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.dex-back:hover {
-    border-color: var(--color-primary);
-}
-
-.dex-back:focus-visible {
-    outline: 3px solid var(--color-primary);
-    outline-offset: 2px;
-}
+/* (The back button is a .game-btn--secondary — issue #20.) */
 
 @media (prefers-reduced-motion: reduce) {
     .dex-card {

@@ -63,45 +63,5 @@
     gap: 10px;
 }
 
-.photo-btn {
-    border: 1px solid var(--color-outline);
-    border-radius: 9999px;
-    background: var(--color-surface);
-    color: var(--color-ink);
-    padding: 12px 20px;
-    font: inherit;
-    font-size: 0.9375rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition:
-        border-color 160ms var(--ease-leaf),
-        box-shadow 160ms var(--ease-leaf);
-}
-
-.photo-btn:hover {
-    border-color: var(--color-primary);
-    box-shadow: var(--shadow-leaf-low);
-}
-
-.photo-btn:focus-visible {
-    outline: 3px solid var(--color-primary);
-    outline-offset: 2px;
-}
-
-.photo-btn--primary {
-    background: var(--color-foliage-mid);
-    border-color: var(--color-foliage-mid);
-    color: #ffffff;
-}
-
-.photo-btn--primary:hover {
-    border-color: var(--color-foliage-deep);
-    background: var(--color-foliage-deep);
-}
-
-.photo-btn--ghost {
-    border-color: transparent;
-    background: transparent;
-    color: var(--color-ink-muted);
-    font-weight: 600;
-}
+/* (The action buttons are .game-btn--secondary / --ghost — issue #20; only the
+ * layout shells above remain here.) */

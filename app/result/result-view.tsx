@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { AppCtaButton } from '@/components/app-cta-button'
 import { AxisBars } from '@/components/axis-bars'
 import { Confetti } from '@/components/confetti'
+import { GameButton } from '@/components/game-button'
 import { MatchChip } from '@/components/match-chip'
 import { ParrotImage } from '@/components/parrot-image'
 import { PhotoInput } from '@/components/photo-input'
@@ -73,13 +74,9 @@ export function ResultView() {
             <main data-testid="result-root" className="result-surface">
                 <div className="result-empty">
                     <p style={{ color: 'var(--color-ink-muted)' }}>결과 없음</p>
-                    <button
-                        type="button"
-                        onClick={() => router.push('/')}
-                        className="result-restart btn-candy--ghost"
-                    >
+                    <GameButton variant="secondary" onClick={() => router.push('/')}>
                         처음으로
-                    </button>
+                    </GameButton>
                 </div>
             </main>
         )
@@ -161,32 +158,29 @@ export function ResultView() {
 
                     <div className="result-actions">
                         <AppCtaButton placement="result" />
-                        <button
-                            type="button"
+                        <GameButton
+                            variant="secondary"
                             data-testid="dex-link"
                             onClick={() => router.push(`/dex?mine=${type}`)}
-                            className="result-restart btn-candy--ghost"
                         >
                             도감에서 보기
-                        </button>
+                        </GameButton>
                         {isSharedVisitor ? (
-                            <button
-                                type="button"
+                            <GameButton
+                                variant="secondary"
                                 data-testid="retake-button"
                                 onClick={handleRestart}
-                                className="result-restart btn-candy--ghost"
                             >
                                 나도 테스트하기
-                            </button>
+                            </GameButton>
                         ) : (
-                            <button
-                                type="button"
+                            <GameButton
+                                variant="secondary"
                                 data-testid="restart-button"
                                 onClick={handleRestart}
-                                className="result-restart btn-candy--ghost"
                             >
                                 다시하기
-                            </button>
+                            </GameButton>
                         )}
                     </div>
                 </div>

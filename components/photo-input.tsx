@@ -6,6 +6,7 @@
 // preview with re-take / re-select. 100% client-side — the file never leaves the
 // device. Emits `photo_attached` with the source that fired (issue #11).
 import { useRef, type ChangeEvent } from 'react'
+import { GameButton } from '@/components/game-button'
 import { track } from '@/lib/analytics'
 import './photo-input.css'
 
@@ -58,51 +59,51 @@ export function PhotoInput({ objectUrl, onPick, onClear }: PhotoInputProps) {
                         <img src={objectUrl} alt="선택한 우리 새 사진 미리보기" />
                     </div>
                     <div className="photo-actions">
-                        <button
-                            type="button"
-                            className="photo-btn"
+                        <GameButton
+                            variant="secondary"
+                            size="sm"
                             data-testid="photo-retake"
                             onClick={() => cameraRef.current?.click()}
                         >
                             다시 찍기
-                        </button>
-                        <button
-                            type="button"
-                            className="photo-btn"
+                        </GameButton>
+                        <GameButton
+                            variant="secondary"
+                            size="sm"
                             onClick={() => galleryRef.current?.click()}
                         >
                             다시 선택
-                        </button>
-                        <button
-                            type="button"
-                            className="photo-btn photo-btn--ghost"
+                        </GameButton>
+                        <GameButton
+                            variant="ghost"
+                            size="sm"
                             data-testid="photo-clear"
                             onClick={onClear}
                         >
                             제거
-                        </button>
+                        </GameButton>
                     </div>
                 </div>
             ) : (
                 <div className="photo-pick">
                     <p className="photo-hint">우리 새 사진을 더하면 공유 카드에 함께 담겨요.</p>
                     <div className="photo-actions">
-                        <button
-                            type="button"
-                            className="photo-btn photo-btn--primary"
+                        <GameButton
+                            variant="secondary"
+                            size="sm"
                             data-testid="photo-camera-button"
                             onClick={() => cameraRef.current?.click()}
                         >
                             📷 사진 촬영
-                        </button>
-                        <button
-                            type="button"
-                            className="photo-btn"
+                        </GameButton>
+                        <GameButton
+                            variant="secondary"
+                            size="sm"
                             data-testid="photo-gallery-button"
                             onClick={() => galleryRef.current?.click()}
                         >
                             🖼️ 갤러리에서 선택
-                        </button>
+                        </GameButton>
                     </div>
                 </div>
             )}

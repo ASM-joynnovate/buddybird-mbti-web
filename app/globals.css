@@ -204,8 +204,8 @@ body {
     color: var(--color-ink);
 }
 
-/* ── Candy buttons — dimensional CTA (inset highlight + bottom-shadow + colored
- * drop shadow), springy hover/active. Shared by intro + result primary actions. */
+/* ── Candy buttons — DEPRECATED (issue #20): replaced by the .game-btn system
+ * below; zero TSX consumers remain. Kept only for the issue #27 sweep. ── */
 .btn-candy {
     box-shadow:
         0 10px 24px -6px color-mix(in srgb, var(--color-primary) 42%, transparent),
@@ -252,9 +252,9 @@ body {
     transform: translateY(1px) scale(0.98);
 }
 
-/* ── Candy button system (.btn) — ported verbatim from the Claude Design bundle.
- * The dimensional CTA: inset highlight + bottom shadow + colored drop shadow, springy
- * hover/active. --brand / --lg / --ghost / --sm modifiers. ── */
+/* ── Candy button system (.btn) — DEPRECATED (issue #20): replaced by the
+ * .game-btn system below; zero TSX consumers remain. Kept only for the issue
+ * #27 sweep. ── */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -328,11 +328,19 @@ body {
  * components/mobile-forest-background.{tsx,css}, mounted once via
  * <MobileForestBackground> in app/layout.tsx (ADR-0004). */
 
-/* ── Raised game button (issue #19 tracer — the full game button system lands
- * in issue #20). Bottom depth shadow = the button's own pressed shade, so the
- * button reads as a physical block sitting in the forest world. The press
- * motion (sink + shrink) is Motion's whileTap (lib/motion buttonTap); the CSS
- * :active state only shrinks the depth shadow in concert. ── */
+/* ── Game button system (issue #20) — the app-wide "cozy forest game" button
+ * vocabulary, replacing the deprecated .btn / .btn-candy families above.
+ * Every variant is a soft physical block: bottom depth bar in the button's own
+ * pressed shade + forest-toned drop + subtle inner top highlight. The press
+ * motion (sink + shrink) is Motion's whileTap (lib/motion buttonTap, via
+ * components/game-button.tsx); the CSS :active state only squashes the depth
+ * shadow in concert. Color stance (ADR-0006): primary actions are bell orange
+ * ONLY — the lime accent never colors an action button.
+ *
+ * Variants: --primary (orange raised CTA, 56px) · --secondary (cream raised,
+ * 48px) · --ghost (low-emphasis text, 44px) · --icon (44px round) · --fab
+ * (60px round floating). Size modifier: --sm (44px compact pill). Disabled is
+ * a state of every variant (flattened depth + desaturated). ── */
 .game-btn {
     display: inline-flex;
     align-items: center;
@@ -342,6 +350,7 @@ body {
     border: 0;
     border-radius: var(--r-pill);
     font-family: var(--font-display), system-ui, sans-serif;
+    line-height: 1.2;
     white-space: nowrap;
     cursor: pointer;
     min-height: 48px;
@@ -354,6 +363,15 @@ body {
     outline-offset: 3px;
 }
 
+/* Disabled — flatten the raised read (no depth bar travel), mute the fill.
+ * Fully usable without motion: whileTap is also dropped by the component. */
+.game-btn:disabled {
+    cursor: not-allowed;
+    filter: saturate(0.4);
+    opacity: 0.6;
+}
+
+/* Primary — THE action color (bell orange, ADR-0001/0006). Main CTAs: 56px. */
 .game-btn--primary {
     background: var(--color-primary);
     color: var(--color-on-primary);
@@ -370,15 +388,122 @@ body {
         filter var(--duration-fast) var(--ease-leaf);
 }
 
-.game-btn--primary:hover {
+.game-btn--primary:hover:not(:disabled) {
     filter: saturate(1.06) brightness(1.03);
 }
 
-.game-btn--primary:active {
+.game-btn--primary:active:not(:disabled) {
     box-shadow:
         0 2px 0 var(--color-primary-active),
         0 8px 16px -10px color-mix(in srgb, var(--color-primary) 40%, transparent),
         inset 0 2px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Secondary — cream game-panel surface with a leaf-green outline + depth bar.
+ * High-contrast deep-green ink so it never sinks into the forest backdrop. */
+.game-btn--secondary {
+    background: var(--color-surface-cream);
+    color: var(--color-ink-forest);
+    font-size: 17px;
+    padding: 12px 28px;
+    border: 2px solid var(--color-border-leaf);
+    box-shadow:
+        0 5px 0 var(--color-border-leaf),
+        0 12px 22px -12px rgba(58, 46, 26, 0.25),
+        inset 0 2px 0 rgba(255, 255, 255, 0.85);
+    transition:
+        box-shadow var(--duration-fast) var(--ease-leaf),
+        background var(--duration-fast) var(--ease-leaf),
+        border-color var(--duration-fast) var(--ease-leaf);
+}
+
+.game-btn--secondary:hover:not(:disabled) {
+    background: #fffcf0;
+    border-color: color-mix(in srgb, var(--color-border-leaf) 70%, var(--color-accent-deep));
+}
+
+.game-btn--secondary:active:not(:disabled) {
+    box-shadow:
+        0 2px 0 var(--color-border-leaf),
+        0 6px 14px -12px rgba(58, 46, 26, 0.22),
+        inset 0 2px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* Ghost — quiet inline action (back/exit, clear). No raised body, full target. */
+.game-btn--ghost {
+    background: transparent;
+    color: var(--color-ink-muted);
+    font-size: 15px;
+    padding: 10px 16px;
+    min-height: 44px;
+    transition:
+        color var(--duration-fast) var(--ease-leaf),
+        background var(--duration-fast) var(--ease-leaf);
+}
+
+.game-btn--ghost:hover:not(:disabled) {
+    color: var(--color-ink);
+    background: color-mix(in srgb, var(--color-surface-cream) 60%, transparent);
+}
+
+/* Icon — 44px round block (close / utility glyphs). */
+.game-btn--icon {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    background: var(--color-surface-cream);
+    color: var(--color-ink-forest);
+    font-size: 18px;
+    border: 2px solid var(--color-border-leaf);
+    box-shadow:
+        0 3px 0 var(--color-border-leaf),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    transition:
+        box-shadow var(--duration-fast) var(--ease-leaf),
+        background var(--duration-fast) var(--ease-leaf);
+}
+
+.game-btn--icon:active:not(:disabled) {
+    box-shadow:
+        0 1px 0 var(--color-border-leaf),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* FAB — floating action: 60px round primary block with the floating lift.
+ * Positioning (fixed/absolute) is the caller's concern. */
+.game-btn--fab {
+    width: 60px;
+    height: 60px;
+    min-height: 60px;
+    padding: 0;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    font-size: 26px;
+    box-shadow:
+        0 5px 0 var(--color-primary-active),
+        var(--shadow-floating),
+        inset 0 2px 0 rgba(255, 255, 255, 0.35);
+    transition:
+        box-shadow var(--duration-fast) var(--ease-leaf),
+        filter var(--duration-fast) var(--ease-leaf);
+}
+
+.game-btn--fab:active:not(:disabled) {
+    box-shadow:
+        0 2px 0 var(--color-primary-active),
+        0 10px 22px -12px rgba(46, 64, 22, 0.26),
+        inset 0 2px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Compact pill — keeps the 44px touch floor while reading smaller. */
+.game-btn--sm {
+    font-size: 15px;
+    padding: 10px 20px;
+    min-height: 44px;
+    gap: 7px;
 }
 
 /* ── Shared entrance/idle keyframes (playful spring motion). ── */
@@ -647,7 +772,8 @@ body {
     }
 
     .chip,
-    .btn {
+    .btn,
+    .game-btn {
         transition-duration: 0.08s;
     }
 

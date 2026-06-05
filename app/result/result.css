@@ -229,48 +229,8 @@
     width: 100%;
 }
 
-.share-button {
-    border: 0;
-    border-radius: 9999px;
-    background: var(--color-primary);
-    color: var(--color-on-primary);
-    padding: 16px 36px;
-    font: inherit;
-    font-size: 1.0625rem;
-    font-weight: 700;
-    cursor: pointer;
-    /* Candy dimensionality: inset highlight + bottom shadow + colored drop shadow. */
-    box-shadow:
-        0 10px 24px -6px color-mix(in srgb, var(--color-primary) 42%, transparent),
-        inset 0 -5px 0 rgba(0, 0, 0, 0.16),
-        inset 0 3px 0 rgba(255, 255, 255, 0.3);
-    transition:
-        background 0.2s var(--ease-leaf),
-        transform 0.28s var(--ease-spring),
-        box-shadow 0.28s var(--ease-spring);
-}
-
-.share-button:hover {
-    background: var(--color-primary-hover);
-    transform: translateY(-3px) scale(1.03);
-}
-
-.share-button:active {
-    transform: translateY(1px) scale(0.98);
-    box-shadow:
-        0 4px 12px -6px color-mix(in srgb, var(--color-primary) 38%, transparent),
-        inset 0 -2px 0 rgba(0, 0, 0, 0.18);
-}
-
-.share-button:disabled {
-    opacity: 0.7;
-    cursor: progress;
-}
-
-.share-button:focus-visible {
-    outline: 3px solid var(--color-primary);
-    outline-offset: 2px;
-}
+/* The share trigger itself is a .game-btn--primary (issue #20) — see
+ * globals.css; only the layout shell + hint remain here. */
 
 .share-hint {
     margin: 0;
@@ -290,30 +250,7 @@
     padding-top: 28px;
 }
 
-.result-restart {
-    border: 1px solid var(--color-outline);
-    background: var(--color-surface);
-    color: var(--color-ink);
-    border-radius: 9999px;
-    padding: 16px 32px;
-    font: inherit;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition:
-        border-color 160ms var(--ease-leaf),
-        box-shadow 160ms var(--ease-leaf);
-}
-
-.result-restart:hover {
-    /* Lift + shadow handled by .btn-candy--ghost; here only the accent border. */
-    border-color: var(--color-primary);
-}
-
-.result-restart:focus-visible {
-    outline: 3px solid var(--color-primary);
-    outline-offset: 2px;
-}
+/* (Restart / dex-link / retake buttons are .game-btn--secondary — issue #20.) */
 
 /* --- Empty state --- */
 .result-empty {
@@ -329,14 +266,4 @@
     text-align: center;
 }
 
-/* Reduced-motion: drop the share button's springy lift (color change is fine). */
-@media (prefers-reduced-motion: reduce) {
-    .share-button {
-        transition-duration: 0.08s;
-    }
-
-    .share-button:hover,
-    .share-button:active {
-        transform: none;
-    }
-}
+/* (Reduced-motion handling for the buttons lives with .game-btn in globals.css.) */

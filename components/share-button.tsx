@@ -4,6 +4,7 @@
 // optional photo, then shares it natively or downloads it as a fallback, emitting the
 // matching funnel event (issue #11). Works with no photo (placeholder hero).
 import { useState } from 'react'
+import { GameButton } from '@/components/game-button'
 import { BRAND_LOGO_SRC, getTypeInfo } from '@/content'
 import { track } from '@/lib/analytics'
 import { composeCard, loadImage } from '@/lib/card'
@@ -57,15 +58,14 @@ export function ShareButton({ type, photoUrl }: ShareButtonProps) {
 
     return (
         <div className="share">
-            <button
-                type="button"
+            <GameButton
+                variant="primary"
                 data-testid="share-button"
-                className="share-button"
                 onClick={handleShare}
                 disabled={busy}
             >
                 {busy ? '카드 만드는 중…' : '결과 카드 공유하기'}
-            </button>
+            </GameButton>
             {hint !== null && (
                 <p className="share-hint" role="status" data-testid="share-hint">
                     {hint}

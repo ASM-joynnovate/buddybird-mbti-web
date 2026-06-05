@@ -57,14 +57,15 @@ export default function Home() {
 
                 {/* Group 2 — dex entry + stats (middle of the screen). */}
                 <div className="hero-group hero-group--mid">
-                    <button
-                        type="button"
+                    <GameButton
+                        variant="secondary"
+                        size="sm"
                         data-testid="dex-button"
                         onClick={() => router.push('/dex')}
-                        className="btn btn--ghost btn--sm hero-dex"
+                        className="hero-dex"
                     >
                         16유형 도감 보기
-                    </button>
+                    </GameButton>
 
                     <div className="hero-stats">
                         <div>

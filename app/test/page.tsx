@@ -8,6 +8,7 @@
 // the presentation is reskinned.
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { useRouter } from 'next/navigation'
+import { GameButton } from '@/components/game-button'
 import { QUESTION_COUNT, QUESTIONS } from '@/content'
 import { track } from '@/lib/analytics'
 import { computeResult, type Choice } from '@/lib/mbti'
@@ -117,15 +118,15 @@ export default function TestPage() {
     return (
         <main data-testid="test-root" className="test-surface">
             <div className="quiz-meta">
-                <button
-                    type="button"
+                <GameButton
+                    variant="ghost"
                     data-testid="back-button"
                     onClick={handleBack}
                     className="quiz-back"
                 >
                     <span aria-hidden="true">←</span>
                     {currentIndex === 0 ? '나가기' : '이전'}
-                </button>
+                </GameButton>
                 <span>
                     {currentIndex + 1} / {QUESTION_COUNT}
                 </span>

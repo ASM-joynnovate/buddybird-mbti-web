@@ -7,6 +7,7 @@
 // (used by MatchChips) auto-opens that type's modal.
 import { useState, type CSSProperties } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { GameButton } from '@/components/game-button'
 import { ParrotImage } from '@/components/parrot-image'
 import { TypeModal } from '@/components/type-modal'
 import { CAROUSEL_TYPES, getTypeInfo, typeGradient } from '@/content'
@@ -67,14 +68,13 @@ export function DexView() {
             </div>
 
             <div className="dex-actions">
-                <button
-                    type="button"
-                    className="dex-back btn-candy--ghost"
+                <GameButton
+                    variant="secondary"
                     onClick={() => router.push('/')}
                     data-testid="dex-back"
                 >
                     ← 돌아가기
-                </button>
+                </GameButton>
             </div>
 
             {focused !== null && <TypeModal code={focused} onClose={handleClose} />}
