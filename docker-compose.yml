@@ -1,0 +1,31 @@
+# BuddyBird MBTI — Next standalone container behind the existing Caddy (ADR-0002).
+# Fixed project name so the compose project is stable regardless of the checkout
+# path the deploy runs from.
+name: buddybird-mbti
+
+services:
+    web:
+        build:
+            context: .
+        image: buddybird-mbti-web:latest
+        container_name: buddybird-mbti-web
+        restart: unless-stopped
+        # No host port publish — the existing Caddy reaches the container over the
+        # shared `proxy` network via its container name (buddybird-mbti-web:3000).
+        expose:
+            - '3000'
+        networks:
+            - proxy
+        healthcheck:
+            # 127.0.0.1 (not localhost): server binds IPv4 0.0.0.0; localhost → ::1.
+            # Trailing slash is canonical under trailingSlash:true.
+            test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:3000/api/healthz/']
+            interval: 30s
+            timeout: 5s
+            retries: 3
+            start_period: 10s
+
+networks:
+    # Pre-existing bridge network the Caddy reverse proxy already runs on.
+    proxy:
+        external: true
