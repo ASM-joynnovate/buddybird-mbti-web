@@ -204,132 +204,16 @@ body {
     color: var(--color-ink);
 }
 
-/* ── Candy buttons — DEPRECATED (issue #20): replaced by the .game-btn system
- * below; zero TSX consumers remain. Kept only for the issue #27 sweep. ── */
-.btn-candy {
-    box-shadow:
-        0 10px 24px -6px color-mix(in srgb, var(--color-primary) 42%, transparent),
-        inset 0 -5px 0 rgba(0, 0, 0, 0.16),
-        inset 0 3px 0 rgba(255, 255, 255, 0.32);
-    transition:
-        transform 0.28s var(--ease-spring),
-        box-shadow 0.28s var(--ease-spring),
-        background 0.2s var(--ease-leaf),
-        filter 0.2s var(--ease-leaf);
-}
-
-.btn-candy:hover {
-    transform: translateY(-3px) scale(1.03);
-    filter: saturate(1.06);
-}
-
-.btn-candy:active {
-    transform: translateY(1px) scale(0.98);
-    box-shadow:
-        0 4px 12px -6px color-mix(in srgb, var(--color-primary) 38%, transparent),
-        inset 0 -2px 0 rgba(0, 0, 0, 0.18);
-}
-
-/* Ghost candy — soft leaf-tinted lift for secondary/surface buttons (no pink tint). */
-.btn-candy--ghost {
-    box-shadow:
-        var(--shadow-leaf-low),
-        inset 0 -4px 0 color-mix(in srgb, var(--color-outline) 70%, transparent);
-    transition:
-        transform 0.28s var(--ease-spring),
-        box-shadow 0.28s var(--ease-spring),
-        border-color 0.2s var(--ease-leaf);
-}
-
-.btn-candy--ghost:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow:
-        var(--shadow-leaf-card),
-        inset 0 -4px 0 color-mix(in srgb, var(--color-outline) 70%, transparent);
-}
-
-.btn-candy--ghost:active {
-    transform: translateY(1px) scale(0.98);
-}
-
-/* ── Candy button system (.btn) — DEPRECATED (issue #20): replaced by the
- * .game-btn system below; zero TSX consumers remain. Kept only for the issue
- * #27 sweep. ── */
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    border: 0;
-    border-radius: var(--r-pill);
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-size: 20px;
-    padding: 18px 34px;
-    color: #ffffff;
-    position: relative;
-    background: var(--cta);
-    white-space: nowrap;
-    cursor: pointer;
-    box-shadow:
-        0 10px 24px color-mix(in srgb, var(--cta) 42%, transparent),
-        inset 0 -5px 0 rgba(0, 0, 0, 0.18),
-        inset 0 3px 0 rgba(255, 255, 255, 0.4);
-    transition:
-        transform 0.3s var(--spring),
-        box-shadow 0.3s var(--spring),
-        filter 0.2s;
-}
-
-.btn:hover {
-    transform: translateY(-3px) scale(1.03);
-    filter: saturate(1.08);
-}
-
-.btn:active {
-    transform: translateY(1px) scale(0.98);
-    box-shadow:
-        0 4px 12px color-mix(in srgb, var(--cta) 36%, transparent),
-        inset 0 -2px 0 rgba(0, 0, 0, 0.18);
-}
-
-.btn:focus-visible {
-    outline: 3px solid var(--pop-blue);
-    outline-offset: 3px;
-}
-
-.btn--lg {
-    font-size: 24px;
-    padding: 22px 44px;
-}
-
-.btn--brand {
-    background: var(--brand);
-    box-shadow:
-        0 10px 24px color-mix(in srgb, var(--brand) 42%, transparent),
-        inset 0 -5px 0 rgba(0, 0, 0, 0.16),
-        inset 0 3px 0 rgba(255, 255, 255, 0.4);
-}
-
-.btn--ghost {
-    background: var(--color-surface);
-    color: var(--color-ink);
-    box-shadow:
-        var(--sh-sm),
-        inset 0 -4px 0 var(--color-outline);
-}
-
-.btn--sm {
-    font-size: 15px;
-    padding: 11px 20px;
-    gap: 7px;
-}
+/* (The legacy candy button families — .btn / .btn--* / .btn-candy /
+ * .btn-candy--ghost — were replaced by the .game-btn system below in issue #20
+ * and removed in the issue #27 sweep once grep showed zero consumers.) */
 
 /* The app-wide backdrop is the PNG forest layer in
  * components/mobile-forest-background.{tsx,css}, mounted once via
  * <MobileForestBackground> in app/layout.tsx (ADR-0004). */
 
 /* ── Game button system (issue #20) — the app-wide "cozy forest game" button
- * vocabulary, replacing the deprecated .btn / .btn-candy families above.
+ * vocabulary (the deprecated .btn / .btn-candy families it replaced are gone).
  * Every variant is a soft physical block: bottom depth bar in the button's own
  * pressed shade + forest-toned drop + subtle inner top highlight. The press
  * motion (sink + shrink) is Motion's whileTap (lib/motion buttonTap, via
@@ -595,42 +479,12 @@ body {
     font-size: 0.875rem;
 }
 
-/* ── Shared entrance/idle keyframes (playful spring motion). ── */
-@keyframes pop {
-    from {
-        transform: scale(0.4);
-        opacity: 0;
-    }
-}
-
-@keyframes bounce {
-    0% {
-        transform: scale(1);
-    }
-    40% {
-        transform: scale(1.06);
-    }
-    70% {
-        transform: scale(0.97);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-@keyframes float-up {
-    from {
-        opacity: 0;
-        transform: translateY(40px) scale(0.9);
-    }
-}
-
-@keyframes floaty {
-    to {
-        transform: translateY(-26px) rotate(8deg);
-    }
-}
-
+/* ── Confetti particle fall (issue #24 decision): the ONE intentionally kept
+ * CSS keyframe — 24 decorative sprites stay cheap as CSS animations while
+ * their layer's lifetime is AnimatePresence-owned (components/confetti.tsx).
+ * (The old entrance/idle keyframes — pop, bounce, float-up, floaty — and the
+ * .anim-pop/.anim-float-up utilities were replaced by lib/motion variants in
+ * issues #22–#24 and removed in the issue #27 sweep: zero users remained.) ── */
 @keyframes confetti-fall {
     from {
         opacity: 1;
@@ -640,15 +494,6 @@ body {
         opacity: 0;
         transform: translateY(86vh) rotate(640deg);
     }
-}
-
-/* Entrance utility classes. */
-.anim-pop {
-    animation: pop 0.5s var(--ease-spring) both;
-}
-
-.anim-float-up {
-    animation: float-up 0.7s var(--ease-spring) both;
 }
 
 /* ── Match chip (궁합) — cross-screen: result match section + type modal. Game
@@ -713,8 +558,8 @@ body {
  * Game panel skin (issue #25, lead-approved .modal*-scoped exception): cream
  * surface + 28px panel radius + leaf border + floating shadow. Open/close motion
  * is AnimatePresence-owned (type-modal.tsx) — the old `animation:` declarations
- * are removed here because CSS animations beat Motion's inline styles in the
- * cascade; the modal-fade/modal-in @keyframes below stay for the issue-27 sweep. ── */
+ * are removed because CSS animations beat Motion's inline styles in the cascade,
+ * and the modal-fade/modal-in @keyframes were deleted in the issue #27 sweep. ── */
 .modal-backdrop {
     position: fixed;
     inset: 0;
@@ -724,12 +569,6 @@ body {
     display: grid;
     place-items: center;
     padding: 20px;
-}
-
-@keyframes modal-fade {
-    from {
-        opacity: 0;
-    }
 }
 
 .modal {
@@ -743,13 +582,6 @@ body {
     box-shadow:
         var(--shadow-floating),
         inset 0 2px 0 rgba(255, 255, 255, 0.6);
-}
-
-@keyframes modal-in {
-    from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.95);
-    }
 }
 
 .modal-hero {
@@ -853,33 +685,16 @@ body {
 /* Respect reduced-motion: neutralize the playful springs + idle drifts. The
  * carousel keeps its own guard; this covers the new buttons/entrances/decor. */
 @media (prefers-reduced-motion: reduce) {
-    /* (Modal open/close reduced-motion handling is Motion-owned — issue #25.) */
+    /* Motion-owned surfaces (entrances, modal open/close, tap feedback) degrade
+     * via useReducedMotion in their components; CSS only shortens the remaining
+     * color/border/shadow transitions. */
     .chip,
-    .btn,
     .game-btn {
         transition-duration: 0.08s;
     }
 
-    .chip:hover,
-    .btn:hover,
-    .btn:active {
-        transform: none;
-    }
-
-    .btn-candy,
-    .btn-candy--ghost {
-        transition-duration: 0.08s;
-    }
-
-    .btn-candy:hover,
-    .btn-candy--ghost:hover,
-    .btn-candy:active,
-    .btn-candy--ghost:active {
-        transform: none;
-    }
-
-    .anim-pop,
-    .anim-float-up {
-        animation: none;
+    .chip:hover {
+        border-color: var(--color-border-leaf);
+        box-shadow: 0 2px 0 var(--color-border-leaf);
     }
 }

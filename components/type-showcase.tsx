@@ -45,6 +45,10 @@ export function TypeShowcase({ pool, intervalMs = 3000 }: TypeShowcaseProps) {
     const [paused, setPaused] = useState(false)
     const [animate, setAnimate] = useState(true)
 
+    // KEPT INTENTIONALLY through the Motion pass (issues #19–#27, user decision +
+    // ADR-0005): this setInterval and the silent-reset rAF below are STATE
+    // orchestration for the infinite carousel, not animation — the visible motion
+    // is a compositor-friendly CSS transform transition. Do not port to Motion.
     useEffect(() => {
         if (reduced || paused || len <= 1) {
             return
