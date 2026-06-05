@@ -7,11 +7,12 @@
 // seamlessly: the pool is tripled and a silent reset (transition suppressed for one
 // frame) jumps the position back into the middle copy at an identical cell, so the
 // wrap is invisible. Tap interaction + the remaining a11y affordances land in #16.
-import { useEffect, useState, type TransitionEvent } from 'react'
+import { useEffect, useState, type CSSProperties, type TransitionEvent } from 'react'
 import { ParrotImage } from '@/components/parrot-image'
 import { getTypeInfo, typeGradient } from '@/content'
 import { useReducedMotion } from '@/lib/hooks/use-reduced-motion'
 import type { TypeCode } from '@/lib/mbti'
+import { GROUP_CSS_VAR, temperamentGroup } from '@/lib/mbti/temperament'
 import './type-showcase.css'
 
 interface TypeShowcaseProps {
@@ -88,10 +89,18 @@ export function TypeShowcase({ pool, intervalMs = 3000 }: TypeShowcaseProps) {
         transition: animate ? undefined : 'none',
     }
 
+    // Temperament-group feather hue carries the active type's identity (DESIGN.md):
+    // it tints the card's accent stripe, the image-tile ring, and the centred peek
+    // tile's selection ring, so the active type reads as a distinct "faction".
+    const accentStyle = {
+        '--showcase-accent': GROUP_CSS_VAR[temperamentGroup(active)],
+    } as CSSProperties
+
     return (
         <section
             className="showcase"
             data-testid="intro-showcase"
+            style={accentStyle}
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
             onFocusCapture={() => setPaused(true)}

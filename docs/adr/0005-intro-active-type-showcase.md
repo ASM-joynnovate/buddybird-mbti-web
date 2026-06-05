@@ -68,6 +68,16 @@ while continuously parading the rest.
   the active type for assistive tech.
 - **Motion is transform/opacity only.** The slide, the active-tile emphasis, and the
   card swap animate compositor-friendly properties only, keeping the CLS/INP budget.
+- **DESIGN.md visual treatment.** The showcase carries the system's playful,
+  slightly game-like read per DESIGN.md: the active type's **temperament-group
+  feather hue** (`lib/mbti/temperament.ts`) tints the card spine, the image-tile
+  ring, and the selected peek tile's ring, so the type reads as its "faction"; tiles
+  wear a **candy bevel** (glossy top highlight + a deep-foliage bottom edge, mirroring
+  the existing `.btn`) and the selected tile pops with a springy overshoot
+  (`--ease-spring`). Radii use the shape tokens, shadows stay green-tinted. (The
+  DESIGN.md frontmatter still describes the superseded green "Tropical Jungle"
+  palette; the live binding is the cream "동화숲" token set in `globals.css` per the
+  ADR-0001/ADR-0002 pivot, so values come from those tokens, principles from DESIGN.md.)
 - **One bubbling pitfall to respect.** The peek tiles tween `opacity`/`transform`
   on (de)emphasis and those `transitionend` events bubble to the track; the loop's
   reset handler must therefore guard on `event.target === event.currentTarget &&
