@@ -1,417 +1,309 @@
 ---
-version: 1.0
-name: Parrot MBTI — Tropical Jungle (historical)
+version: alpha
+name: 동화숲 월드 (Fairytale Forest World)
 description: >-
-    Visual identity for the BuddyBird Parrot MBTI viral web. A bright daylight
-    tropical-jungle world on a green base, with parrot-feather accents, rounded
-    organic-leaf shapes, and a "part the foliage and move forward" motion language.
-    Mobile-first, single fixed theme, Korean-first. Direction and surface layout
-    confirmed in the issue #03 human design review (variant C — editorial trail);
-    the brand-anchor action color remains a placeholder until issue #12.
-    HISTORICAL (Tropical Jungle, pre-ADR-0002) — the token VALUES below are
-    superseded by the 동화숲 system in app/globals.css @theme; this frontmatter is
-    kept for design lineage only.
-
-# --- COLOR TOKENS (hex; brand anchor is a placeholder until issue #12) ---
+    A playful, game-like mobile design system for the Parrot MBTI test. Warm cream
+    parchment surfaces sit over a low-poly fairytale forest, and a single bell-orange
+    accent drives every action. Depth is conveyed through a tactile "raised block"
+    language — a colored bottom depth-bar, a soft drop shadow, and an inset top
+    highlight — so buttons, cards, chips and badges all feel pressable like game UI.
 colors:
-    # Action anchor — single CTA color across the whole funnel.
-    # PLACEHOLDER for the BuddyBird brand color; swap in one place when confirmed (#12).
-    # Deepened from raw hibiscus so white labels clear WCAG AA (4.5:1).
-    primary: '#C9215E' # deep hibiscus — pops on the green base, distinct from group hues
-    on-primary: '#FFFFFF'
-
-    # Secondary / tertiary surfaces of depth (foliage greens).
-    secondary: '#2E7D43' # deep leaf
-    on-secondary: '#FFFFFF'
-    tertiary: '#5AB45A' # mid leaf
-    on-tertiary: '#10331C'
-
-    # Base world (green family — daylight jungle, NOT cream/ivory).
-    background: '#E8F4DD' # pale leaf page base
-    surface: '#F4FBEC' # raised card surface (lighter leaf-white)
-    surface-sunken: '#DCEFCF' # recessed wells / progress track
-    on-surface: '#1A2E1F' # forest ink (green-tinted, not pure black)
-    on-surface-muted: '#4C6151'
-    outline: '#C2D8B0' # hairline / border on green
-
-    # Foliage depth layers (decorative overlap + tinted shadow source).
-    foliage-near: '#5AB45A'
-    foliage-mid: '#2E7D43'
-    foliage-deep: '#1B5E34'
-
-    # 4 temperament-group feather accents (type identity ONLY — never on action buttons).
-    group-ruby: '#E8443B' # Analyst group  (_NT_)
-    group-marigold: '#F4A93C' # Diplomat group (_NF_)
-    group-teal: '#15B8A0' # Sentinel group (_S_J)
-    group-cobalt: '#3D7BD9' # Explorer group (_S_P)
-    on-group: '#FFFFFF'
-
-    error: '#D7263D'
-    on-error: '#FFFFFF'
-
-# --- TYPOGRAPHY TOKENS (Jua display + Pretendard body) ---
+    primary: '#e8772e'
+    primary-hover: '#c85f1e'
+    primary-active: '#a84e16'
+    primary-soft: '#ffe2c8'
+    primary-glow: '#f9b277'
+    border-action: '#f0b486'
+    depth-action: '#e7a06a'
+    on-primary: '#ffffff'
+    gold: '#e8b53a'
+    surface: '#fbf3df'
+    surface-cream: '#fff8e3'
+    surface-mint: '#eafbd8'
+    on-surface: '#2a2118'
+    on-surface-muted: '#6b6150'
+    on-surface-forest: '#2e5016'
+    faction-analyst: '#7b3fb5'
+    faction-diplomat: '#e0568f'
+    faction-sentinel: '#3e8fd0'
+    faction-explorer: '#e08a2c'
 typography:
-    headline-display: # result type code — the hero
-        fontFamily: 'Jua'
-        fontSize: '3rem'
+    display:
+        fontFamily: Jua
+        fontSize: 46px
         fontWeight: 400
-        lineHeight: 1.05
-        letterSpacing: '-0.01em'
+        lineHeight: 1.08
+        letterSpacing: -0.01em
     headline-lg:
-        fontFamily: 'Jua'
-        fontSize: '2rem'
+        fontFamily: Jua
+        fontSize: 28px
         fontWeight: 400
         lineHeight: 1.1
-        letterSpacing: '-0.01em'
+        letterSpacing: 0.04em
     headline-md:
-        fontFamily: 'Jua'
-        fontSize: '1.5rem'
+        fontFamily: Jua
+        fontSize: 20px
         fontWeight: 400
         lineHeight: 1.15
-        letterSpacing: '0em'
-    body-lg:
-        fontFamily: 'Pretendard'
-        fontSize: '1.125rem'
-        fontWeight: 500
-        lineHeight: 1.6
-        letterSpacing: '0em'
-    body-md:
-        fontFamily: 'Pretendard'
-        fontSize: '1rem'
+    title-action:
+        fontFamily: Jua
+        fontSize: 23px
         fontWeight: 400
-        lineHeight: 1.6
-        letterSpacing: '0em'
-    body-sm:
-        fontFamily: 'Pretendard'
-        fontSize: '0.875rem'
+        lineHeight: 1.2
+    question:
+        fontFamily: Jua
+        fontSize: 22px
         fontWeight: 400
-        lineHeight: 1.55
-        letterSpacing: '0em'
+        lineHeight: 1.45
     label-lg:
-        fontFamily: 'Pretendard'
-        fontSize: '1rem'
+        fontFamily: Jua
+        fontSize: 15px
+        fontWeight: 400
+        lineHeight: 1
+        letterSpacing: 0.04em
+    body-lg:
+        fontFamily: Noto Sans KR
+        fontSize: 16px
+        fontWeight: 400
+        lineHeight: 1.6
+    body-md:
+        fontFamily: Noto Sans KR
+        fontSize: 14px
+        fontWeight: 500
+        lineHeight: 1.5
+    body-sm:
+        fontFamily: Noto Sans KR
+        fontSize: 13px
+        fontWeight: 400
+        lineHeight: 1.5
+    caption:
+        fontFamily: Noto Sans KR
+        fontSize: 12px
         fontWeight: 700
-        lineHeight: 1.2
-        letterSpacing: '0em'
-    label-md:
-        fontFamily: 'Pretendard'
-        fontSize: '0.875rem'
-        fontWeight: 700
-        lineHeight: 1.2
-        letterSpacing: '0.005em'
-    label-sm:
-        fontFamily: 'Pretendard'
-        fontSize: '0.75rem'
-        fontWeight: 600
-        lineHeight: 1.2
-        letterSpacing: '0.01em'
-
-# --- SHAPE / RADIUS (organic, generous) ---
+        lineHeight: 1.3
 rounded:
-    none: '0px'
-    sm: '12px'
-    md: '20px'
-    lg: '28px'
-    xl: '36px'
-    full: '9999px'
-
-# --- SPACING (4px base rhythm) ---
+    sm: 12px
+    md: 16px
+    lg: 20px
+    card: 24px
+    panel: 26px
+    full: 999px
 spacing:
-    xs: '4px'
-    sm: '8px'
-    md: '12px'
-    lg: '16px'
-    xl: '24px'
-    2xl: '32px'
-    3xl: '48px'
-
-# --- COMPONENT TOKENS ---
+    xs: 4px
+    sm: 8px
+    md: 14px
+    lg: 22px
+    xl: 32px
+    screen-padding: 22px
+    stack-gap: 14px
+    card-padding: 16px
 components:
     button-primary:
         backgroundColor: '{colors.primary}'
         textColor: '{colors.on-primary}'
+        typography: '{typography.title-action}'
+        rounded: '{rounded.full}'
+        padding: 16px 40px
+        height: 58px
+    button-primary-active:
+        backgroundColor: '{colors.primary-active}'
+    button-secondary:
+        backgroundColor: '{colors.surface-cream}'
+        textColor: '{colors.primary-active}'
         typography: '{typography.label-lg}'
         rounded: '{rounded.full}'
-        padding: '16px'
-    button-primary-hover:
-        backgroundColor: '#B31A53'
-        textColor: '{colors.on-primary}'
-        rounded: '{rounded.full}'
-    button-primary-active:
-        backgroundColor: '#9E1648'
-        textColor: '{colors.on-primary}'
-        rounded: '{rounded.full}'
-    choice-card:
-        backgroundColor: '{colors.surface}'
+        padding: 11px 22px
+        height: 46px
+    card-trading:
+        backgroundColor: '{colors.surface-cream}'
         textColor: '{colors.on-surface}'
-        typography: '{typography.body-lg}'
-        rounded: '{rounded.lg}'
-        padding: '20px'
-    choice-card-hover:
-        backgroundColor: '#FFFFFF'
+        rounded: '{rounded.card}'
+        padding: 6px
+    choice-outline:
+        backgroundColor: '{colors.surface-cream}'
         textColor: '{colors.on-surface}'
+        typography: '{typography.body-md}'
         rounded: '{rounded.lg}'
+        padding: 14px 16px
+    choice-outline-selected:
+        backgroundColor: '#fff7ec'
+        textColor: '{colors.on-surface}'
+    chip:
+        backgroundColor: '{colors.primary}'
+        textColor: '{colors.on-primary}'
+        typography: '{typography.label-lg}'
+        rounded: '{rounded.full}'
+        padding: 4px 14px
+    close-button:
+        backgroundColor: '{colors.surface-cream}'
+        textColor: '{colors.primary-active}'
+        rounded: '{rounded.full}'
+        size: 40px
     progress-track:
-        backgroundColor: '{colors.surface-sunken}'
+        backgroundColor: '{colors.surface-cream}'
         rounded: '{rounded.full}'
-        height: '8px'
-    badge-type:
-        backgroundColor: '#2C5FB0'
-        textColor: '{colors.on-group}'
-        typography: '{typography.label-md}'
+        height: 16px
+    progress-fill:
+        backgroundColor: '{colors.primary}'
         rounded: '{rounded.full}'
-        padding: '8px'
-    result-card:
-        backgroundColor: '{colors.surface}'
-        textColor: '{colors.on-surface}'
-        rounded: '{rounded.xl}'
-        width: '1080px'
-        height: '1080px'
 ---
 
-# Overview
+# 동화숲 월드 — Parrot MBTI Design System
 
-A **tropical daylight jungle**, rendered bright and tactile for a phone screen and
-for the Instagram feed it will be shared into. The world sits on a **green base**
-(not cream or ivory): a pale-leaf page with lighter leaf-white cards floating on
-it. Depth comes not from darkness but from **layered foliage** — leaves that
-overlap, cast soft green-tinted shadows, and part as you move through the test.
+## Overview
 
-The personality is **playful, warm, and a little wild** — a cute parrot peeking
-through the grass, not a corporate quiz. Vivid parrot-feather colors do the
-shouting; the green world keeps it grounded so the feathers (and the user's own
-parrot photo) stay the loudest thing on screen.
+동화숲 월드 ("Fairytale Forest World") is the visual identity for a playful parrot
+MBTI personality test delivered as a mobile app. The mood is **cozy, tactile, and
+game-like** — closer to a cute mobile collection game than a utilitarian form. Every
+surface is warm cream parchment floating over a hand-painted low-poly forest, and the
+entire interface is anchored by **one** energetic accent: bell orange.
 
-This is a **standalone viral microsite**, not the BuddyBird app. It defines its
-own look, and anchors back to the app only through the brand color and logo on
-the result card and CTAs. Single fixed theme (no automatic dark mode) — the
-shared result card must look identical for every viewer.
+The defining trait of the system is its **raised-block depth language**. Buttons, cards,
+chips, badges and panels all share the same recipe: a solid bottom _depth bar_ in a
+darker shade, a soft ambient drop shadow, and an inset top highlight. Pressing an element
+translates it down and shrinks its depth bar, so the whole UI feels physically pressable —
+like buttons on a toy. This tactility is the brand; preserve it on every new component.
 
-> **Confirmed in the issue #03 human design review:** the visual direction and
-> the **Test surface layout — variant C, "editorial trail"** (see below). The
-> `primary` action color remains a **placeholder** until the BuddyBird brand color
-> lands (issue #12); it is a single token and swaps in one place.
+Target audience: casual consumers (mobile-first, Korean-language) looking for a fun,
+shareable personality quiz. The emotional response should be **delight and warmth** —
+inviting, soft-cornered, never clinical. When a rule is undefined, choose the more
+playful, rounder, warmer option.
 
-# Confirmed surface layout (issue #03 — variant C)
+## Colors
 
-The Test 문항 화면 — the highest-density surface — was prototyped in three
-executions and the **editorial trail** was chosen for its calm and legibility:
+The palette is a single evocative accent over warm neutrals, with a forest-derived
+secondary set used only for personality-group identity.
 
-- **Backdrop.** The app-wide **PNG layered forest** (ADR-0004), a single fixed
-  layer behind every surface (`<MobileForestBackground>`). A **cream legibility
-  veil** washes the central content band so the forest is atmosphere, never
-  competing with the text. (Superseded the former SVG leaf + gradient backdrop.)
-- **Progress trail.** A horizontal band of step markers (`done`/`current`/upcoming)
-  plus an `N / 12` count, across the top.
-- **Photo card.** A surface card **above the question** holding the user's parrot
-  photo (a corner leaf accent gives overlap depth). _Photo capture/upload is a
-  separate issue; the layout reserves the slot._
-- **Question card.** The question on a `surface` card with a small `문항 N / 12`
-  kicker; large Jua header drives hierarchy by size.
-- **Choices.** Full-width flat rows anchored to the bottom: a decorative feather
-  accent bar (rotating group hue) + label on a safe rectangle + a chevron. The
-  whole row is the hit target; selecting auto-advances.
-- **Motion.** A gentle horizontal slide per question; instant cut under
-  `prefers-reduced-motion`.
+- **Primary — Bell Orange (#e8772e):** The sole driver of action and emphasis. Used for
+  primary buttons, the depth bars and borders of all game chrome, selection states,
+  badges, chips, and progress fills. `primary-hover (#c85f1e)` and
+  `primary-active (#a84e16)` are the darker family members used for hover and for the
+  pressed depth bar.
+- **Primary Soft / Glow (#ffe2c8 / #f9b277):** Tints used for focus rings, CTA halos, and
+  the lighter stop of orange gradients.
+- **Border & Depth Action (#f0b486 / #e7a06a):** Softened orange used for the resting
+  borders and depth bars of cream surfaces, so chrome reads as part of the orange family
+  without shouting.
+- **Surface — Warm Cream (#fff8e3) on Parchment (#fbf3df):** Cream is the foundation for
+  all foreground cards and chrome; parchment is the page/overlay base. Both are warmer and
+  friendlier than white.
+- **Surface Mint (#eafbd8):** A soft forest-tinted surface for secondary accents (e.g. the
+  question icon tile, helper chips).
+- **Gold (#e8b53a):** A festive companion to orange, used in highlight underlines and
+  progress gradients — never for primary actions.
+- **Ink (#2a2118 / muted #6b6150 / forest #2e5016):** Warm near-black for text, a muted
+  brown for secondary copy, and a deep forest green for on-mint labels.
+- **Faction accents (analyst #7b3fb5, diplomat #e0568f, sentinel #3e8fd0,
+  explorer #e08a2c):** Reserved exclusively for the four MBTI temperament groups. They
+  identify content; they are **not** part of the action system and never style buttons.
 
-The tokens below are bound to the app as a Tailwind `@theme` system in
-`app/globals.css`; primitives live on the Test surface (`app/test/`).
+## Typography
 
-# Colors
+Two families carry the system: **Jua** (a rounded, friendly Korean display face) for
+everything expressive, and **Noto Sans KR** for readable body copy.
 
-The system has four color families. Keep them in their lanes.
+- **Display / Headlines / Titles (Jua):** All headlines, MBTI codes, the hero title,
+  question text, button labels, counts and badges are set in Jua at weight 400. Jua's soft
+  geometry is the voice of the brand — warm and toy-like. Apply the `.font-display` class
+  (or `--title-font`) for these.
+- **Body (Noto Sans KR):** Descriptions, choice copy, and metadata use Noto Sans KR.
+  `body-lg` (16px) for primary reading, `body-md` (14px) for choices, `body-sm` (13px) for
+  card blurbs and captions.
+- **Korean wrapping:** Long Korean strings use `word-break: keep-all` and
+  `text-wrap: balance` so names and questions break on word boundaries, never mid-syllable.
+- The hero title (`--title-font`) is user-tweakable across Jua / Black Han Sans / Do Hyeon /
+  Gaegu, but **Jua is canonical**.
 
-- **Base world (greens).** `background`, `surface`, `surface-sunken`, `outline`,
-  and the `foliage-*` layers. This is the stage. Text uses `on-surface` — a
-  green-tinted forest ink, never pure black — for warmth.
-- **Action anchor.** `primary` (hibiscus pink) is the **single CTA color** for the
-  entire funnel — Start, Back, Share, Install App. It pops hardest on green and is
-  deliberately outside the feather-hue family so "this color = go" is unambiguous.
-- **Temperament-group feathers.** `group-ruby`, `group-marigold`, `group-teal`,
-  `group-cobalt` carry **type identity only** — result headers, type badges, the
-  result-card info band, progress flourishes. **Never** color an action button with
-  a group hue (see Do's and Don'ts). These are **vivid mid-tones**: small white/dark
-  text on the raw hue does **not** clear AA 4.5:1. When a group fill must carry small
-  text (a badge, the result-card band), use a **deepened text-safe shade** of that
-  hue (the `badge-type` token shows the deep-cobalt example, `#2C5FB0`). Reserve the
-  raw hue for large text, icons, borders, and decorative fills. _(Final per-group
-  deep shades are a human-design-review item.)_
-- **Feedback.** `error` for validation/failed states.
+## Layout
 
-`primary` (≥4.5:1 on white) and group hues are checked for contrast at the point
-of use; body text always runs on `surface`/`background`, not on saturated fills.
+A **single-column, mobile-first** layout inside a 402px-wide phone frame. Content is
+governed by a strict **22px global side padding** — every primary surface (hero content,
+question card, choice list, detail modal) spans the full width minus 22px on each side.
+New full-width elements must honor this 22px gutter so left/right edges stay flush across
+screens.
 
-# Typography
+Vertical rhythm uses a small set of gaps: **14px** between stacked siblings (choices, hero
+groups), **16px** internal card padding, and larger **22–32px** separations between major
+regions. The hero pins its title group to the top (clear of the forest canopy art) and its
+CTA group to the bottom via `margin-top: auto`. Overlays (full-screen deck, detail modal)
+are absolutely positioned **inside the phone screen only** and never affect the underlying
+layout.
 
-A deliberate two-family pairing (see ADR-0001 for why we replaced Geist):
+## Elevation & Depth
 
-- **Display — Jua** (rounded Korean gothic): `headline-display`, `headline-lg`,
-  `headline-md`. Friendly and chunky; carries the "fun test" tone and the big
-  result **type code**. Jua ships a single weight (400); we get emphasis from
-  **size**, not weight.
-- **Body — Pretendard**: `body-*` and `label-*`. Korean-web-grade legibility for
-  questions, reports, and UI labels; weight contrast (400 → 700) carries hierarchy.
+Depth is the signature of this system and is expressed through a **tactile raised-block**
+recipe rather than soft material shadows. Every interactive/contained element layers:
 
-Hierarchy is driven by **scale contrast** — pair a large Jua headline against
-small Pretendard body, don't crowd the scale. Korean is the only language (MVP);
-Latin/numerals fall back within the same families.
+1. a solid **bottom depth bar** — `box-shadow: 0 Npx 0 {depth color}` — in a darker shade
+   of its own color (orange surfaces use `depth-action`; the primary button uses
+   `primary-active`);
+2. a **soft ambient drop shadow** below for grounding;
+3. an **inset top highlight** (`inset 0 2px 0` light) for a glossy lip.
 
-> **Dependency:** Pretendard is self-hosted via `next/font/local` (not on Google
-> Fonts). If the font files are unavailable, body falls back to **Noto Sans KR**.
-> Jua loads via `next/font/google`.
+The depth bar height scales with the `--depth` token (default ×1). On `:active`/selected,
+the element translates down by the depth amount and the bar shrinks — producing a physical
+"press." Cards stack their upcoming siblings as offset, scaled ghost layers behind the
+active card to imply a deck. Avoid flat, shadowless elements and avoid generic blurry
+material shadows — they break the toy-like feel.
 
-# Layout
+## Shapes
 
-Mobile-first, single-column, **thumb-reachable**. One idea per viewport: the Test
-shows exactly one question + two choices; primary CTAs sit at the **bottom center**
-within thumb range.
+The shape language is **soft and rounded** throughout — there are no sharp corners.
 
-Spacing follows a **4px rhythm** (`xs`→`3xl`). Use rhythm intentionally — tight
-`sm`/`md` clusters inside a card, generous `2xl`/`3xl` between sections — rather
-than uniform padding everywhere. Section gaps scale fluidly with the viewport.
-Content max-width stays phone-sized even on desktop so the shared experience is
-consistent.
+- **Pills (999px)** for buttons, chips, badges, counts, and progress tracks.
+- **Cards (24px)** for trading cards and the detail modal; **Panels (26px)** for larger
+  surfaces.
+- **lg (20px)** for choice rows, **md (16px)** for inset windows, **sm (12px)** for small
+  letter tiles.
+- Portrait windows and icon tiles use 16–24px radii. Mixing sharp and round corners in one
+  view is forbidden; commit fully to the rounded vocabulary.
 
-# Elevation & Depth
+## Components
 
-Depth is **foliage layering**, not flat Material shadows:
+All components inherit the raised-block depth language and the orange action family.
 
-1. **Overlap.** Leaf/foliage shapes overlap card edges so the world reads as
-   stacked planes.
-2. **Tinted shadow.** Shadows are **green-tinted** (derived from `foliage-deep`),
-   soft and low, like a leaf shadow — never neutral gray.
-3. **Surface lift.** `surface` cards sit above the `background`; `surface-sunken`
-   recedes (progress track, wells).
+- **Primary Button (`button-primary`):** Bell-orange gradient pill, Jua 23px white label,
+  6px `primary-active` depth bar + halo. The single most important action per screen
+  (e.g. "테스트 시작하기"). Optional pulsing glow ring to draw the eye.
+- **Secondary Button (`button-secondary`):** Cream pill, orange border + `depth-action`
+  bar, `primary-active` text. For lower-priority actions (e.g. "16유형 모두 보기").
+- **Trading Card (`card-trading`):** The hero collectible — an orange gradient frame
+  wrapping a cream inner card with a gradient portrait window (holo sweep + bobbing parrot),
+  MBTI code and nickname on one row, a dashed rule, and a short blurb. Always fills its
+  container width.
+- **Choice Row (`choice-outline`, canonical):** Cream pill-card with an **A / B letter** in
+  an orange-outline rounded square at the left and the option text to the right. Selecting
+  fills the letter square solid orange, adds an orange focus ring, and presses the card
+  down. (Alternate tweakable styles: solid-orange badge, split orange panel.)
+- **Question Card:** Groups the question emoji tile (mint, orange border) and question text
+  (Jua) into one cream card with an orange border, depth bar, and a dashed inner frame for
+  legibility over the forest.
+- **Chip / Badge (`chip`):** Orange gradient pill, Jua label, small depth bar. Used for
+  match types ("찰떡궁합"), counts, and eyebrows. Faction chips are the exception — filled
+  with their faction accent.
+- **Close Button (`close-button`):** 40px cream circle, orange border + `depth-action` bar,
+  `primary-active` glyph. Matches game chrome; never a bare dark circle.
+- **Progress Bar:** Cream pill track (orange border, inset shadow) with a gold→orange
+  gradient fill that springs to its new width.
+- **Detail Modal:** A full-width (minus 22px gutter) trading-card-style panel over a blurred
+  forest scrim — large portrait, MBTI code, nickname, full description, a "찰떡궁합" match
+  panel, and a primary CTA.
 
-Three levels are enough: sunken → base → raised card. Don't ladder ten shadows.
+## Do's and Don'ts
 
-# Shapes
-
-**Organic and rounded.** Generous corners (`rounded.lg`/`xl` on cards, `full` on
-buttons and badges) set the friendly tone. The signature move is the
-**organic leaf shape**: choice cards, badges, and dividers can be masked into
-leaf/foliage silhouettes with `clip-path`.
-
-**Guardrail (accessibility):** the leaf `clip-path` applies to the **visual layer
-only**. Text, tap targets, and the focusable element stay on an inner **safe
-rectangle** so labels never clip and focus rings stay legible. Keep clip paths
-simple for compositor performance.
-
-# Components
-
-- **button-primary** — the one action affordance. Hibiscus fill, white label,
-  `full` radius, large pill. Designed `hover`/`active`/`focus-visible` states
-  (darken on press; visible focus ring offset from the pill).
-- **choice-card** — a question's two options. Roomy `surface` card, `body-lg`
-  label on an inner safe rectangle; optional leaf-mask on the visual layer.
-  Whole card is the hit target; selecting auto-advances (no Next button).
-- **progress-track** — slim `surface-sunken` rail showing question N of 12;
-  may carry a foliage/trail flourish but the rail itself stays simple.
-- **badge-type** — small pill carrying a **group feather color**, marking the
-  result's temperament group.
-- **result-card** — the 1080×1080 shared artifact: **photo hero on top** (the
-  user's parrot in a leaf frame) + a **lower info band** (type code, type name,
-  short copy, BuddyBird logo/CTA) in the group color. Text lives in the controlled
-  band, never overlaid on the unpredictable user photo.
-
-# Game UI layer (ADR-0006)
-
-The foreground UI reads as a **cozy forest mobile game** (issues #19–#27): soft
-raised buttons, papercut quest-card panels, and a restrained idle-motion layer
-over the PNG forest. This extends the system above; the live token binding is
-`app/globals.css` `@theme` (see the ADR-0005 note — this file's frontmatter
-predates the 동화숲 pivot and values come from `globals.css`).
-
-- **CTA stays bell orange** (`--color-primary` #E8772E — ADR-0001 reinforced).
-  The lime family (`--color-accent` #AFF729 / `--color-accent-deep` #518D00)
-  is **support only**: decor accents, progress flourishes, semantic fills.
-  Never on an action button.
-- **UI chrome = orange family, two volumes — ALL surfaces.** Every foreground
-  outline + depth bar (buttons, cards, panels, chips, pills, scrims, modal)
-  speaks the game-btn vocabulary via the shared tokens
-  `--color-border-action` / `--color-depth-action`
-  (`color-mix(--color-primary 55%/45%, --color-surface-cream)`); card depth in
-  `--shadow-game-card` is orange-tinted (rgba(168,78,22,.12)). Volumes:
-  primary/FAB run solid `--color-primary` + `--color-primary-active` depth;
-  everything else runs the softened pair, stepping up to ~75% primary on
-  hover and full primary + glow when selected. Secondary/icon button ink is
-  `--color-primary-active`; ghost stays muted ink. The leaf-green
-  outline/depth (`--color-border-leaf`) is fully retired from foreground
-  chrome — green lives in the forest backdrop, mint support surfaces, and
-  type-identity art only.
-- **Selection & emphasis = bell orange.** Every USER-CHOSEN state wears the
-  CTA orange: selected cards (`#E8772E` border + `--color-primary-glow` ring +
-  `--shadow-card-emphasis` depth), the quiz check stamp, active chips, and the
-  dex "my type" card/tag. The green family (`--color-accent-deep`, `--brand`)
-  is retired from selection states. Supporting shades:
-  `--color-primary-soft` #FFE2C8 (selection wash) ·
-  `--color-primary-glow` (opaque 28% primary-on-cream ring) ·
-  `--shadow-card-emphasis` (orange-tinted depth + glow drop).
-- **Orange vs. group hues.** Orange marks what the _user_ chose or owns;
-  the temperament-group feather hues mark _type identity_ (showcase card
-  frames/nameplate, peek carousel's auto-advancing active ring, result hero).
-  A system-driven highlight is identity, not selection — it stays
-  group-colored, never orange, so the CTA keeps its pull on the intro.
-- **Opaque chrome — no decorative alpha.** Structural chrome (borders, 0-blur
-  depth bars, glow rings, inset highlights, chip/scrim/badge fills) is FULLY
-  opaque: translucent layers are replaced by `color-mix` into the underlying
-  surface (usually `--color-surface-cream`). Alpha survives only where it is
-  intrinsic: blurred drop/text shadows, the modal dim overlay, gradient fades
-  (sheens), effects sitting on VARIABLE art (per-type gradients, photos), and
-  element-level `opacity` states/decor.
-- **Surfaces.** Game panels use cream / mint / pale-leaf
-  (`--color-surface-cream` #FFF8E3, `--color-surface-mint` #EAFBD8,
-  `--color-surface-leaf` #DDF7B8) — no untreated pure-white cards. Content on
-  green surfaces uses deep-green ink (`--color-ink-forest`) and soft green
-  borders (`--color-border-leaf`).
-- **Semantics.** reward #FFD966 · warning #FFB84D · soft error #FF7B72 ·
-  info #54C7D8.
-- **Shape.** Buttons/chips ride the pill; cards 24 px (`--radius-lg`); panels
-  28 px (`--radius-panel`).
-- **Elevation.** Forest-toned only (`--shadow-raised-button`,
-  `--shadow-game-card`, `--shadow-floating`); raised buttons add a bottom
-  depth bar in their own pressed shade. Hard black shadows stay banned.
-- **Motion.** Motion for React via the `m` + LazyMotion convention; the shared
-  vocabulary lives in `lib/motion/` (entrances 0.2–0.45 s on
-  `--ease-leaf`/`--ease-spring`; decorative idle loops 3–7 s, mirrored,
-  transform/opacity only). Durations: fast 160 ms · base 260 ms · slow 420 ms.
-  Reduced motion: entrances degrade to opacity-only, taps and idle loops drop
-  entirely.
-- **Showcase collection card** (`components/type-showcase.css`). The intro's
-  active-type card is a "framed exhibit" on the unchanged 5:9 horizontal
-  skeleton (carousel logic per ADR-0005): a 3 px group-tinted outer border
-  with a 1.5 px inset hairline inner frame (picture-frame double border), a
-  cream→mint surface wash, a group-tinted bottom depth bar (never the orange
-  emphasis shadow — that is selection-only), a group-washed **nameplate chip**
-  for the code/name (ink text on a 14% wash — raw group hues under white text
-  fail AA), and a white-matted, group-ringed character window for the parrot.
-- **Intro stat pill type scale.** `hero-stats` runs 20 px Jua figures over
-  16 px labels — a human-comfortable pairing (the old 14/26 split read as
-  tiny captions under oversized digits).
-
-# Do's and Don'ts
-
-**Do**
-
-- Keep `primary` as the only action color, everywhere in the funnel.
-- Mark user-chosen states (selected cards, check stamps, active chips, "my
-  type") with the bell-orange emphasis frame — selection is orange everywhere.
-- Use group feather hues strictly for **type identity** (including
-  system-driven highlights like the showcase peek ring).
-- Build depth from overlapping foliage and green-tinted shadows.
-- Drive hierarchy with Jua/Pretendard **size contrast**.
-- Keep result-card text in the lower band for legibility over any photo.
-- Honor `prefers-reduced-motion`: the foliage-parting transition becomes an
-  instant cut/crossfade.
-
-**Don't**
-
-- Don't tint action buttons with a group color (breaks the learned affordance).
-- Don't color selection states with the green/lime family — orange owns
-  selection; green is forest support.
-- Don't reintroduce automatic dark mode — single fixed theme only.
-- Don't use cream/ivory as the base — the world is green.
-- Don't put text on the leaf `clip-path` edge — keep it on the safe rectangle.
-- Don't render Korean in Geist or an undefined system fallback.
-- Don't animate layout-bound properties — transitions use
-  `transform`/`opacity`/`clip-path` only.
+- **Do** use bell orange as the only action color — one primary button per screen.
+- **Do** give every button, card, chip and badge the raised-block depth recipe (depth bar +
+  soft shadow + inset highlight).
+- **Do** set all expressive text (titles, codes, labels, questions) in Jua, and body copy
+  in Noto Sans KR.
+- **Do** keep every full-width surface within the 22px global side padding.
+- **Do** use `word-break: keep-all` for Korean so text never breaks mid-syllable.
+- **Don't** introduce new accent colors for actions; faction colors identify content only
+  and must never style buttons.
+- **Don't** use sharp corners or mix them with the rounded vocabulary.
+- **Don't** replace the tactile depth bars with flat fills or generic blurry material
+  shadows.
+- **Don't** let overlays (deck, modal) escape the phone frame or shift the underlying hero
+  layout.
+- **Don't** show MBTI axis tags (e.g. "E·F") on quiz choices — use plain A / B letters.
+- **Don't** stack more than two type families on a screen (Jua + Noto Sans KR).
