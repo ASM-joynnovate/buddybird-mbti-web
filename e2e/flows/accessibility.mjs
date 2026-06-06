@@ -1,9 +1,9 @@
 // Flow: accessibility — key semantics for screen-reader and keyboard users, updated
-// for the TypeShowcase intro (issue #18): showcase peek tiles are labelled native
-// buttons with a single pressed state, the caption is a polite live region, intro
-// action buttons have accessible names, image alt discipline holds across the page
-// (decorative images may use alt="" only inside an aria-hidden subtree), the Test
-// progress is a progressbar with live values, and choices are labelled native buttons.
+// for the BackStack intro (design rebuild): the active trading card is a labelled
+// native button, the SR caption is a polite live region, intro action buttons have
+// accessible names, image alt discipline holds across the page (decorative images
+// may use alt="" only inside an aria-hidden subtree), the Test progress is a
+// progressbar with live values, and choices are labelled native buttons.
 
 import { assert, clickTestId, evalJs, openUrl, waitForSurface } from '../helpers.mjs'
 
@@ -11,28 +11,28 @@ export async function run() {
     openUrl('/')
     await waitForSurface('intro-root')
 
-    // Showcase: every peek tile is a labelled native button; exactly one is pressed.
+    // Back stack: the active card is a labelled native button carrying its code.
     assert(
         evalJs(
-            '(function(){var t=document.querySelectorAll(".showcase-peek-track .peek");if(!t.length)return false;var pressed=0;for(var i=0;i<t.length;i++){if(t[i].tagName!=="BUTTON")return false;var l=t[i].getAttribute("aria-label");if(!l||!l.length)return false;if(t[i].getAttribute("aria-pressed")==="true")pressed++;}return pressed===1;})()',
+            '(function(){var b=document.querySelector(\'[data-testid="stack-active-card"]\');if(!b||b.tagName!=="BUTTON")return false;var l=b.getAttribute("aria-label");return !!l && l.length>0 && !!b.getAttribute("data-code");})()',
         ) === true,
-        'showcase peek tiles must be labelled native buttons with exactly one pressed',
+        'back-stack active card must be a labelled native button with a data-code',
     )
 
-    // The caption announcing the active type is a polite live region.
+    // The SR caption announcing the active type is a polite live region.
     assert(
         evalJs(
-            '(function(){var c=document.querySelector(\'[data-testid="showcase-caption"]\');return !!c && c.getAttribute("aria-live")==="polite";})()',
+            '(function(){var c=document.querySelector(\'[data-testid="stack-caption"]\');return !!c && c.getAttribute("aria-live")==="polite";})()',
         ) === true,
-        'showcase caption must be an aria-live=polite region',
+        'back-stack caption must be an aria-live=polite region',
     )
 
-    // Intro action buttons (start + dex) must expose accessible names.
+    // Intro action buttons (start + deck) must expose accessible names.
     assert(
         evalJs(
-            '(function(){var ids=["start-button","dex-button"];for(var i=0;i<ids.length;i++){var b=document.querySelector(\'[data-testid="\'+ids[i]+\'"]\');if(!b)return false;var name=(b.getAttribute("aria-label")||b.textContent||"").trim();if(!name.length)return false;}return true;})()',
+            '(function(){var ids=["start-button","deck-button"];for(var i=0;i<ids.length;i++){var b=document.querySelector(\'[data-testid="\'+ids[i]+\'"]\');if(!b)return false;var name=(b.getAttribute("aria-label")||b.textContent||"").trim();if(!name.length)return false;}return true;})()',
         ) === true,
-        'intro start/dex buttons must have accessible names',
+        'intro start/deck buttons must have accessible names',
     )
 
     // Image alt discipline: every <img> carries an alt attribute; an EMPTY alt is
@@ -45,13 +45,13 @@ export async function run() {
         'every <img> must have alt text (empty alt only inside aria-hidden decoration)',
     )
 
-    // The active showcase card must expose an accessible image name (img alt or the
+    // The active stack card must expose an accessible image name (img alt or the
     // parrot fallback's role=img + aria-label).
     assert(
         evalJs(
-            '(function(){var f=document.querySelector(\'[data-testid="showcase-active-card"]\');if(!f)return false;var img=f.querySelector("img");if(img)return !!img.getAttribute("alt");var fb=f.querySelector(\'[role="img"]\');return !!fb && !!fb.getAttribute("aria-label");})()',
+            '(function(){var f=document.querySelector(\'[data-testid="stack-active-card"]\');if(!f)return false;var img=f.querySelector("img");if(img)return !!img.getAttribute("alt");var fb=f.querySelector(\'[role="img"]\');return !!fb && !!fb.getAttribute("aria-label");})()',
         ) === true,
-        'showcase active card must have an accessible image name',
+        'back-stack active card must have an accessible image name',
     )
 
     // --- Test surface ---

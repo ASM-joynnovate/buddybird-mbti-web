@@ -11,6 +11,7 @@ import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 import { run as runAccessibility } from './flows/accessibility.mjs'
 import { run as runAnalyticsEvents } from './flows/analytics-events.mjs'
+import { run as runDeckOverlay } from './flows/deck-overlay.mjs'
 import { run as runFullNavigation } from './flows/full-navigation.mjs'
 import { run as runFunnelEvents } from './flows/funnel-events.mjs'
 import { run as runIntroCarousel } from './flows/intro-carousel.mjs'
@@ -30,6 +31,7 @@ const FLOWS = [
     { name: 'known-answer-type', fn: runKnownAnswerType },
     { name: 'analytics-events', fn: runAnalyticsEvents },
     { name: 'intro-carousel', fn: runIntroCarousel },
+    { name: 'deck-overlay', fn: runDeckOverlay },
     { name: 'funnel-events', fn: runFunnelEvents },
     { name: 'accessibility', fn: runAccessibility },
     { name: 'responsive', fn: runResponsive },
