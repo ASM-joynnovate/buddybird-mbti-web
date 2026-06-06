@@ -55,8 +55,8 @@ export interface Question {
 // card. Use content/gradient.ts (`typeGradient` / `typeColors`) to consume it — CSS
 // gets a linear-gradient string, Canvas gets the raw hex pair.
 //
-// `match` is the type's two "best match" codes, shown as MatchChips on the result
-// page and in the type modal (deep-link to /dex?focus=CODE).
+// `match` is the type's two "best match" codes, shown as MatchCards on the result
+// page and as chips in the detail popup (which swap the popup to that type).
 //
 // `imageKey` is a stable slug for the parrot character art. Currently unused for
 // resolving the image (assets.ts derives the path from the uppercase code) but kept
