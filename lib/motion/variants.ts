@@ -1,9 +1,10 @@
-// Shared Motion variants for the "cozy forest game" UI pass (issues #19–#27,
-// ADR-0006). One module so every surface animates with the same easing/duration
-// vocabulary, visually matching the CSS tokens in app/globals.css:
+// Shared Motion variants for the 동화숲 UI (ADR-0006, design rebuild ADR-0008).
+// One module so every surface animates with the same easing/duration
+// vocabulary; the easings mirror the @theme tokens in app/globals.css:
 //   easeLeaf   <-> --ease-leaf    cubic-bezier(0.16, 1, 0.3, 1)
 //   easeSpring <-> --ease-spring  cubic-bezier(0.34, 1.56, 0.64, 1)
-//   durations  <-> --duration-fast / --duration-base / --duration-slow
+// Durations live ONLY here — every animation is Motion-owned (ADR-0008), so
+// there are no CSS duration tokens to mirror anymore.
 //
 // Bundle convention (ADR-0006): use the lightweight `m` components, NOT the
 // full `motion` namespace — features come from the app-wide <MotionProvider>

@@ -36,17 +36,18 @@ export function ParrotImage({
         }
     }, [])
 
+    // Fallback fills its frame so the deck/result/preview layout never shifts.
     if (failed) {
         return (
             <span
-                className={`parrot-image-fallback ${className ?? ''}`}
+                className={`flex h-full w-full flex-col items-center justify-center gap-2 bg-[linear-gradient(160deg,#fffdf6_0%,#f4e9cc_100%)] text-ink-muted ${className ?? ''}`}
                 role="img"
                 aria-label={alt}
             >
-                <span className="parrot-image-fallback-mark" aria-hidden="true">
+                <span className="text-[2.5rem] leading-none" aria-hidden="true">
                     🦜
                 </span>
-                <span className="parrot-image-fallback-code">{type}</span>
+                <span className="font-display text-xl tracking-[0.04em] text-ink">{type}</span>
             </span>
         )
     }

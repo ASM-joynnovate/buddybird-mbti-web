@@ -15,10 +15,12 @@
 // prefers-reduced-motion every loop renders fully static and the mushroom
 // pop-in degrades to opacity-only (fadeOnly).
 //
-// Placement transform vs Motion transform: the CSS anchor transform
-// (translate(-50%,-50%) rotate(--r)) lives on a wrapper div (.forest-decal);
-// Motion animates the inner img (.forest-decal__img) so the two transforms
-// never fight over the same element.
+// Placement transform vs Motion transform: the anchor transform
+// (translate(-50%,-50%) rotate(--r), Tailwind utilities on the wrapper div)
+// stays on the wrapper; Motion animates the inner img so the two transforms
+// never fight over the same element. The wrapper/img class strings mirror the
+// static decals in mobile-forest-background.tsx (kept in sync by comment — a
+// server module cannot import values from a 'use client' module).
 //
 // Provider note: these layers rely on the app-wide <MotionProvider> in
 // app/layout.tsx, which (since commit 22ab364) mounts ABOVE
@@ -52,12 +54,22 @@ function desync(
 const palmFloat = desync(floatingLeaf, 'float', { delay: 1.7, duration: 6.4 })
 const vineSway = desync(gentleSway, 'sway', { delay: 0.9 })
 
+// Mirrors the static-decal classes in mobile-forest-background.tsx.
+const DECAL_WRAPPER_CLASS =
+    'pointer-events-none absolute top-(--y) left-(--x) w-(--w) -translate-x-1/2 -translate-y-1/2 rotate-(--r) select-none'
+const DECAL_IMG_CLASS =
+    'block h-auto w-full select-none drop-shadow-[0_6px_12px_rgba(46,36,20,0.16)]'
+
 interface AnimatedDecal {
     name: string
     src: string
     // Same CSS-variable placement contract as the static decals in
     // mobile-forest-background.tsx (anchor %, clamp() width, base rotation).
     vars: { x: string; y: string; w: string; r: string }
+    /** Extra wrapper classes (narrow-viewport size overrides). */
+    wrapperClassName?: string
+    /** Extra img classes (e.g. the vine's hanging pivot). */
+    imgClassName?: string
     // 'idle'     — infinite mirrored loop; fully static under reduced motion.
     // 'entrance' — one-shot pop-in on load; opacity-only under reduced motion.
     kind: 'idle' | 'entrance'
@@ -73,6 +85,7 @@ const ANIMATED_DECALS: readonly AnimatedDecal[] = [
         name: 'monstera',
         src: `${ASSET_BASE}/leaf-monstera.png`,
         vars: { x: '6%', y: '15%', w: 'clamp(72px, 26vw, 170px)', r: '-10deg' },
+        wrapperClassName: 'max-[380px]:w-[clamp(60px,22vw,130px)]',
         kind: 'idle',
         variants: floatingLeaf,
         initial: 'rest',
@@ -82,6 +95,7 @@ const ANIMATED_DECALS: readonly AnimatedDecal[] = [
         name: 'palm',
         src: `${ASSET_BASE}/leaf-palm.png`,
         vars: { x: '95%', y: '12%', w: 'clamp(96px, 32vw, 220px)', r: '-14deg' },
+        wrapperClassName: 'max-[380px]:w-[clamp(80px,28vw,150px)]',
         kind: 'idle',
         variants: palmFloat,
         initial: 'rest',
@@ -91,6 +105,8 @@ const ANIMATED_DECALS: readonly AnimatedDecal[] = [
         name: 'vine',
         src: `${ASSET_BASE}/vine-hanging.png`,
         vars: { x: '97%', y: '24%', w: 'clamp(70px, 22vw, 150px)', r: '0deg' },
+        // Vine sway (gentleSway) pivots from where it hangs, not its center.
+        imgClassName: 'origin-top',
         kind: 'idle',
         variants: vineSway,
         initial: 'rest',
@@ -134,8 +150,8 @@ const fadeOnlyEntrance: Variants = {
     visible: { ...(fadeOnly.visible as TargetAndTransition), scale: 1 },
 }
 
-// Static particle target for reduced motion: matches the CSS resting opacity
-// (0.55 in mobile-forest-background.css), zero drift, applied instantly.
+// Static particle target for reduced motion: matches the resting opacity
+// (opacity-55 on the particle img), zero drift, applied instantly.
 const particleStill: Variants = {
     ...particleFloat,
     still: { opacity: 0.55, x: 0, y: 0, transition: { duration: 0 } },
@@ -158,11 +174,11 @@ export function AnimatedForestDecals() {
                 return (
                     <div
                         key={d.name}
-                        className={`forest-decal forest-decal--${d.name}`}
+                        className={`${DECAL_WRAPPER_CLASS} ${d.wrapperClassName ?? ''}`}
                         style={decalStyle(d)}
                     >
                         <m.img
-                            className="forest-decal__img"
+                            className={`${DECAL_IMG_CLASS} ${d.imgClassName ?? ''}`}
                             src={d.src}
                             alt=""
                             loading="lazy"
@@ -183,7 +199,7 @@ export function AnimatedForestParticles() {
 
     return (
         <m.img
-            className="forest-particles"
+            className="pointer-events-none absolute -inset-3 h-[calc(100%+24px)] w-[calc(100%+24px)] object-cover object-center opacity-55 select-none"
             src={`${ASSET_BASE}/forest-light-particles.png`}
             alt=""
             loading="lazy"
