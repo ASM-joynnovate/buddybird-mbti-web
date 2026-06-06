@@ -1,31 +1,26 @@
 'use client'
 
-// Test (Quiz) — faithful recreation of the Claude Design bundle Quiz ("동화숲 월드"):
-// a segmented progress bar that fills with each answered axis hue, a back/exit link,
-// an emoji-led question card, and two 🅰/🅱 option buttons tinted by their axis-letter
-// color. Selecting an option bounces + stamps a check, then auto-advances. All engine
-// logic is unchanged (useTestProgress, computeResult, encodeResult, analytics); only
-// the presentation is reskinned.
-//
-// Motion pass (issue #23, ADR-0006): question-card transitions run through
-// AnimatePresence (direction-aware enter/exit instead of the slideInL/R
-// keyframes), the option cards wear the game-card vocabulary with Motion
-// hover/tap/bounce feedback, the check stamp pops in via popIn, and the
-// progress fill is a Motion-driven width tween. The 420ms (reduced-motion
-// 120ms) auto-advance stays a setTimeout: the timer is the engine's pacing
-// contract and must not depend on animation completion (an interrupted or
-// degraded transition must never stall the quiz).
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+// Test (Quiz) — 동화숲 월드 v2 presentation: a round back button + a single
+// cream progress pill (gold→orange gradient fill, Motion width tween) + the Jua
+// count pill on one row, the dashed-frame question card (mint emoji tile +
+// Jua question), and the outline A/B choice rows (letter tile fills solid
+// orange on pick, the card presses down with a glow ring). All engine logic is
+// unchanged (useTestProgress, computeResult, encodeResult, analytics); only the
+// presentation is reskinned — the 420ms (reduced-motion 120ms) auto-advance
+// stays a setTimeout: the timer is the engine's pacing contract and must not
+// depend on animation completion.
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, m, useReducedMotion, type Variants } from 'motion/react'
 import { GameButton } from '@/components/ui/game-button'
+import { GamePanel } from '@/components/ui/game-panel'
+import { GamePill } from '@/components/ui/game-pill'
 import { QUESTION_COUNT, QUESTIONS } from '@/content'
 import { track } from '@/lib/analytics'
 import { computeResult, type Choice } from '@/lib/mbti'
 import { easeLeaf, easeSpring, fadeOnly, popIn } from '@/lib/motion'
 import { encodeResult, RESULT_PARAM } from '@/lib/result-url'
 import { useTestProgress } from '@/lib/state/test-progress-context'
-import './test.css'
 
 type Direction = 'r' | 'l'
 
@@ -35,15 +30,15 @@ type Direction = 'r' | 'l'
 // sets pointer-events:none so the outgoing card (kept in the DOM by
 // AnimatePresence mode="wait") can never swallow a tap meant for the next one.
 const cardVariants: Variants = {
-    enter: (direction: Direction) => ({ opacity: 0, x: direction === 'r' ? 60 : -60 }),
+    enter: (direction: Direction) => ({ opacity: 0, x: direction === 'r' ? 18 : -18 }),
     center: {
         opacity: 1,
         x: 0,
-        transition: { duration: 0.4, ease: easeSpring },
+        transition: { duration: 0.36, ease: easeSpring },
     },
     exit: (direction: Direction) => ({
         opacity: 0,
-        x: direction === 'r' ? -42 : 42,
+        x: direction === 'r' ? -14 : 14,
         pointerEvents: 'none',
         transition: { duration: 0.16, ease: easeLeaf },
     }),
@@ -58,33 +53,28 @@ const cardVariantsReduced: Variants = {
     exit: { opacity: 0, pointerEvents: 'none', transition: { duration: 0.08 } },
 }
 
-// Selection bounce (replaces the CSS `bounce` keyframe): same 0/40/70/100%
-// scale envelope, Motion-owned so it composes with whileTap/whileHover.
-const optionBounce: Variants = {
-    idle: { scale: 1 },
-    selected: {
-        scale: [1, 1.06, 0.97, 1],
-        transition: { duration: 0.5, times: [0, 0.4, 0.7, 1], ease: 'easeInOut' },
-    },
-}
+// Choice press — the raised row sinks while the CSS picked state squashes its
+// depth bar in concert (Motion owns transform; CSS only moves border/shadow).
+const choiceTap = { y: 3, scale: 0.99, transition: { duration: 0.14, ease: easeLeaf } }
 
-// Option card press/hover — issue #21 vocabulary (cardTap 0.98 / cardHover
-// 1.01) but defined locally with the option's springier feel.
-const optionTap = { scale: 0.98, transition: { duration: 0.2, ease: easeLeaf } }
-const optionHover = { scale: 1.015, y: -3, transition: { duration: 0.26, ease: easeLeaf } }
+// Full class string per state (prettier-plugin-tailwindcss compatible — no
+// conditional fragments).
+const CHOICE_CLASS =
+    'relative flex cursor-pointer items-center gap-3.5 rounded-lg border-2 border-border-action bg-surface-cream px-4 py-3.5 text-left text-[14.5px] leading-normal text-ink shadow-[0_5px_0_var(--color-depth-action),0_12px_22px_-14px_rgba(58,46,26,0.35)] transition-[border-color,background-color,box-shadow] duration-150 ease-leaf hover:border-primary focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-faction-sentinel disabled:cursor-not-allowed'
+const CHOICE_PICKED_CLASS =
+    'relative flex cursor-pointer items-center gap-3.5 rounded-lg border-2 border-primary bg-[#fff7ec] px-4 py-3.5 text-left text-[14.5px] leading-normal text-ink shadow-[0_1px_0_var(--color-depth-action),0_0_0_3px_var(--color-primary-glow)] transition-[border-color,background-color,box-shadow] duration-150 ease-leaf focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-faction-sentinel disabled:cursor-not-allowed'
 
-// Decorative 🅰/🅱 option accents. With multi-axis weighted choices (ADR-0003) a
-// choice no longer maps to a single axis letter, so the tint is purely a visual A/B
-// distinction — not a semantic axis hue. The badge wash is an OPAQUE color-mix
-// into the cream surface (chrome carries no alpha by rule — DESIGN.md).
-const OPTION_ACCENTS = ['#e8772e', '#7b3fb5'] as const
+const LETTER_CLASS =
+    'grid size-10 flex-none place-items-center rounded-sm border-2 border-primary bg-white font-display text-lg leading-none text-primary-active shadow-[0_2px_0_var(--color-depth-action)] transition-[background-color,color] duration-150 ease-leaf'
+const LETTER_PICKED_CLASS =
+    'grid size-10 flex-none place-items-center rounded-sm border-2 border-primary bg-primary font-display text-lg leading-none text-on-primary shadow-[0_2px_0_var(--color-primary-active)] transition-[background-color,color] duration-150 ease-leaf'
 
 export default function TestPage() {
     const router = useRouter()
     const { answers, currentIndex, answer, setIndex, goBack, setResult } = useTestProgress()
     const reducedMotion = useReducedMotion()
 
-    // Local select state for the design's pick → check/bounce → auto-advance feel.
+    // Local select state for the design's pick → press → auto-advance feel.
     // `picked` holds the chosen choice id during the brief transition window.
     const [picked, setPicked] = useState<string | null>(null)
     const [direction, setDirection] = useState<Direction>('r')
@@ -103,8 +93,11 @@ export default function TestPage() {
     // Safe fallback: empty content or an out-of-range index must not crash.
     if (question === undefined) {
         return (
-            <main data-testid="test-root" className="test-surface test-surface--empty">
-                <p style={{ color: 'var(--color-ink-muted)' }}>표시할 문항이 없습니다.</p>
+            <main
+                data-testid="test-root"
+                className="flex min-h-dvh flex-col items-center justify-center px-gutter"
+            >
+                <p className="text-ink-muted">표시할 문항이 없습니다.</p>
             </main>
         )
     }
@@ -173,64 +166,50 @@ export default function TestPage() {
         goBack()
     }
 
+    // Single pill fill: answered questions out of total (the current question
+    // counts the moment it's picked) — a one-shot Motion width tween per step.
+    const filled = currentIndex + (picked !== null ? 1 : 0)
+    const pct = Math.round((filled / QUESTION_COUNT) * 100)
+
     return (
-        <main data-testid="test-root" className="test-surface">
-            <div className="quiz-meta">
-                {/* secondary --sm (not ghost): the transparent ghost skin was
-                    unreadable over the dark canopy backdrop (issue #27 gate). */}
+        <main
+            data-testid="test-root"
+            className="relative flex min-h-dvh flex-col px-gutter pt-[60px] pb-10"
+        >
+            <div className="flex items-center gap-3">
                 <GameButton
-                    variant="secondary"
-                    size="sm"
+                    variant="icon"
                     data-testid="back-button"
                     onClick={handleBack}
+                    aria-label={currentIndex === 0 ? '나가기' : '이전 문항'}
                 >
-                    <span aria-hidden="true">←</span>
-                    {currentIndex === 0 ? '나가기' : '이전'}
+                    ←
                 </GameButton>
-                <span>
-                    {currentIndex + 1} / {QUESTION_COUNT}
-                </span>
-            </div>
 
-            <div
-                className="progress"
-                data-testid="progress"
-                role="progressbar"
-                aria-label="테스트 진행률"
-                aria-valuemin={1}
-                aria-valuemax={QUESTION_COUNT}
-                aria-valuenow={currentIndex + 1}
-                aria-valuetext={`${QUESTION_COUNT}문항 중 ${currentIndex + 1}번째`}
-            >
-                {QUESTIONS.map((q, i) => {
-                    // Answered segments fill with the picked side's accent (🅰/🅱), mirroring
-                    // the option badges. Choices are multi-axis now (ADR-0003), so the tint
-                    // reflects which side was chosen — not a single axis hue.
-                    const ans = answers[q.id]
-                    const pickedIndex = ans ? q.choices.findIndex((c) => c.id === ans.id) : -1
-                    const width = ans ? '100%' : i === currentIndex ? '14%' : '0%'
-                    const background =
-                        pickedIndex >= 0
-                            ? (OPTION_ACCENTS[pickedIndex] ?? OPTION_ACCENTS[0])
-                            : 'var(--color-outline)'
-                    return (
-                        <span className="seg" key={q.id} aria-hidden="true">
-                            {/* One-shot fill: Motion-owned width tween (non-continuous,
-                                so width is acceptable here — issue #23). initial={false}
-                                keeps restored sessions from replaying every fill. */}
-                            <m.i
-                                initial={false}
-                                animate={{ width }}
-                                transition={
-                                    reducedMotion
-                                        ? { duration: 0.08 }
-                                        : { duration: 0.5, ease: easeSpring }
-                                }
-                                style={{ background }}
-                            />
-                        </span>
-                    )
-                })}
+                <div
+                    className="h-4 flex-1 overflow-hidden rounded-full border-2 border-border-action bg-surface-cream shadow-inset-track"
+                    data-testid="progress"
+                    role="progressbar"
+                    aria-label="테스트 진행률"
+                    aria-valuemin={1}
+                    aria-valuemax={QUESTION_COUNT}
+                    aria-valuenow={currentIndex + 1}
+                    aria-valuetext={`${QUESTION_COUNT}문항 중 ${currentIndex + 1}번째`}
+                >
+                    <m.div
+                        className="h-full rounded-full bg-[linear-gradient(90deg,var(--color-gold),var(--color-primary))] shadow-[inset_0_2px_0_rgba(255,255,255,0.4)]"
+                        initial={false}
+                        animate={{ width: `${pct}%` }}
+                        transition={
+                            reducedMotion ? { duration: 0.08 } : { duration: 0.5, ease: easeSpring }
+                        }
+                    />
+                </div>
+
+                <GamePill bare className="px-3 py-1 font-display text-[15px] text-ink">
+                    <b className="font-normal text-primary">{currentIndex + 1}</b>
+                    &nbsp;/ {QUESTION_COUNT}
+                </GamePill>
             </div>
 
             {/* mode="wait": the outgoing card fully exits before the next mounts, so
@@ -238,7 +217,7 @@ export default function TestPage() {
                 which would need the heavier domMax feature bundle). */}
             <AnimatePresence mode="wait" custom={direction}>
                 <m.div
-                    className="q-card"
+                    className="flex min-h-0 flex-1 flex-col"
                     key={currentIndex}
                     custom={direction}
                     variants={reducedMotion ? cardVariantsReduced : cardVariants}
@@ -246,9 +225,12 @@ export default function TestPage() {
                     animate="center"
                     exit="exit"
                 >
-                    <div className="q-prompt">
+                    <GamePanel
+                        dashedFrame
+                        className="mt-[26px] flex flex-col items-center gap-4 px-[22px] pt-[26px] pb-7 text-center"
+                    >
                         <m.div
-                            className="q-emoji"
+                            className="grid size-[84px] place-items-center rounded-card border-[3px] border-border-action bg-surface-mint text-[42px] shadow-[0_4px_0_var(--color-depth-action),inset_0_2px_0_rgba(255,255,255,0.7)]"
                             aria-hidden="true"
                             variants={reducedMotion ? fadeOnly : popIn}
                             initial="hidden"
@@ -256,12 +238,13 @@ export default function TestPage() {
                         >
                             {question.emoji}
                         </m.div>
-                        <h1 className="q-text font-display">{question.text}</h1>
-                    </div>
+                        <h1 className="m-0 font-display text-[22px] leading-[1.45] break-keep whitespace-pre-line text-ink">
+                            {question.text}
+                        </h1>
+                    </GamePanel>
 
-                    <div className="opts">
+                    <div className="mt-auto flex flex-col gap-3.5 pt-[22px]">
                         {question.choices.map((choice, i) => {
-                            const color = OPTION_ACCENTS[i] ?? OPTION_ACCENTS[0]
                             const isPicked = picked === choice.id
                             const interactive = picked === null && !reducedMotion
                             return (
@@ -277,46 +260,21 @@ export default function TestPage() {
                                     aria-label={choice.label}
                                     onClick={() => handleChoice(choice)}
                                     disabled={picked !== null}
-                                    // Full class string per branch: prettier-plugin-tailwindcss
-                                    // trims a leading space inside a ternary fragment (which
-                                    // silently collapsed `opt is-selected` → `optis-selected`),
-                                    // but it always preserves the space *between* two classes.
-                                    className={
-                                        isPicked
-                                            ? 'opt game-card game-card--selectable is-selected'
-                                            : 'opt game-card game-card--selectable'
-                                    }
-                                    style={{ '--ax': color } as CSSProperties}
-                                    // Hover/tap only while the option is still pickable, so the
-                                    // selection bounce below is never overridden by a lingering
-                                    // hover/tap target on the just-clicked card.
-                                    whileHover={interactive ? optionHover : undefined}
-                                    whileTap={interactive ? optionTap : undefined}
-                                    variants={optionBounce}
-                                    animate={isPicked && !reducedMotion ? 'selected' : 'idle'}
+                                    className={isPicked ? CHOICE_PICKED_CLASS : CHOICE_CLASS}
+                                    whileTap={interactive ? choiceTap : undefined}
+                                    animate={isPicked && !reducedMotion ? { y: 3 } : { y: 0 }}
+                                    transition={{ duration: 0.14, ease: easeLeaf }}
                                 >
+                                    {/* Plain A/B letter tiles — never MBTI axis tags (DESIGN.md). */}
                                     <span
-                                        className="opt-badge"
-                                        style={{
-                                            background: `color-mix(in srgb, ${color} 13%, var(--color-surface-cream))`,
-                                            color,
-                                        }}
+                                        className={isPicked ? LETTER_PICKED_CLASS : LETTER_CLASS}
                                         aria-hidden="true"
                                     >
-                                        {i === 0 ? '🅰' : '🅱'}
+                                        {i === 0 ? 'A' : 'B'}
                                     </span>
-                                    <span className="opt-label">{choice.label}</span>
-                                    {isPicked && (
-                                        <m.span
-                                            className="opt-check"
-                                            aria-hidden="true"
-                                            variants={reducedMotion ? fadeOnly : popIn}
-                                            initial="hidden"
-                                            animate="visible"
-                                        >
-                                            ✓
-                                        </m.span>
-                                    )}
+                                    <span className="min-w-0 flex-1 break-keep">
+                                        {choice.label}
+                                    </span>
                                 </m.button>
                             )
                         })}

@@ -129,6 +129,7 @@ export function DetailPopup({ code, onClose, onSelectType, cta }: DetailPopupPro
                 <GameButton
                     ref={closeRef}
                     variant="icon"
+                    size="sm"
                     className="absolute top-3.5 right-3.5 z-4"
                     onClick={onClose}
                     aria-label="닫기"

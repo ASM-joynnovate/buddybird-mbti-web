@@ -324,6 +324,7 @@ export function DeckOverlay({ controller, onSelect }: DeckOverlayProps) {
                 </GamePill>
                 <GameButton
                     variant="icon"
+                    size="sm"
                     onClick={close}
                     aria-label="닫기"
                     data-testid="deck-close"
