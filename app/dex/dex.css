@@ -15,7 +15,7 @@
 
 /* Readability scrim (issue #25 reopen — parity with the intro treatment):
  * the head sits straight on the dark canopy PNG, so the kicker and caption
- * were sinking into the foliage. Semi-solid cream game-panel scrim + leaf
+ * were sinking into the foliage. Semi-solid cream game-panel scrim + soft orange
  * border + mini depth bar (same vocabulary as the intro .hero-stats pill)
  * keeps all three lines readable at 360–430px. */
 .dex-head {
@@ -24,13 +24,13 @@
     padding: 16px 18px 18px;
     border-radius: var(--radius-lg);
     background: color-mix(in srgb, var(--color-surface-cream) 82%, transparent);
-    border: 1px solid color-mix(in srgb, var(--color-border-leaf) 75%, transparent);
-    box-shadow: 0 2px 0 color-mix(in srgb, var(--color-border-leaf) 45%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-border-action) 75%, transparent);
+    box-shadow: 0 2px 0 color-mix(in srgb, var(--color-depth-action) 45%, transparent);
 }
 
 .dex-eyebrow {
     margin: 0;
-    color: var(--brand-d);
+    color: var(--color-primary-active);
     font-weight: 800;
     letter-spacing: 0.04em;
     font-size: 0.8125rem;
@@ -61,8 +61,8 @@
     }
 }
 
-/* Game collection-card skin (issue #21): cream quest-card surface + leaf
- * border + papercut layered shadow. Transform is Motion-owned (whileHover
+/* Game collection-card skin (issue #21): cream quest-card surface + softened-
+ * orange action border + papercut layered shadow. Transform is Motion-owned (whileHover
  * 1.01 / whileTap 0.98 in dex-view.tsx) — CSS only moves border/shadow. */
 .dex-card {
     position: relative;
@@ -70,7 +70,7 @@
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    border: 3px solid var(--color-border-leaf);
+    border: 3px solid var(--color-border-action);
     border-radius: var(--radius-lg);
     padding: 16px 14px 18px;
     text-align: center;
@@ -97,9 +97,9 @@
 }
 
 .dex-card:hover {
-    border-color: color-mix(in srgb, var(--color-border-leaf) 55%, var(--color-accent-deep));
+    border-color: color-mix(in srgb, var(--color-primary) 75%, var(--color-surface-cream));
     box-shadow:
-        0 6px 0 rgba(101, 132, 60, 0.16),
+        0 6px 0 rgba(168, 78, 22, 0.14),
         0 16px 32px -10px rgba(58, 46, 26, 0.2),
         inset 0 2px 0 rgba(255, 255, 255, 0.6);
 }
@@ -109,8 +109,14 @@
     outline-offset: 2px;
 }
 
+/* "My type" — a user-earned state, so it wears the bell-orange emphasis frame
+ * (selection color, same vocabulary as the picked quiz option). */
 .dex-card.mine {
-    border-color: var(--brand);
+    border-color: var(--color-primary);
+    box-shadow:
+        var(--shadow-card-emphasis),
+        0 0 0 3px var(--color-primary-glow),
+        inset 0 2px 0 rgba(255, 255, 255, 0.6);
 }
 
 .dex-mine-tag {
@@ -118,7 +124,7 @@
     top: 10px;
     right: 10px;
     z-index: 2;
-    background: var(--brand);
+    background: var(--color-primary);
     color: #ffffff;
     font-size: 0.625rem;
     font-weight: 800;

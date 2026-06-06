@@ -4,58 +4,82 @@
  * left, and the type code/name + one-line report on the right. The centre-fixed
  * peek carousel (#15) mounts below the card and shares the same active index.
  *
- * Visual language follows DESIGN.md: organic generous radii (tokens, not magic
- * numbers), green-tinted foliage shadows, and a playful, slightly game-like feel —
- * a chunky candy bevel (glossy top highlight + deep-foliage bottom edge) on the
- * tiles, and the temperament-group feather hue (`--showcase-accent`, set per active
- * type in the component) tinting the card spine, the image-tile ring, and the
- * selected peek tile's ring so the active type reads as its "faction".
- * Tokens: globals.css.
+ * Collection-card skin (forest game pass): the card is a "framed exhibit" —
+ * a chunky group-tinted outer border with an inset hairline inner frame (a
+ * picture-frame double border), a cream→mint surface wash, a group-tinted
+ * depth bar, a nameplate chip for the code/name, and a white-matted, group-
+ * ringed character window. The temperament-group feather hue
+ * (`--showcase-accent`, set per active type in the component) drives every
+ * frame layer plus the selected peek tile's ring, so the active type reads as
+ * its "faction" (type identity stays group-colored — orange is reserved for
+ * user-chosen states, DESIGN.md). Tokens: globals.css.
  */
 
 .showcase {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    /* 12px (was 16px): absorbs the nameplate chip's extra height so the intro
+     * still fits one screen on short viewports (360×640). */
+    gap: 12px;
     width: 100%;
 }
 
 /* --- Active type card (5:9 inner columns) --- *
  * Height follows content (a compact band), not a fixed ratio: the card is the
- * taller of its 1:1 image tile and the right-hand text. Game quest-card skin
- * (issue #21 vocabulary): cream surface + leaf border + papercut shadow; the
- * group-tinted spine down the leading edge keeps the "faction" identity. The
- * swap entrance is Motion's fadeUp (type-showcase.tsx) — the old
- * showcase-card-fade keyframe is gone. */
+ * taller of its 1:1 image tile and the right-hand text. Collection-card skin:
+ * group-tinted 3px outer frame over a cream→mint wash, a group-tinted depth
+ * bar (GameButton vocabulary, never hard black), and the inner hairline frame
+ * below. The orange --shadow-card-emphasis is NOT used here — that shade is
+ * reserved for user-selected cards. The swap entrance is Motion's fadeUp
+ * (type-showcase.tsx) — the old showcase-card-fade keyframe is gone. */
 .showcase-card {
     position: relative;
     display: flex;
     align-items: stretch;
     width: 100%;
-    background: var(--color-surface-cream);
-    border: 2px solid var(--color-border-leaf);
+    background: linear-gradient(
+        170deg,
+        var(--color-surface-cream) 0%,
+        var(--color-surface-mint) 130%
+    );
+    border: 3px solid
+        color-mix(
+            in srgb,
+            var(--showcase-accent, var(--color-border-action)) 40%,
+            var(--color-border-action)
+        );
     border-radius: var(--radius-lg);
     box-shadow:
-        var(--shadow-game-card),
-        inset 0 2px 0 color-mix(in srgb, #ffffff 65%, transparent),
-        inset 0 0 0 1px color-mix(in srgb, var(--showcase-accent, transparent) 16%, transparent);
+        0 5px 0
+            color-mix(
+                in srgb,
+                var(--showcase-accent, var(--color-primary)) 22%,
+                rgba(168, 78, 22, 0.12)
+            ),
+        0 14px 30px -10px rgba(58, 46, 26, 0.18),
+        inset 0 2px 0 color-mix(in srgb, #ffffff 65%, transparent);
     overflow: hidden;
+    padding: 16px;
 }
 
-/* Group-feather spine down the leading edge — the card's "faction" marker. */
+/* Inset hairline inner frame — the second border of the "picture frame" read
+ * (replaces the old group-feather spine; the faction hue now lives in every
+ * frame layer instead of one edge stripe). Decorative only. */
 .showcase-card::before {
     content: '';
     position: absolute;
-    inset: 0 auto 0 0;
-    width: 5px;
-    background: var(--showcase-accent, var(--color-foliage-near));
+    inset: 5px;
+    border-radius: calc(var(--radius-lg) - 8px);
+    border: 1.5px solid
+        color-mix(in srgb, var(--showcase-accent, var(--color-primary)) 35%, transparent);
+    pointer-events: none;
     z-index: 1;
 }
 
 /* Left column (5): padding keeps the gradient tile off the card edges. */
 .showcase-card-figure {
-    flex: 5;
+    flex: 4;
     display: grid;
     place-items: center;
     margin: 0;
@@ -64,8 +88,8 @@
 
 /* 1:1 gradient tile — a square capped to a compact size, vertically centred, never
  * filling the card. The parrot is contained so the silhouette stays whole. A candy
- * bevel (glossy top, deep-foliage bottom edge) and a group-feather ring give it a
- * tactile, game-icon read. */
+ * bevel (glossy top, deep-foliage bottom edge) plus a double ring — a white-cream
+ * matte then the group-feather frame — give it a "framed character window" read. */
 .showcase-card-thumb {
     position: relative;
     display: grid;
@@ -76,8 +100,9 @@
     border-radius: var(--radius-md);
     box-shadow:
         inset 0 2px 0 color-mix(in srgb, #ffffff 38%, transparent),
-        inset 0 -4px 0 color-mix(in srgb, var(--color-foliage-deep) 26%, transparent),
-        0 0 0 2px color-mix(in srgb, var(--showcase-accent, transparent) 55%, transparent),
+        inset 0 -4px 0 color-mix(in srgb, var(--color-ink) 26%, transparent),
+        0 0 0 2px var(--color-surface-cream),
+        0 0 0 4px color-mix(in srgb, var(--showcase-accent, var(--color-primary)) 60%, transparent),
         var(--sh-sm);
     overflow: hidden;
 }
@@ -102,24 +127,49 @@
     );
 }
 
-/* Right column (9): wider, left-aligned text block, vertically centred. */
+/* Right column (9): wider, left-aligned text block, vertically centred.
+ * Tighter padding/gap than the old skin offsets the nameplate chip's extra
+ * height so the card's overall band stays the same (intro fits one screen). */
 .showcase-card-body {
     flex: 9;
     min-width: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: 8px;
-    padding: 14px 16px 14px 4px;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 12px 16px 12px 4px;
     text-align: left;
 }
 
+/* Nameplate chip — the code/name ride a group-washed plate with its own mini
+ * depth bar (museum-label read). Ink text on a 14% wash keeps AA contrast —
+ * raw group hues under white text would not (DESIGN.md). */
 .showcase-card-head {
     display: flex;
     align-items: baseline;
     flex-wrap: wrap;
+    align-self: flex-start;
     gap: 6px;
     margin: 0;
+    padding: 4px 12px;
+    border-radius: 10px;
+    background: color-mix(
+        in srgb,
+        var(--showcase-accent, var(--color-primary)) 14%,
+        var(--color-surface-cream)
+    );
+    border: 1.5px solid
+        color-mix(
+            in srgb,
+            var(--showcase-accent, var(--color-primary)) 45%,
+            var(--color-border-action)
+        );
+    box-shadow: 0 2px 0
+        color-mix(
+            in srgb,
+            var(--showcase-accent, var(--color-primary)) 30%,
+            var(--color-border-action)
+        );
     line-height: 1.15;
 }
 
@@ -187,7 +237,7 @@
     border-radius: var(--radius-md);
     box-shadow:
         inset 0 2px 0 color-mix(in srgb, #ffffff 34%, transparent),
-        inset 0 -3px 0 color-mix(in srgb, var(--color-foliage-deep) 26%, transparent),
+        inset 0 -3px 0 color-mix(in srgb, var(--color-ink) 26%, transparent),
         var(--sh-sm);
     overflow: hidden;
     opacity: 0.55;
@@ -234,9 +284,9 @@
     z-index: 1;
     box-shadow:
         inset 0 2px 0 color-mix(in srgb, #ffffff 34%, transparent),
-        inset 0 -3px 0 color-mix(in srgb, var(--color-foliage-deep) 26%, transparent),
+        inset 0 -3px 0 color-mix(in srgb, var(--color-ink) 26%, transparent),
         0 0 0 3px var(--showcase-accent, var(--color-primary)),
-        0 8px 18px color-mix(in srgb, var(--color-foliage-deep) 34%, transparent);
+        0 8px 18px color-mix(in srgb, var(--color-ink) 34%, transparent);
 }
 
 /* Screen-reader-only live caption announcing the active type. */

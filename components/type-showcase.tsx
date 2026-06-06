@@ -100,8 +100,10 @@ export function TypeShowcase({ pool, intervalMs = 3000 }: TypeShowcaseProps) {
     }
 
     // Temperament-group feather hue carries the active type's identity (DESIGN.md):
-    // it tints the card's accent stripe, the image-tile ring, and the centred peek
-    // tile's selection ring, so the active type reads as a distinct "faction".
+    // it tints the card's outer/inner picture frames, the nameplate chip, the
+    // character-window ring, and the centred peek tile's selection ring, so the
+    // active type reads as a distinct "faction" (orange stays reserved for
+    // user-chosen states).
     const accentStyle = {
         '--showcase-accent': GROUP_CSS_VAR[temperamentGroup(active)],
     } as CSSProperties

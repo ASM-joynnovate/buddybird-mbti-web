@@ -66,6 +66,15 @@
         0 4px 22px color-mix(in srgb, var(--color-surface-cream) 60%, transparent);
 }
 
+/* Short viewports (≤700px tall, e.g. 360×640): the roomier showcase card
+ * (16px inner padding) outgrows the screen, so the headline gives back its
+ * generous top margin to keep title+showcase+stats+CTA on one screen. */
+@media (max-height: 700px) {
+    .hero-title {
+        margin-top: clamp(8px, 3vh, 24px);
+    }
+}
+
 /* Gold highlight marker behind the keyword. */
 .hl {
     position: relative;
@@ -106,12 +115,14 @@
     justify-content: center;
     align-items: stretch;
     gap: 22px;
-    padding: 10px 22px;
+    padding: 16px 32px;
     border-radius: var(--r-pill);
     background: color-mix(in srgb, var(--color-surface-cream) 82%, transparent);
-    border: 1px solid color-mix(in srgb, var(--color-border-leaf) 75%, transparent);
-    box-shadow: 0 2px 0 color-mix(in srgb, var(--color-border-leaf) 45%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-border-action) 75%, transparent);
+    box-shadow: 0 2px 0 color-mix(in srgb, var(--color-depth-action) 45%, transparent);
     color: var(--color-ink-muted);
+    /* Human-comfortable stat type scale: 16px labels under 20px Jua figures —
+     * the old 14/26 split read as tiny captions under oversized digits. */
     font-size: 14px;
     font-weight: 600;
 }
@@ -123,7 +134,7 @@
 .hero-stats b {
     display: block;
     font-family: var(--font-display), system-ui, sans-serif;
-    font-size: 26px;
+    font-size: 20px;
     line-height: 1;
     color: var(--color-ink);
 }

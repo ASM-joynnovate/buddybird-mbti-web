@@ -11,11 +11,21 @@
  * 동화숲 token names via the :root alias block below.
  */
 @theme {
-    /* Action anchor — the single CTA color across the funnel: bell-touch orange. */
+    /* Action anchor — the single CTA color across the funnel: bell-touch orange.
+     * Orange also marks every USER-CHOSEN state (selected cards, active chips,
+     * "my type" tags) — soft/glow below are the selection wash + ring shades. */
     --color-primary: #e8772e;
     --color-on-primary: #ffffff;
     --color-primary-hover: #c85f1e;
     --color-primary-active: #a84e16;
+    --color-primary-soft: #ffe2c8;
+    --color-primary-glow: rgba(232, 119, 46, 0.28);
+    /* Shared softened-orange chrome — the ONE outline + depth-bar pair for every
+     * foreground surface (buttons, cards, panels, chips, pills, modal), so the
+     * whole UI speaks the game-btn vocabulary. Full --color-primary is reserved
+     * for hover/selected emphasis. */
+    --color-border-action: color-mix(in srgb, var(--color-primary) 55%, var(--color-surface-cream));
+    --color-depth-action: color-mix(in srgb, var(--color-primary) 45%, var(--color-surface-cream));
 
     /* Base world — warm cream parchment (the fairytale-forest stage). */
     --color-bg: #fbf3df;
@@ -97,7 +107,9 @@
      * from the button's own fill at point of use), card = papercut layers,
      * floating = modal/FAB lift. */
     --shadow-raised-button: 0 10px 22px -8px rgba(58, 46, 26, 0.28);
-    --shadow-game-card: 0 4px 0 rgba(101, 132, 60, 0.14), 0 12px 28px -10px rgba(58, 46, 26, 0.16);
+    --shadow-game-card: 0 4px 0 rgba(168, 78, 22, 0.12), 0 12px 28px -10px rgba(58, 46, 26, 0.16);
+    /* Selected/emphasized card — orange-tinted depth + glow (selection only). */
+    --shadow-card-emphasis: 0 8px 0 rgba(168, 78, 22, 0.18), 0 16px 32px rgba(232, 119, 46, 0.18);
     --shadow-floating: 0 18px 40px -12px rgba(46, 64, 22, 0.28);
 
     /* Motion durations (mirrored by lib/motion/variants.ts — keep in sync). */
@@ -283,16 +295,19 @@ body {
         inset 0 2px 0 rgba(255, 255, 255, 0.25);
 }
 
-/* Secondary — cream game-panel surface with a leaf-green outline + depth bar.
- * High-contrast deep-green ink so it never sinks into the forest backdrop. */
+/* Secondary — cream game-panel surface in the ORANGE action family (softened):
+ * a muted-orange outline + depth bar with deep-orange ink, so every button —
+ * primary or secondary — reads as "action = orange", just at lower volume.
+ * (Replaced the original leaf-green outline: green is forest support, never
+ * an action color.) */
 .game-btn--secondary {
     background: var(--color-surface-cream);
-    color: var(--color-ink-forest);
+    color: var(--color-primary-active);
     font-size: 17px;
     padding: 12px 28px;
-    border: 2px solid var(--color-border-leaf);
+    border: 2px solid var(--color-border-action);
     box-shadow:
-        0 5px 0 var(--color-border-leaf),
+        0 5px 0 var(--color-depth-action),
         0 12px 22px -12px rgba(58, 46, 26, 0.25),
         inset 0 2px 0 rgba(255, 255, 255, 0.85);
     transition:
@@ -303,12 +318,12 @@ body {
 
 .game-btn--secondary:hover:not(:disabled) {
     background: #fffcf0;
-    border-color: color-mix(in srgb, var(--color-border-leaf) 70%, var(--color-accent-deep));
+    border-color: var(--color-primary);
 }
 
 .game-btn--secondary:active:not(:disabled) {
     box-shadow:
-        0 2px 0 var(--color-border-leaf),
+        0 2px 0 var(--color-depth-action),
         0 6px 14px -12px rgba(58, 46, 26, 0.22),
         inset 0 2px 0 rgba(255, 255, 255, 0.6);
 }
@@ -330,7 +345,8 @@ body {
     background: color-mix(in srgb, var(--color-surface-cream) 60%, transparent);
 }
 
-/* Icon — 44px round block (close / utility glyphs). */
+/* Icon — 44px round block (close / utility glyphs). Same softened-orange
+ * action family as the secondary button. */
 .game-btn--icon {
     width: 44px;
     height: 44px;
@@ -338,11 +354,11 @@ body {
     padding: 0;
     border-radius: 50%;
     background: var(--color-surface-cream);
-    color: var(--color-ink-forest);
+    color: var(--color-primary-active);
     font-size: 18px;
-    border: 2px solid var(--color-border-leaf);
+    border: 2px solid var(--color-border-action);
     box-shadow:
-        0 3px 0 var(--color-border-leaf),
+        0 3px 0 var(--color-depth-action),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
     transition:
         box-shadow var(--duration-fast) var(--ease-leaf),
@@ -351,7 +367,7 @@ body {
 
 .game-btn--icon:active:not(:disabled) {
     box-shadow:
-        0 1px 0 var(--color-border-leaf),
+        0 1px 0 var(--color-depth-action),
         inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
@@ -392,8 +408,9 @@ body {
 
 /* ── Game panel / card / chip primitives (issue #21) — quest-card surfaces for
  * content sitting in the forest world. No untreated pure white: cream / mint
- * game surfaces + soft leaf border + papercut layered shadow (--shadow-game-card)
- * + a subtle inner top highlight. Page passes (issues #22–#25) adopt these for
+ * game surfaces + the shared softened-orange action chrome (--color-border-action
+ * outline, --color-depth-action depth bar — same vocabulary as .game-btn) +
+ * papercut layered shadow (--shadow-game-card) + a subtle inner top highlight. Page passes (issues #22–#25) adopt these for
  * their own card surfaces.
  *
  * Motion convention for card surfaces (m.* + lib/motion): entrance fadeUp with
@@ -404,7 +421,7 @@ body {
     position: relative;
     border-radius: var(--radius-panel);
     background: var(--color-surface-cream);
-    border: 2px solid var(--color-border-leaf);
+    border: 2px solid var(--color-border-action);
     box-shadow:
         var(--shadow-game-card),
         inset 0 2px 0 rgba(255, 255, 255, 0.65);
@@ -428,7 +445,7 @@ body {
     position: relative;
     border-radius: var(--radius-lg);
     background: var(--color-surface-cream);
-    border: 2px solid var(--color-border-leaf);
+    border: 2px solid var(--color-border-action);
     box-shadow:
         var(--shadow-game-card),
         inset 0 2px 0 rgba(255, 255, 255, 0.6);
@@ -437,7 +454,10 @@ body {
 
 /* Selectable card (button/link cards) — border highlight + shadow lift on
  * hover/selection; the grow/shrink itself is Motion (whileHover 1.01 /
- * whileTap cardTap 0.98) so CSS never touches transform. */
+ * whileTap cardTap 0.98) so CSS never touches transform. Selection = bell
+ * orange (the user-choice color, same anchor as the CTA): hover only hints
+ * with an orange-tinted border, the picked card gets the full orange frame +
+ * glow ring + emphasis depth. */
 .game-card--selectable {
     cursor: pointer;
     transition:
@@ -446,15 +466,19 @@ body {
 }
 
 .game-card--selectable:hover {
-    border-color: color-mix(in srgb, var(--color-border-leaf) 55%, var(--color-accent-deep));
+    border-color: color-mix(in srgb, var(--color-primary) 75%, var(--color-surface-cream));
     box-shadow:
-        0 6px 0 rgba(101, 132, 60, 0.16),
+        0 6px 0 rgba(168, 78, 22, 0.14),
         0 16px 32px -10px rgba(58, 46, 26, 0.2),
         inset 0 2px 0 rgba(255, 255, 255, 0.6);
 }
 
 .game-card--selectable.is-selected {
-    border-color: var(--color-accent-deep);
+    border-color: var(--color-primary);
+    box-shadow:
+        var(--shadow-card-emphasis),
+        0 0 0 3px var(--color-primary-glow),
+        inset 0 2px 0 rgba(255, 255, 255, 0.6);
 }
 
 .game-card--disabled,
@@ -472,8 +496,8 @@ body {
     border-radius: var(--r-pill);
     padding: 8px 14px;
     background: var(--color-surface-mint);
-    border: 2px solid var(--color-border-leaf);
-    box-shadow: 0 2px 0 var(--color-border-leaf);
+    border: 2px solid var(--color-border-action);
+    box-shadow: 0 2px 0 var(--color-depth-action);
     color: var(--color-ink-forest);
     font-weight: 700;
     font-size: 0.875rem;
@@ -497,8 +521,8 @@ body {
 }
 
 /* ── Match chip (궁합) — cross-screen: result match section + type modal. Game
- * chip skin (issue #21): semi-solid cream pill + leaf border + tiny depth bar
- * (never floating text). The per-type gradient dot + border accent (--c1/--c2)
+ * chip skin (issue #21): semi-solid cream pill + softened-orange action border
+ * + tiny depth bar (never floating text). The per-type gradient dot + border accent (--c1/--c2)
  * are injected inline by the MatchChip component; transform is Motion-owned
  * (whileTap cardTap via MatchChip), so CSS only moves border/shadow. ── */
 .chip {
@@ -506,11 +530,11 @@ body {
     align-items: center;
     gap: 9px;
     background: var(--color-surface-cream);
-    border: 2px solid var(--color-border-leaf);
+    border: 2px solid var(--color-border-action);
     border-radius: var(--r-pill);
     padding: 9px 16px 9px 10px;
     min-height: 44px;
-    box-shadow: 0 2px 0 var(--color-border-leaf);
+    box-shadow: 0 2px 0 var(--color-depth-action);
     font: inherit;
     font-weight: 700;
     font-size: 0.875rem;
@@ -524,7 +548,7 @@ body {
 .chip:hover {
     border-color: var(--c1, var(--color-primary));
     box-shadow: 0 3px 0
-        color-mix(in srgb, var(--c1, var(--color-primary)) 35%, var(--color-border-leaf));
+        color-mix(in srgb, var(--c1, var(--color-primary)) 35%, var(--color-depth-action));
 }
 
 .chip:focus-visible {
@@ -556,7 +580,7 @@ body {
 /* ── Type detail modal (도감 + result match → /dex?focus). Ported from the bundle
  * styles.css. Per-type gradient hero via --type-grad (injected inline by React).
  * Game panel skin (issue #25, lead-approved .modal*-scoped exception): cream
- * surface + 28px panel radius + leaf border + floating shadow. Open/close motion
+ * surface + 28px panel radius + softened-orange action border + floating shadow. Open/close motion
  * is AnimatePresence-owned (type-modal.tsx) — the old `animation:` declarations
  * are removed because CSS animations beat Motion's inline styles in the cascade,
  * and the modal-fade/modal-in @keyframes were deleted in the issue #27 sweep. ── */
@@ -573,7 +597,7 @@ body {
 
 .modal {
     background: var(--color-surface-cream);
-    border: 2px solid var(--color-border-leaf);
+    border: 2px solid var(--color-border-action);
     border-radius: var(--radius-panel);
     max-width: 420px;
     width: 100%;
@@ -661,7 +685,7 @@ body {
     padding: 9px 18px;
     border-radius: var(--r-pill);
     background: var(--color-surface-mint);
-    border: 2px solid var(--color-border-leaf);
+    border: 2px solid var(--color-border-action);
     color: var(--color-ink-forest);
     font-weight: 700;
     font-size: 0.9375rem;
@@ -694,7 +718,7 @@ body {
     }
 
     .chip:hover {
-        border-color: var(--color-border-leaf);
-        box-shadow: 0 2px 0 var(--color-border-leaf);
+        border-color: var(--color-border-action);
+        box-shadow: 0 2px 0 var(--color-depth-action);
     }
 }

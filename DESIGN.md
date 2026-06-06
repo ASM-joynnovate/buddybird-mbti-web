@@ -1,6 +1,6 @@
 ---
 version: 1.0
-name: Parrot MBTI — Tropical Jungle
+name: Parrot MBTI — Tropical Jungle (historical)
 description: >-
     Visual identity for the BuddyBird Parrot MBTI viral web. A bright daylight
     tropical-jungle world on a green base, with parrot-feather accents, rounded
@@ -8,6 +8,9 @@ description: >-
     Mobile-first, single fixed theme, Korean-first. Direction and surface layout
     confirmed in the issue #03 human design review (variant C — editorial trail);
     the brand-anchor action color remains a placeholder until issue #12.
+    HISTORICAL (Tropical Jungle, pre-ADR-0002) — the token VALUES below are
+    superseded by the 동화숲 system in app/globals.css @theme; this frontmatter is
+    kept for design lineage only.
 
 # --- COLOR TOKENS (hex; brand anchor is a placeholder until issue #12) ---
 colors:
@@ -323,6 +326,32 @@ predates the 동화숲 pivot and values come from `globals.css`).
   The lime family (`--color-accent` #AFF729 / `--color-accent-deep` #518D00)
   is **support only**: decor accents, progress flourishes, semantic fills.
   Never on an action button.
+- **UI chrome = orange family, two volumes — ALL surfaces.** Every foreground
+  outline + depth bar (buttons, cards, panels, chips, pills, scrims, modal)
+  speaks the game-btn vocabulary via the shared tokens
+  `--color-border-action` / `--color-depth-action`
+  (`color-mix(--color-primary 55%/45%, --color-surface-cream)`); card depth in
+  `--shadow-game-card` is orange-tinted (rgba(168,78,22,.12)). Volumes:
+  primary/FAB run solid `--color-primary` + `--color-primary-active` depth;
+  everything else runs the softened pair, stepping up to ~75% primary on
+  hover and full primary + glow when selected. Secondary/icon button ink is
+  `--color-primary-active`; ghost stays muted ink. The leaf-green
+  outline/depth (`--color-border-leaf`) is fully retired from foreground
+  chrome — green lives in the forest backdrop, mint support surfaces, and
+  type-identity art only.
+- **Selection & emphasis = bell orange.** Every USER-CHOSEN state wears the
+  CTA orange: selected cards (`#E8772E` border + `--color-primary-glow` ring +
+  `--shadow-card-emphasis` depth), the quiz check stamp, active chips, and the
+  dex "my type" card/tag. The green family (`--color-accent-deep`, `--brand`)
+  is retired from selection states. Supporting shades:
+  `--color-primary-soft` #FFE2C8 (selection wash) ·
+  `--color-primary-glow` rgba(232,119,46,.28) (ring) ·
+  `--shadow-card-emphasis` (orange-tinted depth + glow drop).
+- **Orange vs. group hues.** Orange marks what the _user_ chose or owns;
+  the temperament-group feather hues mark _type identity_ (showcase card
+  frames/nameplate, peek carousel's auto-advancing active ring, result hero).
+  A system-driven highlight is identity, not selection — it stays
+  group-colored, never orange, so the CTA keeps its pull on the intro.
 - **Surfaces.** Game panels use cream / mint / pale-leaf
   (`--color-surface-cream` #FFF8E3, `--color-surface-mint` #EAFBD8,
   `--color-surface-leaf` #DDF7B8) — no untreated pure-white cards. Content on
@@ -341,13 +370,27 @@ predates the 동화숲 pivot and values come from `globals.css`).
   transform/opacity only). Durations: fast 160 ms · base 260 ms · slow 420 ms.
   Reduced motion: entrances degrade to opacity-only, taps and idle loops drop
   entirely.
+- **Showcase collection card** (`components/type-showcase.css`). The intro's
+  active-type card is a "framed exhibit" on the unchanged 5:9 horizontal
+  skeleton (carousel logic per ADR-0005): a 3 px group-tinted outer border
+  with a 1.5 px inset hairline inner frame (picture-frame double border), a
+  cream→mint surface wash, a group-tinted bottom depth bar (never the orange
+  emphasis shadow — that is selection-only), a group-washed **nameplate chip**
+  for the code/name (ink text on a 14% wash — raw group hues under white text
+  fail AA), and a white-matted, group-ringed character window for the parrot.
+- **Intro stat pill type scale.** `hero-stats` runs 20 px Jua figures over
+  16 px labels — a human-comfortable pairing (the old 14/26 split read as
+  tiny captions under oversized digits).
 
 # Do's and Don'ts
 
 **Do**
 
 - Keep `primary` as the only action color, everywhere in the funnel.
-- Use group feather hues strictly for **type identity**.
+- Mark user-chosen states (selected cards, check stamps, active chips, "my
+  type") with the bell-orange emphasis frame — selection is orange everywhere.
+- Use group feather hues strictly for **type identity** (including
+  system-driven highlights like the showcase peek ring).
 - Build depth from overlapping foliage and green-tinted shadows.
 - Drive hierarchy with Jua/Pretendard **size contrast**.
 - Keep result-card text in the lower band for legibility over any photo.
@@ -357,6 +400,8 @@ predates the 동화숲 pivot and values come from `globals.css`).
 **Don't**
 
 - Don't tint action buttons with a group color (breaks the learned affordance).
+- Don't color selection states with the green/lime family — orange owns
+  selection; green is forest support.
 - Don't reintroduce automatic dark mode — single fixed theme only.
 - Don't use cream/ivory as the base — the world is green.
 - Don't put text on the leaf `clip-path` edge — keep it on the safe rectangle.

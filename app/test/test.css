@@ -2,14 +2,16 @@
  * Test (Quiz) surface — faithful recreation of the Claude Design bundle Quiz
  * ("동화숲 월드"): a segmented progress bar (each answered segment fills with its axis
  * hue), a back/exit meta row, an emoji-led question card, and two big 🅰/🅱 option
- * cards tinted by their axis-letter color (--ax). Ported from styles.css; tokens:
+ * cards. The per-option --ax accent (decorative 🅰/🅱 A/B colors, ADR-0003) only
+ * tints the badge + progress fill; selection itself is the generic orange
+ * .game-card--selectable.is-selected from globals. Ported from styles.css; tokens:
  * globals.css.
  *
  * Motion pass (issue #23): question-card slide (was slideInL/R keyframes), the
  * selection bounce, the check-stamp pop and the progress fill are Motion-owned in
  * page.tsx — this file no longer animates transform/width. Option cards consume the
  * .game-card / .game-card--selectable vocabulary (issue #21) for their surface;
- * only quiz-specific layout and the per-option --ax accent live here.
+ * only quiz-specific layout lives here.
  */
 
 .test-surface {
@@ -174,13 +176,13 @@
     flex: 1;
 }
 
-/* Picked option highlights with its 🅰/🅱 accent (overrides the generic
- * .game-card--selectable.is-selected green; .opts ancestor wins the tie). */
-.opts .opt.is-selected {
-    border-color: var(--ax);
-}
+/* (The picked option's orange frame + glow comes straight from the generic
+ * .game-card--selectable.is-selected in globals — the old per-option --ax
+ * border override is gone: selection reads as bell orange everywhere, while
+ * --ax keeps tinting only the 🅰/🅱 badge and the progress fill.) */
 
-/* Check stamp on the picked option (top-right). Pop-in is Motion (popIn). */
+/* Check stamp on the picked option (top-right) — orange, matching the
+ * selected frame. Pop-in is Motion (popIn). */
 .opt-check {
     position: absolute;
     top: -12px;
@@ -188,7 +190,7 @@
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: var(--ax);
+    background: var(--color-primary);
     color: #ffffff;
     display: grid;
     place-items: center;

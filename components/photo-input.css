@@ -46,7 +46,7 @@
     border-radius: var(--radius-lg);
     overflow: hidden;
     background: var(--color-surface-cream);
-    border: 2px solid var(--color-border-leaf);
+    border: 2px solid var(--color-border-action);
     box-shadow: var(--shadow-game-card);
 }
 
