@@ -19,13 +19,18 @@
     --color-primary-hover: #c85f1e;
     --color-primary-active: #a84e16;
     --color-primary-soft: #ffe2c8;
-    --color-primary-glow: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-cream));
+    --color-primary-glow: #f9b277;
     /* Shared softened-orange chrome — the ONE outline + depth-bar pair for every
      * foreground surface (buttons, cards, panels, chips, pills, modal), so the
-     * whole UI speaks the game-btn vocabulary. Full --color-primary is reserved
-     * for hover/selected emphasis. */
-    --color-border-action: color-mix(in srgb, var(--color-primary) 55%, var(--color-surface-cream));
-    --color-depth-action: color-mix(in srgb, var(--color-primary) 45%, var(--color-surface-cream));
+     * whole UI speaks the raised-block vocabulary. Full --color-primary is
+     * reserved for hover/selected emphasis. Solid hex per DESIGN.md (no derived
+     * color-mix — the values ARE the norm). */
+    --color-border-action: #f0b486;
+    --color-depth-action: #e7a06a;
+
+    /* Festive companion to orange — highlight underlines, progress gradients.
+     * Never colors a primary action (DESIGN.md). */
+    --color-gold: #e8b53a;
 
     /* Base world — warm cream parchment (the fairytale-forest stage). */
     --color-bg: #fbf3df;
@@ -40,26 +45,39 @@
     --color-foliage-mid: #3c7a24; /* deep forest green */
     --color-foliage-deep: #2e6b2e;
 
-    /* 4 temperament-group feather accents (type identity; decorative flourishes). */
+    /* 4 temperament-faction accents (DESIGN.md) — type-identity ONLY. They label
+     * content (group badges, faction chips) and never style actions. */
+    --color-faction-analyst: #7b3fb5;
+    --color-faction-diplomat: #e0568f;
+    --color-faction-sentinel: #3e8fd0;
+    --color-faction-explorer: #e08a2c;
+
+    /* DEPRECATED group accents — superseded by the faction palette above; kept
+     * only until step-8 of the design rebuild deletes their last consumers. */
     --color-group-ruby: #c8341f;
     --color-group-marigold: #f0913a;
     --color-group-teal: #2e9bb5;
     --color-group-cobalt: #3e8fd0;
 
-    /* Per-axis spectrum colors (result axis bars). One representative 동화숲 hue per
-     * MBTI axis (E / N / F / J letters), from the bundle's axis palette. */
-    --color-axis-ei: #e8772e; /* 에너지 — bell orange (E) */
-    --color-axis-sn: #7b3fb5; /* 인식 — royal purple (N) */
-    --color-axis-tf: #e86a9e; /* 판단 — bloom pink (F) */
-    --color-axis-jp: #3c7a24; /* 생활 — forest green (J) */
+    /* Per-axis spectrum colors (result axis bars) — prototype palette. */
+    --color-axis-ei: #e8772e; /* 에너지 — bell orange */
+    --color-axis-sn: #5b9e3a; /* 인식 — leaf green */
+    --color-axis-tf: #2e9bb5; /* 판단 — teal */
+    --color-axis-jp: #e8b53a; /* 생활 — gold */
 
     --color-error: #d7263d;
 
-    /* Organic, generous radii. */
+    /* Rounded vocabulary (DESIGN.md): sm = letter tiles, md = inset windows,
+     * lg = choice rows, card = trading cards / detail modal, panel = larger
+     * surfaces. NOTE: md/lg are SMALLER than Tailwind defaults — ADR-0008. */
     --radius-sm: 12px;
-    --radius-md: 20px;
-    --radius-lg: 24px;
+    --radius-md: 16px;
+    --radius-lg: 20px;
+    --radius-card: 24px;
     --radius-xl: 32px;
+
+    /* Global 22px side gutter — every full-width surface honors it (DESIGN.md). */
+    --spacing-gutter: 22px;
 
     /* Type families — bound to next/font variables set on <html> (layout.tsx). */
     --font-sans: var(--font-noto-kr);
@@ -98,9 +116,59 @@
     --color-error-soft: #ff7b72;
     --color-info: #54c7d8;
 
-    /* Game shape: buttons/chips ride the existing pill (--r-pill), cards the
-     * existing --radius-lg (24px); panels get a dedicated 28px step. */
-    --radius-panel: 28px;
+    /* Game shape: buttons/chips ride the pill, cards --radius-card (24px);
+     * panels get a dedicated 26px step (DESIGN.md rounded.panel). */
+    --radius-panel: 26px;
+
+    /* ── Raised-block shadow recipes (DESIGN.md elevation language) — every
+     * value layers: bottom depth bar + soft ambient drop + inset top highlight.
+     * Values are the bundle styles.css originals, verbatim. ── */
+
+    /* Primary button (orange raised CTA) + its pressed state. */
+    --shadow-raise-primary:
+        0 6px 0 var(--color-primary-active),
+        0 16px 26px -10px color-mix(in srgb, var(--color-primary) 60%, transparent),
+        inset 0 2px 0 color-mix(in srgb, #ffffff 38%, var(--color-primary));
+    --shadow-raise-primary-down:
+        0 2px 0 var(--color-primary-active),
+        0 8px 16px -10px color-mix(in srgb, var(--color-primary) 50%, transparent),
+        inset 0 2px 0 color-mix(in srgb, #ffffff 26%, var(--color-primary));
+
+    /* Cream raised surfaces (secondary button, pills) + pressed + small (icon). */
+    --shadow-raise-cream:
+        0 5px 0 var(--color-depth-action), 0 12px 22px -14px rgba(58, 46, 26, 0.35),
+        inset 0 2px 0 color-mix(in srgb, #ffffff 85%, var(--color-surface-cream));
+    --shadow-raise-cream-down:
+        0 2px 0 var(--color-depth-action),
+        inset 0 2px 0 color-mix(in srgb, #ffffff 60%, var(--color-surface-cream));
+    --shadow-raise-cream-sm:
+        0 3px 0 var(--color-depth-action), 0 8px 16px -8px rgba(58, 46, 26, 0.5);
+
+    /* Cream content panel (quiz card, result panels). */
+    --shadow-raise-panel:
+        0 6px 0 var(--color-depth-action), 0 16px 30px -18px rgba(58, 46, 26, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.85);
+
+    /* Trading-card orange gradient frame (full + compact deck size). */
+    --shadow-card-frame:
+        0 7px 0 var(--color-primary-active), 0 22px 40px -16px rgba(40, 20, 8, 0.55),
+        inset 0 2px 0 rgba(255, 255, 255, 0.5);
+    --shadow-card-frame-sm:
+        0 5px 0 var(--color-primary-active), 0 14px 26px -14px rgba(40, 20, 8, 0.5),
+        inset 0 2px 0 rgba(255, 255, 255, 0.5);
+
+    /* Foil portrait window (inset gloss + white ring + action ring). */
+    --shadow-window:
+        inset 0 2px 0 rgba(255, 255, 255, 0.45), inset 0 -10px 22px rgba(0, 0, 0, 0.22),
+        0 0 0 3px #ffffff, 0 0 0 5px var(--color-border-action);
+
+    /* Deck ghost card-backs peeking behind the active card. */
+    --shadow-ghost:
+        0 6px 0 rgba(0, 0, 0, 0.12), 0 16px 26px -16px rgba(40, 20, 8, 0.5),
+        inset 0 2px 0 rgba(255, 255, 255, 0.35);
+
+    /* Recessed track (progress bar, axis spectrum track). */
+    --shadow-inset-track: inset 0 2px 4px rgba(58, 46, 26, 0.15);
 
     /* Forest-toned game elevation (NEVER hard black shadows):
      * raised button = bottom depth + colored soft drop (depth color is mixed
@@ -132,8 +200,8 @@
 :root {
     --brand: var(--color-foliage-near); /* leaf green */
     --brand-d: var(--color-foliage-mid); /* deep forest green */
-    --royal: var(--color-axis-sn); /* royal purple */
-    --gold: #e8b53a;
+    --royal: #7b3fb5; /* royal purple (axis-sn moved to leaf green — pin literal) */
+    --gold: var(--color-gold);
     --cta: var(--color-primary); /* bell orange */
     --cta-d: var(--color-primary-hover);
 
