@@ -19,7 +19,7 @@
     --color-primary-hover: #c85f1e;
     --color-primary-active: #a84e16;
     --color-primary-soft: #ffe2c8;
-    --color-primary-glow: rgba(232, 119, 46, 0.28);
+    --color-primary-glow: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-cream));
     /* Shared softened-orange chrome — the ONE outline + depth-bar pair for every
      * foreground surface (buttons, cards, panels, chips, pills, modal), so the
      * whole UI speaks the game-btn vocabulary. Full --color-primary is reserved
@@ -107,9 +107,13 @@
      * from the button's own fill at point of use), card = papercut layers,
      * floating = modal/FAB lift. */
     --shadow-raised-button: 0 10px 22px -8px rgba(58, 46, 26, 0.28);
-    --shadow-game-card: 0 4px 0 rgba(168, 78, 22, 0.12), 0 12px 28px -10px rgba(58, 46, 26, 0.16);
+    --shadow-game-card:
+        0 4px 0 color-mix(in srgb, var(--color-primary-active) 12%, var(--color-surface-cream)),
+        0 12px 28px -10px rgba(58, 46, 26, 0.16);
     /* Selected/emphasized card — orange-tinted depth + glow (selection only). */
-    --shadow-card-emphasis: 0 8px 0 rgba(168, 78, 22, 0.18), 0 16px 32px rgba(232, 119, 46, 0.18);
+    --shadow-card-emphasis:
+        0 8px 0 color-mix(in srgb, var(--color-primary-active) 18%, var(--color-surface-cream)),
+        0 16px 32px rgba(232, 119, 46, 0.18);
     --shadow-floating: 0 18px 40px -12px rgba(46, 64, 22, 0.28);
 
     /* Motion durations (mirrored by lib/motion/variants.ts — keep in sync). */
@@ -277,7 +281,7 @@ body {
     box-shadow:
         0 6px 0 var(--color-primary-active),
         0 14px 26px -10px color-mix(in srgb, var(--color-primary) 45%, transparent),
-        inset 0 2px 0 rgba(255, 255, 255, 0.35);
+        inset 0 2px 0 color-mix(in srgb, #ffffff 35%, var(--color-primary));
     transition:
         box-shadow var(--duration-fast) var(--ease-leaf),
         background var(--duration-fast) var(--ease-leaf),
@@ -292,7 +296,7 @@ body {
     box-shadow:
         0 2px 0 var(--color-primary-active),
         0 8px 16px -10px color-mix(in srgb, var(--color-primary) 40%, transparent),
-        inset 0 2px 0 rgba(255, 255, 255, 0.25);
+        inset 0 2px 0 color-mix(in srgb, #ffffff 25%, var(--color-primary));
 }
 
 /* Secondary — cream game-panel surface in the ORANGE action family (softened):
@@ -309,7 +313,7 @@ body {
     box-shadow:
         0 5px 0 var(--color-depth-action),
         0 12px 22px -12px rgba(58, 46, 26, 0.25),
-        inset 0 2px 0 rgba(255, 255, 255, 0.85);
+        inset 0 2px 0 color-mix(in srgb, #ffffff 85%, var(--color-surface-cream));
     transition:
         box-shadow var(--duration-fast) var(--ease-leaf),
         background var(--duration-fast) var(--ease-leaf),
@@ -325,7 +329,7 @@ body {
     box-shadow:
         0 2px 0 var(--color-depth-action),
         0 6px 14px -12px rgba(58, 46, 26, 0.22),
-        inset 0 2px 0 rgba(255, 255, 255, 0.6);
+        inset 0 2px 0 color-mix(in srgb, #ffffff 60%, var(--color-surface-cream));
 }
 
 /* Ghost — quiet inline action (back/exit, clear). No raised body, full target. */
@@ -342,7 +346,7 @@ body {
 
 .game-btn--ghost:hover:not(:disabled) {
     color: var(--color-ink);
-    background: color-mix(in srgb, var(--color-surface-cream) 60%, transparent);
+    background: var(--color-surface-cream);
 }
 
 /* Icon — 44px round block (close / utility glyphs). Same softened-orange
@@ -359,7 +363,7 @@ body {
     border: 2px solid var(--color-border-action);
     box-shadow:
         0 3px 0 var(--color-depth-action),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        inset 0 1px 0 color-mix(in srgb, #ffffff 80%, var(--color-surface-cream));
     transition:
         box-shadow var(--duration-fast) var(--ease-leaf),
         background var(--duration-fast) var(--ease-leaf);
@@ -368,7 +372,7 @@ body {
 .game-btn--icon:active:not(:disabled) {
     box-shadow:
         0 1px 0 var(--color-depth-action),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        inset 0 1px 0 color-mix(in srgb, #ffffff 60%, var(--color-surface-cream));
 }
 
 /* FAB — floating action: 60px round primary block with the floating lift.
@@ -385,7 +389,7 @@ body {
     box-shadow:
         0 5px 0 var(--color-primary-active),
         var(--shadow-floating),
-        inset 0 2px 0 rgba(255, 255, 255, 0.35);
+        inset 0 2px 0 color-mix(in srgb, #ffffff 35%, var(--color-primary));
     transition:
         box-shadow var(--duration-fast) var(--ease-leaf),
         filter var(--duration-fast) var(--ease-leaf);
@@ -395,7 +399,7 @@ body {
     box-shadow:
         0 2px 0 var(--color-primary-active),
         0 10px 22px -12px rgba(46, 64, 22, 0.26),
-        inset 0 2px 0 rgba(255, 255, 255, 0.25);
+        inset 0 2px 0 color-mix(in srgb, #ffffff 25%, var(--color-primary));
 }
 
 /* Compact pill — keeps the 44px touch floor while reading smaller. */
@@ -424,7 +428,7 @@ body {
     border: 2px solid var(--color-border-action);
     box-shadow:
         var(--shadow-game-card),
-        inset 0 2px 0 rgba(255, 255, 255, 0.65);
+        inset 0 2px 0 color-mix(in srgb, #ffffff 65%, var(--color-surface-cream));
     color: var(--color-ink);
 }
 
@@ -435,7 +439,7 @@ body {
 
 /* Empty state — a waiting slot, not a raised panel. */
 .game-panel--empty {
-    background: color-mix(in srgb, var(--color-surface-cream) 72%, transparent);
+    background: var(--color-surface-cream);
     border-style: dashed;
     box-shadow: none;
     color: var(--color-ink-muted);
@@ -448,7 +452,7 @@ body {
     border: 2px solid var(--color-border-action);
     box-shadow:
         var(--shadow-game-card),
-        inset 0 2px 0 rgba(255, 255, 255, 0.6);
+        inset 0 2px 0 color-mix(in srgb, #ffffff 60%, var(--color-surface-cream));
     color: var(--color-ink);
 }
 
@@ -468,9 +472,9 @@ body {
 .game-card--selectable:hover {
     border-color: color-mix(in srgb, var(--color-primary) 75%, var(--color-surface-cream));
     box-shadow:
-        0 6px 0 rgba(168, 78, 22, 0.14),
+        0 6px 0 color-mix(in srgb, var(--color-primary-active) 14%, var(--color-surface-cream)),
         0 16px 32px -10px rgba(58, 46, 26, 0.2),
-        inset 0 2px 0 rgba(255, 255, 255, 0.6);
+        inset 0 2px 0 color-mix(in srgb, #ffffff 60%, var(--color-surface-cream));
 }
 
 .game-card--selectable.is-selected {
@@ -478,7 +482,7 @@ body {
     box-shadow:
         var(--shadow-card-emphasis),
         0 0 0 3px var(--color-primary-glow),
-        inset 0 2px 0 rgba(255, 255, 255, 0.6);
+        inset 0 2px 0 color-mix(in srgb, #ffffff 60%, var(--color-surface-cream));
 }
 
 .game-card--disabled,
@@ -605,7 +609,7 @@ body {
     overflow-y: auto;
     box-shadow:
         var(--shadow-floating),
-        inset 0 2px 0 rgba(255, 255, 255, 0.6);
+        inset 0 2px 0 color-mix(in srgb, #ffffff 60%, var(--color-surface-cream));
 }
 
 .modal-hero {

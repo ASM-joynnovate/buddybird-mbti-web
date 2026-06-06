@@ -75,8 +75,8 @@ const optionHover = { scale: 1.015, y: -3, transition: { duration: 0.26, ease: e
 
 // Decorative 🅰/🅱 option accents. With multi-axis weighted choices (ADR-0003) a
 // choice no longer maps to a single axis letter, so the tint is purely a visual A/B
-// distinction — not a semantic axis hue. Hex (not a CSS var) so the badge can append
-// an alpha suffix (`${color}22`).
+// distinction — not a semantic axis hue. The badge wash is an OPAQUE color-mix
+// into the cream surface (chrome carries no alpha by rule — DESIGN.md).
 const OPTION_ACCENTS = ['#e8772e', '#7b3fb5'] as const
 
 export default function TestPage() {
@@ -297,7 +297,10 @@ export default function TestPage() {
                                 >
                                     <span
                                         className="opt-badge"
-                                        style={{ background: `${color}22`, color }}
+                                        style={{
+                                            background: `color-mix(in srgb, ${color} 13%, var(--color-surface-cream))`,
+                                            color,
+                                        }}
                                         aria-hidden="true"
                                     >
                                         {i === 0 ? '🅰' : '🅱'}

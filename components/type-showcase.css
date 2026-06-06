@@ -55,10 +55,10 @@
             color-mix(
                 in srgb,
                 var(--showcase-accent, var(--color-primary)) 22%,
-                rgba(168, 78, 22, 0.12)
+                var(--color-surface-cream)
             ),
         0 14px 30px -10px rgba(58, 46, 26, 0.18),
-        inset 0 2px 0 color-mix(in srgb, #ffffff 65%, transparent);
+        inset 0 2px 0 color-mix(in srgb, #ffffff 65%, var(--color-surface-cream));
     overflow: hidden;
     padding: 16px;
 }
@@ -72,7 +72,11 @@
     inset: 5px;
     border-radius: calc(var(--radius-lg) - 8px);
     border: 1.5px solid
-        color-mix(in srgb, var(--showcase-accent, var(--color-primary)) 35%, transparent);
+        color-mix(
+            in srgb,
+            var(--showcase-accent, var(--color-primary)) 35%,
+            var(--color-surface-cream)
+        );
     pointer-events: none;
     z-index: 1;
 }
@@ -102,7 +106,12 @@
         inset 0 2px 0 color-mix(in srgb, #ffffff 38%, transparent),
         inset 0 -4px 0 color-mix(in srgb, var(--color-ink) 26%, transparent),
         0 0 0 2px var(--color-surface-cream),
-        0 0 0 4px color-mix(in srgb, var(--showcase-accent, var(--color-primary)) 60%, transparent),
+        0 0 0 4px
+            color-mix(
+                in srgb,
+                var(--showcase-accent, var(--color-primary)) 60%,
+                var(--color-surface-cream)
+            ),
         var(--sh-sm);
     overflow: hidden;
 }
@@ -180,7 +189,7 @@
 }
 
 .showcase-card-sep {
-    color: color-mix(in srgb, var(--color-ink-muted) 55%, transparent);
+    color: color-mix(in srgb, var(--color-ink-muted) 55%, var(--color-surface-cream));
     font-weight: 400;
 }
 

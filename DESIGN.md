@@ -345,13 +345,20 @@ predates the 동화숲 pivot and values come from `globals.css`).
   dex "my type" card/tag. The green family (`--color-accent-deep`, `--brand`)
   is retired from selection states. Supporting shades:
   `--color-primary-soft` #FFE2C8 (selection wash) ·
-  `--color-primary-glow` rgba(232,119,46,.28) (ring) ·
+  `--color-primary-glow` (opaque 28% primary-on-cream ring) ·
   `--shadow-card-emphasis` (orange-tinted depth + glow drop).
 - **Orange vs. group hues.** Orange marks what the _user_ chose or owns;
   the temperament-group feather hues mark _type identity_ (showcase card
   frames/nameplate, peek carousel's auto-advancing active ring, result hero).
   A system-driven highlight is identity, not selection — it stays
   group-colored, never orange, so the CTA keeps its pull on the intro.
+- **Opaque chrome — no decorative alpha.** Structural chrome (borders, 0-blur
+  depth bars, glow rings, inset highlights, chip/scrim/badge fills) is FULLY
+  opaque: translucent layers are replaced by `color-mix` into the underlying
+  surface (usually `--color-surface-cream`). Alpha survives only where it is
+  intrinsic: blurred drop/text shadows, the modal dim overlay, gradient fades
+  (sheens), effects sitting on VARIABLE art (per-type gradients, photos), and
+  element-level `opacity` states/decor.
 - **Surfaces.** Game panels use cream / mint / pale-leaf
   (`--color-surface-cream` #FFF8E3, `--color-surface-mint` #EAFBD8,
   `--color-surface-leaf` #DDF7B8) — no untreated pure-white cards. Content on

@@ -61,7 +61,7 @@
      * halo so the headline separates from busy foliage at every width. */
     color: var(--color-ink);
     text-shadow:
-        0 1px 0 color-mix(in srgb, var(--color-surface-cream) 85%, transparent),
+        0 1px 0 var(--color-surface-cream),
         0 0 14px color-mix(in srgb, var(--color-surface-cream) 80%, transparent),
         0 4px 22px color-mix(in srgb, var(--color-surface-cream) 60%, transparent);
 }
@@ -91,7 +91,7 @@
     height: 38%;
     z-index: -1;
     border-radius: var(--r-pill);
-    background: color-mix(in srgb, var(--pop-yellow) 70%, transparent);
+    background: color-mix(in srgb, var(--pop-yellow) 70%, var(--color-surface-cream));
     transform: rotate(-1.5deg);
 }
 
@@ -117,9 +117,10 @@
     gap: 22px;
     padding: 16px 32px;
     border-radius: var(--r-pill);
-    background: color-mix(in srgb, var(--color-surface-cream) 82%, transparent);
-    border: 1px solid color-mix(in srgb, var(--color-border-action) 75%, transparent);
-    box-shadow: 0 2px 0 color-mix(in srgb, var(--color-depth-action) 45%, transparent);
+    background: var(--color-surface-cream);
+    border: 1px solid var(--color-border-action);
+    box-shadow: 0 2px 0
+        color-mix(in srgb, var(--color-depth-action) 45%, var(--color-surface-cream));
     color: var(--color-ink-muted);
     /* Human-comfortable stat type scale: 16px labels under 20px Jua figures —
      * the old 14/26 split read as tiny captions under oversized digits. */

@@ -23,9 +23,10 @@
     margin-bottom: 26px;
     padding: 16px 18px 18px;
     border-radius: var(--radius-lg);
-    background: color-mix(in srgb, var(--color-surface-cream) 82%, transparent);
-    border: 1px solid color-mix(in srgb, var(--color-border-action) 75%, transparent);
-    box-shadow: 0 2px 0 color-mix(in srgb, var(--color-depth-action) 45%, transparent);
+    background: var(--color-surface-cream);
+    border: 1px solid var(--color-border-action);
+    box-shadow: 0 2px 0
+        color-mix(in srgb, var(--color-depth-action) 45%, var(--color-surface-cream));
 }
 
 .dex-eyebrow {
@@ -77,7 +78,7 @@
     background: var(--color-surface-cream);
     box-shadow:
         var(--shadow-game-card),
-        inset 0 2px 0 rgba(255, 255, 255, 0.6);
+        inset 0 2px 0 color-mix(in srgb, #ffffff 60%, var(--color-surface-cream));
     cursor: pointer;
     overflow: hidden;
     transition:
@@ -99,9 +100,9 @@
 .dex-card:hover {
     border-color: color-mix(in srgb, var(--color-primary) 75%, var(--color-surface-cream));
     box-shadow:
-        0 6px 0 rgba(168, 78, 22, 0.14),
+        0 6px 0 color-mix(in srgb, var(--color-primary-active) 14%, var(--color-surface-cream)),
         0 16px 32px -10px rgba(58, 46, 26, 0.2),
-        inset 0 2px 0 rgba(255, 255, 255, 0.6);
+        inset 0 2px 0 color-mix(in srgb, #ffffff 60%, var(--color-surface-cream));
 }
 
 .dex-card:focus-visible {
@@ -116,7 +117,7 @@
     box-shadow:
         var(--shadow-card-emphasis),
         0 0 0 3px var(--color-primary-glow),
-        inset 0 2px 0 rgba(255, 255, 255, 0.6);
+        inset 0 2px 0 color-mix(in srgb, #ffffff 60%, var(--color-surface-cream));
 }
 
 .dex-mine-tag {
