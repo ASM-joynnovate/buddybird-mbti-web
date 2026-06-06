@@ -7,8 +7,8 @@
 // with the hero filling the viewport so the stats + CTA settle at the bottom.
 import { useRouter } from 'next/navigation'
 import { m, useReducedMotion } from 'motion/react'
-import { GameButton } from '@/components/game-button'
 import { TypeShowcase } from '@/components/type-showcase'
+import { GameButton } from '@/components/ui/game-button'
 import { CAROUSEL_TYPES, QUESTION_COUNT } from '@/content'
 import { track } from '@/lib/analytics'
 import type { TypeCode } from '@/lib/mbti'

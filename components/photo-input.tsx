@@ -6,7 +6,7 @@
 // preview with re-take / re-select. 100% client-side — the file never leaves the
 // device. Emits `photo_attached` with the source that fired (issue #11).
 import { useRef, type ChangeEvent } from 'react'
-import { GameButton } from '@/components/game-button'
+import { GameButton } from '@/components/ui/game-button'
 import { track } from '@/lib/analytics'
 import './photo-input.css'
 

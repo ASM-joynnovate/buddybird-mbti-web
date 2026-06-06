@@ -4,7 +4,7 @@
 // optional photo, then shares it natively or downloads it as a fallback, emitting the
 // matching funnel event (issue #11). Works with no photo (placeholder hero).
 import { useState } from 'react'
-import { GameButton } from '@/components/game-button'
+import { GameButton } from '@/components/ui/game-button'
 import { BRAND_LOGO_SRC, getTypeInfo } from '@/content'
 import { track } from '@/lib/analytics'
 import { composeCard, loadImage } from '@/lib/card'

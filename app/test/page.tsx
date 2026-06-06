@@ -18,7 +18,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, m, useReducedMotion, type Variants } from 'motion/react'
-import { GameButton } from '@/components/game-button'
+import { GameButton } from '@/components/ui/game-button'
 import { QUESTION_COUNT, QUESTIONS } from '@/content'
 import { track } from '@/lib/analytics'
 import { computeResult, type Choice } from '@/lib/mbti'

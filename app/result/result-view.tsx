@@ -11,11 +11,11 @@ import { m, useReducedMotion, type Variants } from 'motion/react'
 import { AppCtaButton } from '@/components/app-cta-button'
 import { AxisBars } from '@/components/axis-bars'
 import { Confetti } from '@/components/confetti'
-import { GameButton } from '@/components/game-button'
 import { MatchChip } from '@/components/match-chip'
 import { ParrotImage } from '@/components/parrot-image'
 import { PhotoInput } from '@/components/photo-input'
 import { ShareButton } from '@/components/share-button'
+import { GameButton } from '@/components/ui/game-button'
 import { getTypeInfo, typeGradient } from '@/content'
 import {
     AXES,

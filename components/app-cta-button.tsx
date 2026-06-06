@@ -4,7 +4,7 @@
 // `app_cta_click` emit in one place guarantees the funnel event fires with a correct
 // placement no matter where the CTA is rendered (issue #06/#07/#11). The link target
 // is a single placeholder constant swapped in issue #10.
-import { GameButtonLink } from '@/components/game-button'
+import { GameButtonLink } from '@/components/ui/game-button'
 import { track } from '@/lib/analytics'
 import { APP_CTA_LABEL, APP_CTA_URL } from '@/lib/app-cta'
 

@@ -15,8 +15,8 @@
 // issue-20 GameButton icon variant.
 import { useEffect, useRef, type CSSProperties } from 'react'
 import { m, useReducedMotion, type Variants } from 'motion/react'
-import { GameButton } from '@/components/game-button'
 import { ParrotImage } from '@/components/parrot-image'
+import { GameButton } from '@/components/ui/game-button'
 import { getTypeInfo, typeGradient } from '@/content'
 import type { TypeCode } from '@/lib/mbti'
 import { durationBase, durationFast, sheetSlideUp } from '@/lib/motion'
