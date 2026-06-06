@@ -113,7 +113,10 @@ export function BackStack({
             onFocusCapture={() => setHovered(true)}
             onBlurCapture={() => setHovered(false)}
         >
-            <div ref={hostRef} className="w-full [touch-action:none]">
+            {/* Cap the hero card width so it never dominates the viewport (the
+                gutter still governs on narrower screens). Standard Tailwind
+                step: md = 28rem. */}
+            <div ref={hostRef} className="w-full max-w-md [touch-action:none]">
                 <m.div
                     className="relative w-full pb-[26px]"
                     style={{

@@ -67,7 +67,7 @@ export default function Home() {
     return (
         <main
             data-testid="intro-root"
-            className="relative flex h-dvh flex-col items-center overflow-hidden px-gutter pt-[clamp(96px,15dvh,132px)] pb-10 text-center"
+            className="relative flex h-dvh flex-col items-center overflow-hidden px-gutter pt-[clamp(84px,12dvh,112px)] pb-[clamp(40px,9dvh,88px)] text-center"
         >
             <m.div
                 className="flex min-h-0 w-full flex-1 flex-col items-center"

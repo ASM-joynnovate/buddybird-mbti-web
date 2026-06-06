@@ -230,7 +230,7 @@ export default function TestPage() {
                         className="mt-[26px] flex flex-col items-center gap-4 px-[22px] pt-[26px] pb-7 text-center"
                     >
                         <m.div
-                            className="grid size-[84px] place-items-center rounded-card border-[3px] border-border-action bg-surface-mint text-[42px] shadow-[0_4px_0_var(--color-depth-action),inset_0_2px_0_rgba(255,255,255,0.7)]"
+                            className="grid size-[84px] place-items-center rounded-card border-[3px] border-border-action bg-primary-soft text-[42px] shadow-[0_4px_0_var(--color-depth-action),inset_0_2px_0_rgba(255,255,255,0.7)]"
                             aria-hidden="true"
                             variants={reducedMotion ? fadeOnly : popIn}
                             initial="hidden"

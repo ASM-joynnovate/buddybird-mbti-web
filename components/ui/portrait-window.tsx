@@ -24,6 +24,9 @@ interface PortraitWindowProps {
     /** Rendered + intrinsic size of the parrot art, px. */
     imgSize: number
     variant?: keyof typeof VARIANT_CLASS
+    /** `bottom` — perched on the window's lower edge (hero cards, detail popup);
+     * `center` — vertically centred (compact deck cards). */
+    align?: 'bottom' | 'center'
     /** Height / rounding / margin — the caller's concern. */
     className?: string
     /** Extra overlays painted above the art (e.g. the detail popup code label). */
@@ -35,6 +38,7 @@ export function PortraitWindow({
     code,
     imgSize,
     variant = 'framed',
+    align = 'bottom',
     className,
     children,
     loading = 'eager',
@@ -66,32 +70,55 @@ export function PortraitWindow({
                 />
             )}
 
-            {/* Bobbing parrot — anchored to the window's bottom centre. */}
-            <m.div
-                className="absolute bottom-[-8px] left-1/2"
-                initial={{ x: '-50%' }}
-                animate={
-                    reducedMotion
-                        ? { x: '-50%' }
-                        : {
-                              x: '-50%',
-                              y: [0, -6, 0],
-                          }
-                }
-                transition={
-                    reducedMotion
-                        ? undefined
-                        : { duration: 3.2, repeat: Infinity, ease: 'easeInOut' }
-                }
-            >
-                <ParrotImage
-                    type={code}
-                    width={imgSize}
-                    height={imgSize}
-                    loading={loading}
-                    className="object-contain drop-shadow-[0_8px_10px_rgba(0,0,0,0.3)]"
-                />
-            </m.div>
+            {/* Bobbing parrot. `bottom` keeps the hero perch; `center` wraps the
+                art in a flex-centred layer so the bob tween and the centring
+                never share one transform. */}
+            {align === 'center' ? (
+                <span className="absolute inset-0 flex items-center justify-center">
+                    <m.div
+                        animate={reducedMotion ? undefined : { y: [0, -6, 0] }}
+                        transition={
+                            reducedMotion
+                                ? undefined
+                                : { duration: 3.2, repeat: Infinity, ease: 'easeInOut' }
+                        }
+                    >
+                        <ParrotImage
+                            type={code}
+                            width={imgSize}
+                            height={imgSize}
+                            loading={loading}
+                            className="object-contain drop-shadow-[0_8px_10px_rgba(0,0,0,0.3)]"
+                        />
+                    </m.div>
+                </span>
+            ) : (
+                <m.div
+                    className="absolute bottom-[-8px] left-1/2"
+                    initial={{ x: '-50%' }}
+                    animate={
+                        reducedMotion
+                            ? { x: '-50%' }
+                            : {
+                                  x: '-50%',
+                                  y: [0, -6, 0],
+                              }
+                    }
+                    transition={
+                        reducedMotion
+                            ? undefined
+                            : { duration: 3.2, repeat: Infinity, ease: 'easeInOut' }
+                    }
+                >
+                    <ParrotImage
+                        type={code}
+                        width={imgSize}
+                        height={imgSize}
+                        loading={loading}
+                        className="object-contain drop-shadow-[0_8px_10px_rgba(0,0,0,0.3)]"
+                    />
+                </m.div>
+            )}
 
             {children}
         </div>

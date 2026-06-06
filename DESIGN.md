@@ -19,10 +19,8 @@ colors:
     gold: '#e8b53a'
     surface: '#fbf3df'
     surface-cream: '#fff8e3'
-    surface-mint: '#eafbd8'
     on-surface: '#2a2118'
     on-surface-muted: '#6b6150'
-    on-surface-forest: '#2e5016'
     faction-analyst: '#7b3fb5'
     faction-diplomat: '#e0568f'
     faction-sentinel: '#3e8fd0'
@@ -187,12 +185,10 @@ secondary set used only for personality-group identity.
 - **Surface — Warm Cream (#fff8e3) on Parchment (#fbf3df):** Cream is the foundation for
   all foreground cards and chrome; parchment is the page/overlay base. Both are warmer and
   friendlier than white.
-- **Surface Mint (#eafbd8):** A soft forest-tinted surface for secondary accents (e.g. the
-  question icon tile, helper chips).
 - **Gold (#e8b53a):** A festive companion to orange, used in highlight underlines and
   progress gradients — never for primary actions.
-- **Ink (#2a2118 / muted #6b6150 / forest #2e5016):** Warm near-black for text, a muted
-  brown for secondary copy, and a deep forest green for on-mint labels.
+- **Ink (#2a2118 / muted #6b6150):** Warm near-black for text and a muted brown for
+  secondary copy.
 - **Faction accents (analyst #7b3fb5, diplomat #e0568f, sentinel #3e8fd0,
   explorer #e08a2c):** Reserved exclusively for the four MBTI temperament groups. They
   identify content; they are **not** part of the action system and never style buttons.
@@ -275,7 +271,7 @@ All components inherit the raised-block depth language and the orange action fam
   an orange-outline rounded square at the left and the option text to the right. Selecting
   fills the letter square solid orange, adds an orange focus ring, and presses the card
   down. (Alternate tweakable styles: solid-orange badge, split orange panel.)
-- **Question Card:** Groups the question emoji tile (mint, orange border) and question text
+- **Question Card:** Groups the question emoji tile (soft orange, orange border) and question text
   (Jua) into one cream card with an orange border, depth bar, and a dashed inner frame for
   legibility over the forest.
 - **Chip / Badge (`chip`):** Orange gradient pill, Jua label, small depth bar. Used for

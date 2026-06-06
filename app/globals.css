@@ -30,16 +30,13 @@
      * Never colors a primary action (DESIGN.md). */
     --color-gold: #e8b53a;
 
-    /* Base world — parchment page base + cream/mint foreground surfaces. */
+    /* Base world — parchment page base + cream foreground surfaces. */
     --color-bg: #fbf3df;
     --color-surface-cream: #fff8e3;
-    --color-surface-mint: #eafbd8;
 
-    /* Ink — warm near-black text, muted brown secondary copy, deep forest green
-     * for on-mint labels. */
+    /* Ink — warm near-black text + muted brown secondary copy. */
     --color-ink: #2a2118;
     --color-ink-muted: #6b6150;
-    --color-ink-forest: #2e5016;
 
     /* 4 temperament-faction accents (DESIGN.md) — type-identity ONLY. They label
      * content (group badges, faction chips) and never style actions. */

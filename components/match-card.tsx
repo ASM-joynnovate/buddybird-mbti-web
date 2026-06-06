@@ -26,7 +26,7 @@ export function MatchCard({ code, onSelect }: MatchCardProps) {
     return (
         <m.button
             type="button"
-            className="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 rounded-full border-2 border-[color-mix(in_srgb,var(--color-primary)_26%,var(--color-surface-mint))] bg-surface-mint py-[9px] pr-3 pl-[9px] shadow-[0_3px_0_var(--color-depth-action),inset_0_2px_0_rgba(255,255,255,0.7)] transition-[border-color] duration-150 ease-leaf hover:border-primary focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 rounded-full border-2 border-border-action bg-surface-cream py-[9px] pr-3 pl-[9px] shadow-[0_3px_0_var(--color-depth-action),inset_0_2px_0_rgba(255,255,255,0.7)] transition-[border-color] duration-150 ease-leaf hover:border-primary focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-primary"
             style={{ '--type-grad': typeGradient(code) } as CSSProperties}
             onClick={() => onSelect(code)}
             whileTap={reducedMotion ? undefined : cardTap}

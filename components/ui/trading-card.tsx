@@ -29,14 +29,17 @@ export function TradingCard({ code, compact = false, loading = 'eager' }: Tradin
             }
         >
             <div className="relative overflow-hidden rounded-[19px] border-[1.5px] border-white bg-surface-cream">
+                {/* Compact deck cards centre the parrot in the window; the full
+                    hero card keeps the bottom perch. */}
                 <PortraitWindow
                     code={code}
-                    imgSize={compact ? 124 : 172}
+                    imgSize={compact ? 104 : 150}
+                    align={compact ? 'center' : 'bottom'}
                     loading={loading}
                     className={
                         compact
                             ? 'mx-[9px] mt-[9px] h-[clamp(96px,30vw,120px)] rounded-md'
-                            : 'mx-[9px] mt-[9px] h-[clamp(140px,46vw,178px)] rounded-md'
+                            : 'mx-[9px] mt-[9px] h-[clamp(118px,36vw,150px)] rounded-md'
                     }
                 />
 
@@ -51,16 +54,16 @@ export function TradingCard({ code, compact = false, loading = 'eager' }: Tradin
                         </span>
                     </div>
                 ) : (
-                    <div className="px-4 pt-3.5 pb-[17px]">
+                    <div className="px-4 pt-3 pb-3.5">
                         <div className="flex items-baseline justify-between gap-3">
-                            <span className="flex-none font-display text-[28px] leading-none tracking-[0.04em] text-primary-active">
+                            <span className="flex-none font-display text-[26px] leading-none tracking-[0.04em] text-primary-active">
                                 {code}
                             </span>
-                            <span className="min-w-0 text-right font-display text-[19px] leading-[1.15] text-balance break-keep text-ink">
+                            <span className="min-w-0 text-right font-display text-[18px] leading-[1.15] text-balance break-keep text-ink">
                                 {info?.name ?? code}
                             </span>
                         </div>
-                        <DashedRule className="my-[11px]" />
+                        <DashedRule className="my-2.5" />
                         <p className="m-0 text-[13px] leading-normal text-ink-muted">
                             {info?.report ?? ''}
                         </p>
