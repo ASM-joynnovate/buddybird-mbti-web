@@ -120,7 +120,7 @@ export function DetailPopup({ code, onClose, onSelectType, cta }: DetailPopupPro
                 aria-modal="true"
                 aria-label={`${code} ${info.name}`}
                 data-testid={`detail-popup-${code}`}
-                className="relative z-1 flex max-h-[calc(100dvh-44px)] w-full flex-col rounded-card bg-[linear-gradient(160deg,var(--color-primary-glow),var(--color-primary)_55%,var(--color-primary-active))] p-1.5 shadow-[0_8px_0_var(--color-primary-active),0_26px_50px_-16px_rgba(20,12,6,0.7),inset_0_2px_0_rgba(255,255,255,0.5)]"
+                className="relative z-1 flex max-h-[calc(100dvh-44px)] w-full max-w-md flex-col rounded-card bg-[linear-gradient(160deg,var(--color-primary-glow),var(--color-primary)_55%,var(--color-primary-active))] p-1.5 shadow-[0_8px_0_var(--color-primary-active),0_26px_50px_-16px_rgba(20,12,6,0.7),inset_0_2px_0_rgba(255,255,255,0.5)]"
                 variants={reducedMotion ? reducedFade : cardPop}
                 initial="hidden"
                 animate="visible"
