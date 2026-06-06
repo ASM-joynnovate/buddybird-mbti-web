@@ -1,21 +1,31 @@
 'use client'
 
-// Result reveal (issue #24, ADR-0006): the hero and body sections enter once via
-// Motion variants (popIn/fadeUp + stagger) — important information animates a
-// single time, never loops. Under prefers-reduced-motion every entrance degrades
-// to the opacity-only fadeOnly variant; the page is fully readable without
-// motion. The ?t= deep-link / share / photo logic is untouched.
-import type { CSSProperties } from 'react'
+// Result reveal — 동화숲 월드 v2: opaque kraft-paper backdrop (occludes the
+// forest), full-bleed --type-grad hero (bobbing art, CODE + 이름 on one row,
+// faction badge), then the raised-block panels: 설명 / 성향 스펙트럼 / 환상의
+// 궁합 (MatchCard → DetailPopup in place) / 사진. Actions: 친구에게 공유하기
+// (primary, the existing canvas share logic) + 도감 보기 (opens the deck
+// overlay right here) + 다시하기 + the app CTA. The ?t= deep-link / share /
+// photo logic is untouched.
+//
+// Motion: hero and body sections enter once via the shared variants
+// (popIn/fadeUp + stagger) — important information animates a single time.
+// Under prefers-reduced-motion every entrance degrades to the opacity-only
+// fadeOnly variant; the page is fully readable without motion.
+import { useState, type CSSProperties } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { m, useReducedMotion, type Variants } from 'motion/react'
+import { AnimatePresence, m, useReducedMotion, type Variants } from 'motion/react'
 import { AppCtaButton } from '@/components/app-cta-button'
 import { AxisBars } from '@/components/axis-bars'
 import { Confetti } from '@/components/confetti'
-import { MatchChip } from '@/components/match-chip'
+import { DeckOverlay, useDeckController } from '@/components/deck-overlay'
+import { DetailPopup } from '@/components/detail-popup'
+import { MatchCard } from '@/components/match-card'
 import { ParrotImage } from '@/components/parrot-image'
 import { PhotoInput } from '@/components/photo-input'
 import { ShareButton } from '@/components/share-button'
 import { GameButton } from '@/components/ui/game-button'
+import { GamePanel } from '@/components/ui/game-panel'
 import { getTypeInfo, typeGradient } from '@/content'
 import {
     AXES,
@@ -26,14 +36,13 @@ import {
     type TemperamentGroup,
     type TypeCode,
 } from '@/lib/mbti'
+import { GROUP_CSS_VAR } from '@/lib/mbti/temperament'
 import { easeSpring, fadeOnly, fadeUp, popIn, staggerContainer } from '@/lib/motion'
 import { usePhotoSource } from '@/lib/photo/use-photo-source'
 import { decodeResult, RESULT_PARAM } from '@/lib/result-url'
 import { useTestProgress } from '@/lib/state/test-progress-context'
-import './result.css'
 
-// Hero-art entrance — replaces the `anim-float-up` CSS class (globals
-// `float-up` keyframe): same rise-from-below + scale envelope, Motion-owned.
+// Hero-art entrance: rise-from-below + scale envelope, Motion-owned.
 const heroArtRise: Variants = {
     hidden: { opacity: 0, y: 40, scale: 0.9 },
     visible: {
@@ -51,6 +60,11 @@ const GROUP_LABEL: Record<TemperamentGroup, string> = {
     Sentinels: '관리자형',
     Explorers: '탐험가형',
 }
+
+// Opaque kraft-paper page base — fully occludes the forest backdrop (binding
+// decision: the result reads as a calm report page, not a forest scene).
+const PAPER_CLASS =
+    'relative min-h-dvh bg-[radial-gradient(130%_80%_at_50%_0%,#fff6e0_0%,#f4e7cb_70%,#efdfbf_100%)]'
 
 // Fallback axis tallies for a shared visitor arriving on a legacy/manual bare code
 // (no encoded tally). The exact per-axis counts aren't recoverable from the type code
@@ -73,6 +87,9 @@ export function ResultView() {
     const { result, reset } = useTestProgress()
     const photo = usePhotoSource()
     const reducedMotion = useReducedMotion()
+
+    const deck = useDeckController()
+    const [detail, setDetail] = useState<TypeCode | null>(null)
 
     // One-shot reveal vocabulary; every entrance degrades to an opacity-only
     // fade under reduced motion (ADR-0006 convention).
@@ -97,9 +114,9 @@ export function ResultView() {
 
     if (type === null) {
         return (
-            <main data-testid="result-root" className="result-surface">
-                <div className="result-empty">
-                    <p style={{ color: 'var(--color-ink-muted)' }}>결과 없음</p>
+            <main data-testid="result-root" className={PAPER_CLASS}>
+                <div className="flex min-h-dvh flex-col items-center justify-center gap-4 px-gutter">
+                    <p className="m-0 text-ink-muted">결과 없음</p>
                     <GameButton variant="secondary" onClick={() => router.push('/')}>
                         처음으로
                     </GameButton>
@@ -118,130 +135,198 @@ export function ResultView() {
             ? result.axisScores
             : (decoded?.axisScores ?? fallbackScores(type))
 
-    // Per-type identity gradient is the primary hero visual ("동화숲 월드", ADR-0002);
-    // the temperament group is demoted to the badge label only.
-    const heroStyle = {
-        '--result-gradient': typeGradient(type),
-    } as CSSProperties
+    // Per-type identity gradient is the primary hero visual; the temperament
+    // group is demoted to the faction badge.
+    const heroStyle = { '--type-grad': typeGradient(type) } as CSSProperties
 
     return (
-        <main data-testid="result-root" className="result-surface">
+        <main data-testid="result-root" className={PAPER_CLASS}>
             <Confetti />
-
-            <div className="result-foliage" aria-hidden="true">
-                <span className="result-leaf result-leaf--tr" />
-                <span className="result-leaf result-leaf--bl" />
-            </div>
 
             {/* One-shot staggered reveal: hero pieces first, then the body blocks.
                 Variant labels cascade from this container; children only declare
                 their own `variants`. */}
-            <m.div
-                className="result-content"
-                variants={staggerContainer}
-                initial="hidden"
-                animate="visible"
-            >
-                <m.header className="result-hero" style={heroStyle} variants={staggerContainer}>
-                    <m.span className="result-badge" variants={rise}>
-                        {GROUP_LABEL[group]}
-                    </m.span>
-
-                    <m.div className="result-hero-art" variants={art}>
-                        <ParrotImage type={type} width={640} height={640} loading="eager" />
-                    </m.div>
+            <m.div variants={staggerContainer} initial="hidden" animate="visible">
+                <m.header
+                    className="relative flex flex-col items-center overflow-hidden rounded-b-[32px] px-gutter pt-[60px] pb-[26px] text-center shadow-[0_16px_32px_-14px_rgba(20,12,6,0.6),inset_0_-2px_0_rgba(0,0,0,0.12)] [background:var(--type-grad)]"
+                    style={heroStyle}
+                    variants={staggerContainer}
+                >
+                    {/* Gradient washes — sheen above, grounding shade below. */}
+                    <span
+                        className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_-10%,rgba(255,255,255,0.4),transparent_55%),radial-gradient(140%_90%_at_50%_130%,rgba(0,0,0,0.32),transparent_60%)]"
+                        aria-hidden="true"
+                    />
 
                     <m.p
-                        data-testid="result-type"
-                        className="result-type font-display"
-                        variants={pop}
+                        className="relative z-1 m-0 font-display text-[19px] text-white [text-shadow:0_2px_6px_rgba(0,0,0,0.4)]"
+                        variants={rise}
                     >
-                        {type}
+                        🎉 나의 앵무새 성격은
                     </m.p>
 
-                    {info !== null && (
-                        <>
-                            <m.h1 className="result-name font-display" variants={rise}>
-                                {info.name}
-                            </m.h1>
-                            <m.p className="result-tag" variants={rise}>
-                                {info.report}
-                            </m.p>
-                        </>
-                    )}
-                </m.header>
-
-                <m.div className="result-body" variants={staggerContainer}>
-                    {info !== null && (
-                        <m.p className="result-description" variants={rise}>
-                            {info.description}
-                        </m.p>
-                    )}
-
-                    <m.div className="result-block" variants={rise}>
-                        <AxisBars axisScores={axisScores} />
+                    <m.div className="relative z-1 my-1.5 size-[152px]" variants={art}>
+                        {reducedMotion ? (
+                            <ParrotImage
+                                type={type}
+                                width={304}
+                                height={304}
+                                loading="eager"
+                                className="h-full w-full object-contain drop-shadow-[0_12px_16px_rgba(0,0,0,0.4)]"
+                            />
+                        ) : (
+                            <m.div
+                                className="h-full w-full"
+                                animate={{ y: [0, -8, 0] }}
+                                transition={{ duration: 3.4, repeat: Infinity, ease: 'easeInOut' }}
+                            >
+                                <ParrotImage
+                                    type={type}
+                                    width={304}
+                                    height={304}
+                                    loading="eager"
+                                    className="h-full w-full object-contain drop-shadow-[0_12px_16px_rgba(0,0,0,0.4)]"
+                                />
+                            </m.div>
+                        )}
                     </m.div>
 
-                    {/* Compatibility ("궁합") — best-match types, deep-linking to the dex. */}
-                    {info !== null && info.match.length > 0 && (
-                        <m.section
-                            className="result-match"
-                            aria-label="환상의 궁합"
-                            variants={rise}
+                    <div className="relative z-1 mb-3 flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
+                        <m.p
+                            data-testid="result-type"
+                            className="m-0 font-display text-4xl leading-none tracking-[0.05em] text-white [text-shadow:0_3px_10px_rgba(0,0,0,0.4)]"
+                            variants={pop}
                         >
-                            <h2 className="result-match-title">환상의 궁합</h2>
-                            <div className="chips result-match-chips">
-                                {info.match.map((matchCode) => (
-                                    <MatchChip key={matchCode} code={matchCode} />
-                                ))}
-                            </div>
-                        </m.section>
-                    )}
+                            {type}
+                        </m.p>
+                        {info !== null && (
+                            <m.h1
+                                className="m-0 font-display text-[19px] leading-[1.1] font-normal break-keep text-gold [text-shadow:0_2px_6px_rgba(0,0,0,0.45)]"
+                                variants={rise}
+                            >
+                                {info.name}
+                            </m.h1>
+                        )}
+                    </div>
 
-                    {/* Photo input (#08) + share card (#09) — own results only. */}
-                    {!isSharedVisitor && (
-                        <m.div
-                            className="result-share-slot game-panel game-panel--mint"
-                            variants={rise}
-                        >
-                            <PhotoInput
-                                objectUrl={photo.objectUrl}
-                                onPick={photo.setFile}
-                                onClear={photo.clear}
-                            />
-                            <ShareButton type={type} photoUrl={photo.objectUrl} />
+                    <m.span
+                        className="relative z-1 rounded-full border-[1.5px] border-white/70 px-4 py-1.5 font-display text-sm whitespace-nowrap text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_4px_10px_-4px_rgba(0,0,0,0.4)]"
+                        style={{ background: GROUP_CSS_VAR[group] }}
+                        variants={rise}
+                    >
+                        {GROUP_LABEL[group]}
+                    </m.span>
+                </m.header>
+
+                <m.div
+                    className="flex flex-col gap-[18px] px-gutter pt-[22px] pb-9"
+                    variants={staggerContainer}
+                >
+                    {info !== null && (
+                        <m.div variants={rise}>
+                            <GamePanel
+                                as="section"
+                                aria-label="성격 설명"
+                                className="px-[18px] py-5"
+                            >
+                                <p className="m-0 text-[14.5px] leading-[1.7] break-keep text-ink">
+                                    {info.description}
+                                </p>
+                            </GamePanel>
                         </m.div>
                     )}
 
-                    <m.div className="result-actions" variants={rise}>
-                        <AppCtaButton placement="result" />
-                        <GameButton
-                            variant="secondary"
-                            data-testid="dex-link"
-                            onClick={() => router.push(`/dex?mine=${type}`)}
-                        >
-                            도감에서 보기
-                        </GameButton>
-                        {isSharedVisitor ? (
+                    <m.div variants={rise}>
+                        <AxisBars axisScores={axisScores} />
+                    </m.div>
+
+                    {/* Compatibility ("궁합") — best-match cards open the detail popup. */}
+                    {info !== null && info.match.length > 0 && (
+                        <m.div variants={rise}>
+                            <GamePanel
+                                as="section"
+                                aria-label="환상의 궁합"
+                                className="px-[18px] pt-[18px] pb-5"
+                            >
+                                <h2 className="m-0 mb-4 font-display text-lg font-normal text-ink">
+                                    🤝 환상의 궁합
+                                </h2>
+                                <div className="flex gap-3">
+                                    {info.match.map((matchCode) => (
+                                        <MatchCard
+                                            key={matchCode}
+                                            code={matchCode}
+                                            onSelect={setDetail}
+                                        />
+                                    ))}
+                                </div>
+                            </GamePanel>
+                        </m.div>
+                    )}
+
+                    {/* Photo (#08) — own results only; feeds the share card (#09). */}
+                    {!isSharedVisitor && (
+                        <m.div variants={rise}>
+                            <GamePanel className="px-[18px] py-[18px]">
+                                <PhotoInput
+                                    objectUrl={photo.objectUrl}
+                                    onPick={photo.setFile}
+                                    onClear={photo.clear}
+                                />
+                            </GamePanel>
+                        </m.div>
+                    )}
+
+                    <m.div className="mt-1 flex flex-col gap-3" variants={rise}>
+                        {!isSharedVisitor && <ShareButton type={type} photoUrl={photo.objectUrl} />}
+                        {isSharedVisitor && (
                             <GameButton
-                                variant="secondary"
+                                size="sm"
+                                className="w-full"
                                 data-testid="retake-button"
                                 onClick={handleRestart}
                             >
                                 나도 테스트하기
                             </GameButton>
-                        ) : (
+                        )}
+                        <div className="flex gap-3">
                             <GameButton
                                 variant="secondary"
-                                data-testid="restart-button"
-                                onClick={handleRestart}
+                                className="flex-1"
+                                data-testid="deck-open-button"
+                                onClick={deck.openAnimated}
                             >
-                                다시하기
+                                🗂 도감 보기
                             </GameButton>
-                        )}
+                            {!isSharedVisitor && (
+                                <GameButton
+                                    variant="secondary"
+                                    className="flex-1"
+                                    data-testid="restart-button"
+                                    onClick={handleRestart}
+                                >
+                                    ↺ 다시하기
+                                </GameButton>
+                            )}
+                        </div>
+                        <div className="flex justify-center">
+                            <AppCtaButton placement="result" />
+                        </div>
                     </m.div>
                 </m.div>
             </m.div>
+
+            {/* Deck overlay + detail popup, mounted locally (no /dex route). */}
+            <DeckOverlay controller={deck} onSelect={setDetail} />
+            <AnimatePresence>
+                {detail !== null && (
+                    <DetailPopup
+                        code={detail}
+                        onClose={() => setDetail(null)}
+                        onSelectType={setDetail}
+                    />
+                )}
+            </AnimatePresence>
         </main>
     )
 }

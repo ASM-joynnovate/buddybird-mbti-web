@@ -57,17 +57,23 @@ export function ShareButton({ type, photoUrl }: ShareButtonProps) {
     }
 
     return (
-        <div className="share">
+        <div className="flex w-full flex-col gap-2">
             <GameButton
                 variant="primary"
+                size="sm"
+                className="w-full"
                 data-testid="share-button"
                 onClick={handleShare}
                 disabled={busy}
             >
-                {busy ? '카드 만드는 중…' : '결과 카드 공유하기'}
+                {busy ? '카드 만드는 중…' : '친구에게 공유하기'} <span aria-hidden="true">↗</span>
             </GameButton>
             {hint !== null && (
-                <p className="share-hint" role="status" data-testid="share-hint">
+                <p
+                    className="m-0 text-center text-[13px] text-ink-muted"
+                    role="status"
+                    data-testid="share-hint"
+                >
                     {hint}
                 </p>
             )}
