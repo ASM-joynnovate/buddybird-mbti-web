@@ -50,3 +50,7 @@ collections with two navigation models for the same content.
   the intro flow asserts tap → Detail Popup.
 - The scrub introduces the standalone `animate()` import (snap animations),
   which coexists with LazyMotion `strict` — only `m.*` components are guarded.
+  Measured landing first-load JS after the full rebuild: **236 KiB gzip** vs
+  the 222.6 KiB pre-rebuild baseline (ADR-0006) — +13.4 KiB for standalone
+  `animate()` + the deck/portal code, against the already-breached PRD budget
+  (the breach remains structural, see ADR-0006).
