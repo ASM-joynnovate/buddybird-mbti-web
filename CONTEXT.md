@@ -7,13 +7,13 @@ shareable card that funnels toward installing the BuddyBird app.
 ## Flow surfaces
 
 **Intro**:
-The first screen — service pitch, an **active type card** (a compact band: a 1:1
-gradient image tile on the left, the type code · name · one-line report on the
-right) paired with a **centre-fixed auto-advancing peek carousel** (all 16 types,
-the middle tile highlighted, a tile tappable to activate it, seamless infinite
-loop), and the "테스트 시작하기" CTA. The card and the centre tile share one active
-index, so they always name the same type. See ADR-0005.
-_Avoid_: Landing, Home, Splash; "peek-row" (the static row it replaced)
+The first screen — a fixed full-viewport hero: headline, the **Back Stack**
+(the active **Trading Card** with the next two types peeking behind as ghost
+card-backs; auto-advances, tap opens the **Detail Popup**, scrubbing opens the
+**Deck Overlay**), the deck button ("16유형 모두 보기"), hero stats, and the
+"테스트 시작하기" CTA. See ADR-0005 (auto-advance pattern) and ADR-0007.
+_Avoid_: Landing, Home, Splash; "type showcase" / "peek carousel" (the surfaces
+it replaced)
 
 **Test**:
 The screen that presents two-choice **Questions** one at a time and auto-advances
@@ -21,9 +21,29 @@ on selection.
 _Avoid_: Quiz, Survey, Questions page
 
 **Result**:
-The screen showing the derived **Type**, its report, the parrot image, and the
-photo/share/restart actions.
+The kraft-paper report screen showing the derived **Type** — gradient hero,
+description / spectrum / match panels — plus the photo, share, deck ("도감
+보기" opens the **Deck Overlay** in place), restart, and app-install actions.
 _Avoid_: Outcome, Report page
+
+**Trading Card**:
+The collectible card unit of the deck system — an orange gradient frame around a
+cream inner card with the type's gradient portrait window, code, and nickname.
+Full size on the Intro Back Stack; compact (code/rule/name) in the Deck Overlay
+grid.
+_Avoid_: Type card, Showcase card
+
+**Deck Overlay**:
+The full-screen 16-type collection that opens over Intro and Result (scrub or
+button on Intro, "도감 보기" on Result). Replaces the removed `/dex` route — see
+ADR-0007. Tapping a card opens its **Detail Popup**.
+_Avoid_: Dex, 도감 페이지 (it is an overlay, not a route), Collection page
+
+**Detail Popup**:
+The trading-card-style modal showing one Type in full — gradient portrait, code,
+nickname, description, "찰떡궁합" match chips (which swap the popup's type), and
+an optional CTA. Replaces the old Type Modal.
+_Avoid_: Type Modal, Detail page
 
 ## MBTI model
 
