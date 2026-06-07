@@ -3,8 +3,16 @@
 // Intro (Landing) — the 동화숲 월드 v2 hero: headline with the gold-marker
 // highlight, the BackStack trading-card deck (auto-advance + tap → detail
 // popup + scrub → full deck overlay), then deck button / hero stats / pulsing
-// CTA pinned to the bottom. The screen is a fixed h-dvh stage
-// (overflow-hidden) so the deck scrub gesture never fights page scroll.
+// CTA pinned to the bottom. The stage is min-h-dvh: on viewports tall enough
+// for the content it renders identically to the old fixed h-dvh stage (no
+// page overflow → no scroll), but on short viewports (iPhone SE/8 class,
+// landscape, in-app browsers with tall chrome) the page grows and scrolls so
+// the start CTA is always reachable — the old h-dvh + overflow-hidden stage
+// clipped it with no way to scroll. The deck scrub gesture still never
+// fights page scroll where it matters: the BackStack host keeps
+// touch-action:none, so only gestures outside the card scroll the page.
+// overflow-x-clip preserves the old horizontal clipping without creating a
+// scroll container (clip, unlike hidden, cannot become a scroll axis).
 // Rendered by the server-component shell in page.tsx, which owns the route
 // metadata (a 'use client' page cannot export it).
 import { useRef, useState } from 'react'
@@ -76,7 +84,7 @@ export function IntroView() {
     return (
         <main
             data-testid="intro-root"
-            className="relative flex h-dvh flex-col items-center overflow-hidden px-gutter pt-[clamp(5.25rem,12dvh,7rem)] pb-[clamp(2.5rem,9dvh,5.5rem)] text-center"
+            className="relative flex min-h-dvh flex-col items-center overflow-x-clip px-gutter pt-[clamp(5.25rem,12dvh,7rem)] pb-[clamp(2.5rem,9dvh,5.5rem)] text-center"
         >
             <m.div
                 className="flex min-h-0 w-full flex-1 flex-col items-center"
