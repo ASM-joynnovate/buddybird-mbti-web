@@ -16,9 +16,16 @@ _Avoid_: Landing, Home, Splash; "type showcase" / "peek carousel" (the surfaces
 it replaced)
 
 **Test**:
-The screen that presents two-choice **Questions** one at a time and auto-advances
-on selection.
+The screen that presents two-choice **Questions** one at a time — each framed as
+a **Quest Sheet** — and auto-advances on selection.
 _Avoid_: Quiz, Survey, Questions page
+
+**Quest Sheet**:
+The presentation unit for the current **Question** on the Test screen — a
+parchment commission notice pinned to the forest, carrying the commission
+number ("No.n"), the question's emoji stamp, and the question text. Chosen
+over banner / keyword-highlight treatments in the 2026-06-07 prototype round.
+_Avoid_: Question Card (the emoji-tile card it replaced), 문항 카드
 
 **Result**:
 The kraft-paper report screen showing the derived **Type** — gradient hero,

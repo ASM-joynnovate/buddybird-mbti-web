@@ -2,8 +2,10 @@
 
 // Test (Quiz) — 동화숲 월드 v2 presentation: a round back button + a single
 // cream progress pill (gold→orange gradient fill, Motion width tween) + the Jua
-// count pill on one row, the dashed-frame question card (mint emoji tile +
-// Jua question), and the outline A/B choice rows (letter tile fills solid
+// count pill on one row, the Quest Sheet question card (pinned parchment:
+// brass pin, "No.n" eyebrow, postage-stamp emoji tile, Jua 24px question —
+// winner of the 2026-06-07 question-presentation prototype round), and the
+// outline A/B choice rows (letter tile fills solid
 // orange on pick, the card presses down with a glow ring). All engine logic is
 // unchanged (useTestProgress, computeResult, encodeResult, analytics); only the
 // presentation is reskinned — the 420ms (reduced-motion 120ms) auto-advance
@@ -227,23 +229,34 @@ export function TestView() {
                     animate="center"
                     exit="exit"
                 >
-                    <GamePanel
-                        dashedFrame
-                        className="mt-6 flex flex-col items-center gap-4 px-gutter pt-6 pb-7 text-center"
-                    >
-                        <m.div
-                            className="grid size-21 place-items-center rounded-card border-[3px] border-border-action bg-primary-soft text-[2.75rem] shadow-[0_4px_0_var(--color-depth-action),inset_0_2px_0_rgba(255,255,255,0.7)]"
+                    {/* Quest Sheet — the question as a parchment commission notice
+                        pinned to the forest: brass pin, slight tilt, "No.n" eyebrow,
+                        and the question emoji as a tilted postage-stamp tile. */}
+                    <div className="relative mt-8 -rotate-[1.2deg]">
+                        <span
                             aria-hidden="true"
-                            variants={reducedMotion ? fadeOnly : popIn}
-                            initial="hidden"
-                            animate="visible"
-                        >
-                            {question.emoji}
-                        </m.div>
-                        <h1 className="m-0 font-display text-xl leading-normal break-keep whitespace-pre-line text-ink">
-                            {question.text}
-                        </h1>
-                    </GamePanel>
+                            className="absolute -top-2.5 left-1/2 z-1 size-5 -translate-x-1/2 rounded-full border-2 border-primary-active bg-[radial-gradient(circle_at_35%_30%,#ffe2c8,var(--color-gold)_55%,var(--color-primary-hover))] shadow-[0_3px_4px_rgba(58,46,26,0.35)]"
+                        />
+                        <GamePanel dashedFrame className="px-6 py-7">
+                            <div className="flex items-center justify-between gap-3">
+                                <p className="m-0 font-display text-3xl leading-none text-primary">
+                                    No.{currentIndex + 1}
+                                </p>
+                                <m.span
+                                    aria-hidden="true"
+                                    className="grid size-14 rotate-6 place-items-center rounded-sm border-2 border-dashed border-primary bg-primary-soft text-3xl shadow-[0_2px_0_var(--color-depth-action)]"
+                                    variants={reducedMotion ? fadeOnly : popIn}
+                                    initial="hidden"
+                                    animate="visible"
+                                >
+                                    {question.emoji}
+                                </m.span>
+                            </div>
+                            <h1 className="m-0 mt-4 font-display text-2xl leading-[1.4] break-keep whitespace-pre-line text-ink">
+                                {question.text}
+                            </h1>
+                        </GamePanel>
+                    </div>
 
                     <div className="mt-auto flex flex-col gap-3.5 pt-5">
                         {question.choices.map((choice, i) => {

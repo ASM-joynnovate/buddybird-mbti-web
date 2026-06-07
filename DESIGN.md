@@ -51,9 +51,9 @@ typography:
         lineHeight: 1.2
     question:
         fontFamily: Jua
-        fontSize: 1.25rem # 20px (text-xl)
+        fontSize: 1.5rem # 24px (text-2xl)
         fontWeight: 400
-        lineHeight: 1.5
+        lineHeight: 1.4
     label-lg:
         fontFamily: Jua
         fontSize: 1rem # 16px (text-base)
@@ -272,9 +272,12 @@ All components inherit the raised-block depth language and the orange action fam
   an orange-outline rounded square at the left and the option text to the right. Selecting
   fills the letter square solid orange, adds an orange focus ring, and presses the card
   down. (Alternate tweakable styles: solid-orange badge, split orange panel.)
-- **Question Card:** Groups the question emoji tile (soft orange, orange border) and question text
-  (Jua) into one cream card with an orange border, depth bar, and a dashed inner frame for
-  legibility over the forest.
+- **Question Card (Quest Sheet):** The question presented as a parchment commission
+  notice pinned to the forest — a brass pin at the top, a slight −1.2° tilt, a Jua
+  "No.n" commission-number eyebrow, the question emoji as a tilted postage-stamp tile
+  (dashed orange border on `primary-soft`), and the question text in Jua 24px
+  left-aligned. Built on the cream panel + dashed-inner-frame recipe; the narrative
+  framing (not just scale) is what gives the question its hierarchy over the forest.
 - **Chip / Badge (`chip`):** Orange gradient pill, Jua label, small depth bar. Used for
   match types ("찰떡궁합"), counts, and eyebrows. Faction chips are the exception — filled
   with their faction accent.
