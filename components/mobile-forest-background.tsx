@@ -22,14 +22,22 @@
 // in sync by comment; a server module cannot import values from a 'use client'
 // module).
 import type { CSSProperties, ReactNode } from 'react'
+import Image, { type StaticImageData } from 'next/image'
+// Static imports give next/image the intrinsic dimensions, so the optimizer
+// serves resized WebP/AVIF (the base PNG alone is ~1.8MB at source).
+import forestBottomGround from '@/public/assets/mbti/forest-bottom-ground.png'
+import forestMobileBase from '@/public/assets/mbti/forest-mobile-base.png'
+import forestTopCanopy from '@/public/assets/mbti/forest-top-canopy.png'
+import leafGeneral from '@/public/assets/mbti/leaf-general.png'
+import rockCluster from '@/public/assets/mbti/rock-cluster.png'
 import { AnimatedForestDecals, AnimatedForestParticles } from './animated-forest-decorations'
-
-const ASSET_BASE = '/assets/mbti'
 
 interface Decal {
     name: string
-    src: string
+    src: StaticImageData
     vars: { x: string; y: string; w: string; r: string }
+    /** Rendered width hint for the responsive srcset (the clamp() max). */
+    sizes: string
     /** Extra wrapper classes (e.g. narrow-viewport hiding). */
     className?: string
 }
@@ -41,14 +49,16 @@ interface Decal {
 const STATIC_DECALS: readonly Decal[] = [
     {
         name: 'general',
-        src: `${ASSET_BASE}/leaf-general.png`,
+        src: leafGeneral,
         vars: { x: '8%', y: '52%', w: 'clamp(2.75rem, 14vw, 6rem)', r: '14deg' },
+        sizes: '6rem',
         className: 'max-[23.75rem]:hidden',
     },
     {
         name: 'rock',
-        src: `${ASSET_BASE}/rock-cluster.png`,
+        src: rockCluster,
         vars: { x: '15%', y: '96%', w: 'clamp(6rem, 30vw, 12.5rem)', r: '0deg' },
+        sizes: '12.5rem',
     },
 ]
 
@@ -64,15 +74,15 @@ export function MobileForestBackground({ children }: { children: ReactNode }) {
                 aria-hidden="true"
             >
                 {/* z0 — main forest base: covers the viewport (cover, never stretched),
-                 * eager + high priority as the largest above-the-fold visual (LCP).
-                 * Always static (full-screen PNG — never animated). */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                    className="absolute inset-0 h-full w-full object-cover object-center"
-                    src={`${ASSET_BASE}/forest-mobile-base.png`}
+                 * priority (preload + eager + fetchpriority=high) as the largest
+                 * above-the-fold visual (LCP). Always static (never animated). */}
+                <Image
+                    className="object-cover object-center"
+                    src={forestMobileBase}
                     alt=""
-                    fetchPriority="high"
-                    decoding="async"
+                    fill
+                    priority
+                    sizes="100vw"
                 />
 
                 {/* z1 — side decals: static ones here (server-rendered, no JS),
@@ -90,34 +100,28 @@ export function MobileForestBackground({ children }: { children: ReactNode }) {
                             } as CSSProperties
                         }
                     >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                        <Image
                             className="block h-auto w-full drop-shadow-[0_6px_12px_rgba(46,36,20,0.16)] select-none"
                             src={d.src}
                             alt=""
-                            loading="lazy"
-                            decoding="async"
+                            sizes={d.sizes}
                         />
                     </div>
                 ))}
                 <AnimatedForestDecals />
 
                 {/* z2 — top canopy + bottom ground overlays (static). */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                     className="pointer-events-none absolute top-0 left-0 h-auto w-full select-none"
-                    src={`${ASSET_BASE}/forest-top-canopy.png`}
+                    src={forestTopCanopy}
                     alt=""
-                    loading="lazy"
-                    decoding="async"
+                    sizes="100vw"
                 />
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                     className="pointer-events-none absolute bottom-0 left-0 h-auto w-full select-none"
-                    src={`${ASSET_BASE}/forest-bottom-ground.png`}
+                    src={forestBottomGround}
                     alt=""
-                    loading="lazy"
-                    decoding="async"
+                    sizes="100vw"
                 />
 
                 {/* z3 — subtle light particles (opacity pulse + micro drift). */}

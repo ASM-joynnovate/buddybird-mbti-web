@@ -6,6 +6,7 @@
 // the CLS budget holds. Reused by the intro carousel (#06), result hero (#07), and
 // photo-preview card framing.
 import { useCallback, useState } from 'react'
+import Image from 'next/image'
 import { getTypeInfo, parrotImageSrc } from '@/content'
 import type { TypeCode } from '@/lib/mbti'
 
@@ -53,17 +54,17 @@ export function ParrotImage({
     }
 
     return (
-        // Plain <img>, not next/image: this app is a static export with no image
-        // optimization server, and the share-card Canvas needs a predictable URL.
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        // next/image: the standalone Node server (ADR-0002) provides the image
+        // optimizer, so the ~250KB type PNGs ship resized + WebP/AVIF. The
+        // share-card Canvas composes from the user photo + brand logo only, so
+        // it never depends on this element's URL.
+        <Image
             ref={checkBroken}
             src={parrotImageSrc(type)}
             alt={alt}
             width={width}
             height={height}
             loading={loading}
-            decoding="async"
             className={className}
             onError={() => setFailed(true)}
         />
