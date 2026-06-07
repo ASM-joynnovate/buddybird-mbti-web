@@ -29,7 +29,7 @@ export const easeSpring = [0.34, 1.56, 0.64, 1] as const
 
 export const durationFast = 0.16
 export const durationBase = 0.26
-export const durationSlow = 0.42
+const durationSlow = 0.42
 
 /* ── Entrances ── */
 
@@ -78,34 +78,10 @@ export const buttonTap: TargetAndTransition = {
 }
 
 // Card / chip press — gentler than buttonTap (issue #21 vocabulary: tap 0.98).
-// Pair with `whileHover={cardHover}` on selectable cards; CSS keeps transform
-// untouched on these surfaces so Motion owns it exclusively.
+// CSS keeps transform untouched on these surfaces so Motion owns it exclusively.
 export const cardTap: TargetAndTransition = {
     scale: 0.98,
     transition: { duration: 0.2, ease: easeLeaf },
-}
-
-export const cardHover: TargetAndTransition = {
-    scale: 1.01,
-    transition: { duration: durationBase, ease: easeLeaf },
-}
-
-/* ── Sheets / modals (use with AnimatePresence for the exit leg) ── */
-
-export const sheetSlideUp: Variants = {
-    hidden: { opacity: 0, y: 30, scale: 0.95 },
-    visible: {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        transition: { duration: durationSlow, ease: easeSpring },
-    },
-    exit: {
-        opacity: 0,
-        y: 24,
-        scale: 0.96,
-        transition: { duration: durationBase, ease: easeLeaf },
-    },
 }
 
 /* ── Decorative idle loops (background flourishes only) ── */

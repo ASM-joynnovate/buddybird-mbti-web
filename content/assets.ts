@@ -10,7 +10,7 @@
 import type { TypeCode } from '@/lib/mbti'
 import { TYPES } from './types'
 
-export const PARROT_IMAGE_BASE = '/parrots-mbti-charactor'
+const PARROT_IMAGE_BASE = '/parrots-mbti-charactor'
 export const BRAND_LOGO_SRC = '/brand/buddybird-logo.png'
 
 // Root-absolute path to a type's parrot character image, keyed by the uppercase type code.

@@ -3,7 +3,7 @@
 // shown in parentheses (e.g. "인싸앵(E)"). `cssVar` is the per-axis bar color token
 // defined in globals.css. Orientation (left/right) matches AXIS_LETTERS in lib/mbti.
 
-import type { Axis, Letter } from '@/lib/mbti'
+import type { Axis } from '@/lib/mbti'
 
 export interface AxisEnd {
     label: string
@@ -41,14 +41,3 @@ export const AXIS_META: Record<Axis, AxisMeta> = {
         cssVar: 'var(--color-axis-jp)',
     },
 }
-
-// Flat letter → identity hue lookup, derived from AXIS_META ends. Lets the quiz color
-// an option (or an answered progress segment) straight from a choice's `letter`.
-export const LETTER_COLOR: Record<Letter, string> = Object.values(AXIS_META).reduce(
-    (acc, meta) => {
-        acc[meta.left.letter as Letter] = meta.left.color
-        acc[meta.right.letter as Letter] = meta.right.color
-        return acc
-    },
-    {} as Record<Letter, string>,
-)

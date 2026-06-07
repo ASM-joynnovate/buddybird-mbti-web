@@ -1,10 +1,8 @@
 export {
     buttonTap,
-    cardHover,
     cardTap,
     durationBase,
     durationFast,
-    durationSlow,
     easeLeaf,
     easeSpring,
     fadeOnly,
@@ -13,6 +11,5 @@ export {
     gentleSway,
     particleFloat,
     popIn,
-    sheetSlideUp,
     staggerContainer,
 } from './variants'

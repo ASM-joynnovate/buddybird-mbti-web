@@ -11,8 +11,9 @@ import {
 } from '@/lib/mbti/types'
 
 // Thrown when input is missing, malformed, or fails to resolve every axis unambiguously.
-// Callers should treat this as "the test is not validly complete" rather than a guessable result.
-export class IncompleteAnswersError extends Error {
+// Callers should treat this as "the test is not validly complete" rather than a guessable
+// result. Internal-only for now — re-export it if a caller ever needs instanceof checks.
+class IncompleteAnswersError extends Error {
     constructor(message: string) {
         super(message)
         this.name = 'IncompleteAnswersError'
