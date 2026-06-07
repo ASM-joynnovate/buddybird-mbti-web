@@ -12,7 +12,7 @@
 // AnimatePresence-owned — the CALLER wraps the conditional mount; this
 // component declares enter/exit variants (scrim fade + card pop-in). Under
 // prefers-reduced-motion both legs degrade to a quick opacity-only fade.
-import { useEffect, useRef } from 'react'
+import { useEffect, useEffectEvent, useRef } from 'react'
 import { m, useReducedMotion, type Variants } from 'motion/react'
 import { DashedRule } from '@/components/ui/dashed-rule'
 import { GameButton } from '@/components/ui/game-button'
@@ -55,6 +55,11 @@ export function DetailPopup({ code, onClose, onSelectType, cta }: DetailPopupPro
     const closeRef = useRef<HTMLButtonElement>(null)
     const reducedMotion = useReducedMotion()
 
+    // Effect Event: the keydown handler always sees the latest onClose without
+    // making it a dep — otherwise every parent re-render (new arrow identity)
+    // re-ran the dialog setup, re-stealing focus to the close button.
+    const handleClose = useEffectEvent(onClose)
+
     useEffect(() => {
         const previouslyFocused = document.activeElement as HTMLElement | null
         closeRef.current?.focus()
@@ -64,7 +69,7 @@ export function DetailPopup({ code, onClose, onSelectType, cta }: DetailPopupPro
 
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
-                onClose()
+                handleClose()
                 return
             }
             if (event.key !== 'Tab') {
@@ -94,7 +99,9 @@ export function DetailPopup({ code, onClose, onSelectType, cta }: DetailPopupPro
             document.body.style.overflow = overflow
             previouslyFocused?.focus()
         }
-    }, [code, onClose])
+        // `code` stays a dep on purpose: swapping types via a match chip re-runs
+        // the setup so initial focus lands back on the close button.
+    }, [code])
 
     const info = getTypeInfo(code)
     if (info === null) {
