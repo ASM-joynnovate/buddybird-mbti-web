@@ -25,84 +25,85 @@ colors:
     faction-diplomat: '#e0568f'
     faction-sentinel: '#3e8fd0'
     faction-explorer: '#e08a2c'
+# Lengths are rem (ADR-0009); px noted in comments. Sizes sit on the default
+# Tailwind scale (text-xs/sm/base/lg/xl/2xl, 4px spacing grid).
 typography:
     display:
         fontFamily: Jua
-        fontSize: 46px
+        fontSize: 2.875rem # 46px
         fontWeight: 400
         lineHeight: 1.08
-        letterSpacing: -0.01em
     headline-lg:
         fontFamily: Jua
-        fontSize: 28px
+        fontSize: 1.75rem # 28px
         fontWeight: 400
         lineHeight: 1.1
-        letterSpacing: 0.04em
+        letterSpacing: 0.05em # tracking-wider
     headline-md:
         fontFamily: Jua
-        fontSize: 20px
+        fontSize: 1.25rem # 20px (text-xl)
         fontWeight: 400
         lineHeight: 1.15
     title-action:
         fontFamily: Jua
-        fontSize: 23px
+        fontSize: 1.5rem # 24px (text-2xl)
         fontWeight: 400
         lineHeight: 1.2
     question:
         fontFamily: Jua
-        fontSize: 22px
+        fontSize: 1.25rem # 20px (text-xl)
         fontWeight: 400
-        lineHeight: 1.45
+        lineHeight: 1.5
     label-lg:
         fontFamily: Jua
-        fontSize: 15px
+        fontSize: 1rem # 16px (text-base)
         fontWeight: 400
         lineHeight: 1
-        letterSpacing: 0.04em
+        letterSpacing: 0.05em # tracking-wider
     body-lg:
         fontFamily: Noto Sans KR
-        fontSize: 16px
+        fontSize: 1rem # 16px (text-base)
         fontWeight: 400
         lineHeight: 1.6
     body-md:
         fontFamily: Noto Sans KR
-        fontSize: 14px
+        fontSize: 0.875rem # 14px (text-sm)
         fontWeight: 500
         lineHeight: 1.5
     body-sm:
         fontFamily: Noto Sans KR
-        fontSize: 13px
+        fontSize: 0.875rem # 14px (text-sm) — distinguished from body-md by weight
         fontWeight: 400
         lineHeight: 1.5
     caption:
         fontFamily: Noto Sans KR
-        fontSize: 12px
+        fontSize: 0.75rem # 12px (text-xs)
         fontWeight: 700
         lineHeight: 1.3
 rounded:
-    sm: 12px
-    md: 16px
-    lg: 20px
-    card: 24px
-    panel: 26px
-    full: 999px
+    sm: 0.75rem # 12px
+    md: 1rem # 16px
+    lg: 1.25rem # 20px
+    card: 1.5rem # 24px
+    panel: 1.625rem # 26px
+    full: 999px # pill
 spacing:
-    xs: 4px
-    sm: 8px
-    md: 14px
-    lg: 22px
-    xl: 32px
-    screen-padding: 22px
-    stack-gap: 14px
-    card-padding: 16px
+    xs: 0.25rem # 4px
+    sm: 0.5rem # 8px
+    md: 0.875rem # 14px
+    lg: 1.25rem # 20px
+    xl: 2rem # 32px
+    screen-padding: 1.375rem # 22px — the one off-grid value, kept as the gutter token
+    stack-gap: 0.875rem # 14px
+    card-padding: 1rem # 16px
 components:
     button-primary:
         backgroundColor: '{colors.primary}'
         textColor: '{colors.on-primary}'
         typography: '{typography.title-action}'
         rounded: '{rounded.full}'
-        padding: 16px 40px
-        height: 58px
+        padding: 1rem 2.5rem # 16px 40px
+        height: 3.5rem # 56px
     button-primary-active:
         backgroundColor: '{colors.primary-active}'
     button-secondary:
@@ -110,19 +111,19 @@ components:
         textColor: '{colors.primary-active}'
         typography: '{typography.label-lg}'
         rounded: '{rounded.full}'
-        padding: 11px 22px
-        height: 46px
+        padding: 0.75rem 1.25rem # 12px 20px
+        height: 2.75rem # 44px
     card-trading:
         backgroundColor: '{colors.surface-cream}'
         textColor: '{colors.on-surface}'
         rounded: '{rounded.card}'
-        padding: 6px
+        padding: 0.375rem # 6px
     choice-outline:
         backgroundColor: '{colors.surface-cream}'
         textColor: '{colors.on-surface}'
         typography: '{typography.body-md}'
         rounded: '{rounded.lg}'
-        padding: 14px 16px
+        padding: 0.875rem 1rem # 14px 16px
     choice-outline-selected:
         backgroundColor: '#fff7ec'
         textColor: '{colors.on-surface}'
@@ -131,16 +132,16 @@ components:
         textColor: '{colors.on-primary}'
         typography: '{typography.label-lg}'
         rounded: '{rounded.full}'
-        padding: 4px 14px
+        padding: 0.25rem 0.875rem # 4px 14px
     close-button:
         backgroundColor: '{colors.surface-cream}'
         textColor: '{colors.primary-active}'
         rounded: '{rounded.full}'
-        size: 40px
+        size: 2.5rem # 40px
     progress-track:
         backgroundColor: '{colors.surface-cream}'
         rounded: '{rounded.full}'
-        height: 16px
+        height: 1rem # 16px
     progress-fill:
         backgroundColor: '{colors.primary}'
         rounded: '{rounded.full}'
@@ -203,8 +204,8 @@ everything expressive, and **Noto Sans KR** for readable body copy.
   geometry is the voice of the brand — warm and toy-like. Apply the `.font-display` class
   (or `--title-font`) for these.
 - **Body (Noto Sans KR):** Descriptions, choice copy, and metadata use Noto Sans KR.
-  `body-lg` (16px) for primary reading, `body-md` (14px) for choices, `body-sm` (13px) for
-  card blurbs and captions.
+  `body-lg` (16px) for primary reading, `body-md` (14px, medium) for choices, `body-sm`
+  (14px, regular) for card blurbs and captions.
 - **Korean wrapping:** Long Korean strings use `word-break: keep-all` and
   `text-wrap: balance` so names and questions break on word boundaries, never mid-syllable.
 - The hero title (`--title-font`) is user-tweakable across Jua / Black Han Sans / Do Hyeon /
@@ -258,7 +259,7 @@ The shape language is **soft and rounded** throughout — there are no sharp cor
 
 All components inherit the raised-block depth language and the orange action family.
 
-- **Primary Button (`button-primary`):** Bell-orange gradient pill, Jua 23px white label,
+- **Primary Button (`button-primary`):** Bell-orange gradient pill, Jua 24px white label,
   6px `primary-active` depth bar + halo. The single most important action per screen
   (e.g. "테스트 시작하기"). Optional pulsing glow ring to draw the eye.
 - **Secondary Button (`button-secondary`):** Cream pill, orange border + `depth-action`
