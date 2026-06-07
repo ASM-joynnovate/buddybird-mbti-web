@@ -33,9 +33,23 @@ project-structure guide:
   No React, no DOM.
 - **`app/`** — thin route shells (page/layout/api), global CSS, metadata.
 
-Dependency direction: `app → features → shared/lib/content`; features must
-not import other features except through their public entry (the only current
-case: `intro`/`result` use `features/deck`'s detail popup and controller).
+Dependency direction: `app → features → shared/lib/content`. Two kinds of
+modules live in `features/` (audited against bulletproof-react's
+project-structure guide, 2026-06-07):
+
+- **Capability features** (`deck`, `quiz`'s progress context, `share`,
+  `app-install`) must never import another feature — bulletproof-react's
+  cross-feature ban applies to these, and the audit confirms zero
+  capability-to-capability imports.
+- **Screen compositions** (`intro/intro-view`, `result/result-view`,
+  `quiz/test-view`) are the application-level composition layer that
+  bulletproof-react puts in `app/`; in App Router the route files are server
+  shells, so the client compositions live in `features/` instead and MAY
+  import capability features through their public entries.
+
+Both rules are enforced by ESLint `import/no-restricted-paths` zones in
+`eslint.config.mjs` (the bulletproof-react enforcement pattern), not just by
+this document.
 
 Multi-unit files split into folders with an `index.ts` barrel as the public
 entry (`features/deck/deck-overlay/`); single-file modules stay barrel-less

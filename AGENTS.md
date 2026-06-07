@@ -22,6 +22,27 @@ MBTI를 도출하고, 결과 카드를 인스타로 공유하게 해 앱 유입�
 
 상세는 `.scratch/parrot-mbti/PRD.md` 참조.
 
+## Folder structure — where new code goes (ADR-0010)
+
+Dependency direction `app → features → shared/lib/content`, enforced by
+`import/no-restricted-paths` in `eslint.config.mjs`. Capability zones are
+generated from the `features/` folder listing, so most additions need no
+config change — the one exception is marked below.
+
+| You are adding…                           | Put it here                                                                                                                                                                                                                                                                            |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A new screen/route                        | Thin server shell `app/<route>/page.tsx` (owns `metadata`) + `'use client'` view `features/<screen>/<screen>-view.tsx`. **Add the feature folder name to `COMPOSITION_FEATURES` in `eslint.config.mjs`** — screen compositions are the only features allowed to import other features. |
+| A new capability (deck/share-like module) | `features/<name>/` — must NOT import other features (new folders are restricted automatically; no config change). Screen compositions compose it.                                                                                                                                      |
+| A design-system primitive                 | `shared/ui/` — swappable unit together with the `@theme` tokens in `app/globals.css`.                                                                                                                                                                                                  |
+| Background-world pieces                   | `shared/forest/` — swappable unit; mounted once in `app/layout.tsx`.                                                                                                                                                                                                                   |
+| Motion vocabulary / analytics             | `shared/motion/` · `shared/analytics/`. `shared/*` must never import `features/` or `app/`.                                                                                                                                                                                            |
+| Pure domain logic                         | `lib/` — no React, no DOM, unit-testable in isolation.                                                                                                                                                                                                                                 |
+| Copy, type metadata, asset paths          | `content/`.                                                                                                                                                                                                                                                                            |
+
+A file holding multiple components/hooks splits into a folder with an
+`index.ts` public entry (pattern: `features/deck/deck-overlay/`). Rationale
+and rejected alternatives: `docs/adr/0010-feature-based-folder-structure.md`.
+
 ## Agent skills
 
 ### Issue tracker
