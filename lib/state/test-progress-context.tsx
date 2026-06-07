@@ -2,8 +2,8 @@
 
 import {
     createContext,
+    use,
     useCallback,
-    useContext,
     useEffect,
     useMemo,
     useReducer,
@@ -101,7 +101,7 @@ export function TestProgressProvider({ children }: { children: ReactNode }) {
 }
 
 export function useTestProgress(): TestProgressValue {
-    const value = useContext(TestProgressContext)
+    const value = use(TestProgressContext)
 
     if (value === null) {
         throw new Error('useTestProgress must be used within a TestProgressProvider')
