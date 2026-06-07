@@ -63,8 +63,15 @@ _Avoid_: Item, Q
 One of a Question's two options; weights the letters of one or more **Axes** by 1
 each. The two Choices of a Question are **symmetric** — they cover the same Axes
 with opposite letters, so the question contributes the same total to each Axis it
-touches regardless of which side is picked.
+touches regardless of which side is picked. Its copy reads as a **Hook** followed
+by a **Body**.
 _Avoid_: Option, Answer (an "answer" is a Choice the user selected)
+
+**Hook**:
+The short punch line of a **Choice** — a quoted utterance, onomatopoeia, or
+nickname — shown above the **Body** (the behavioural description) on the Test
+screen's choice rows. Chosen in the 2026-06-07 Choice Row prototype round.
+_Avoid_: Title, Headline (of a Choice)
 
 **Axis**:
 One of the four MBTI dimensions — E·I, S·N, T·F, J·P.

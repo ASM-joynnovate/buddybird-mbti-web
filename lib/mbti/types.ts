@@ -29,9 +29,16 @@ export const AXIS_LETTERS: Record<Axis, { left: Letter; right: Letter }> = {
 // contributes the same total to each axis it touches regardless of which side wins.
 // `weights` keys are the letters that receive +1; values are always 1 in the current
 // model but kept numeric to leave room for future tuning.
+// `label` stays the full one-line sentence (aria-label, analytics continuity).
+// `hook`/`body` split the same copy for display: hook is the short punch line
+// (대사/의성어/별명) set large, body the behavioural description under it
+// (2026-06-07 Choice Row prototype round). Optional so minimal Choice fixtures
+// stay valid; the view falls back to `label` when absent.
 export interface Choice {
     id: string
     label: string
+    hook?: string
+    body?: string
     weights: Partial<Record<Letter, number>>
 }
 

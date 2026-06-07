@@ -65,6 +65,16 @@ typography:
         fontSize: 1rem # 16px (text-base)
         fontWeight: 400
         lineHeight: 1.6
+    choice-hook:
+        fontFamily: NEXON Lv2 Gothic
+        fontSize: 1.0625rem # 17px
+        fontWeight: 700
+        lineHeight: 1.375 # leading-snug
+    choice-body:
+        fontFamily: NEXON Lv2 Gothic
+        fontSize: 0.875rem # 14px (text-sm)
+        fontWeight: 400
+        lineHeight: 1.5
     body-md:
         fontFamily: Noto Sans KR
         fontSize: 0.875rem # 14px (text-sm)
@@ -121,7 +131,7 @@ components:
     choice-outline:
         backgroundColor: '{colors.surface-cream}'
         textColor: '{colors.on-surface}'
-        typography: '{typography.body-md}'
+        typography: '{typography.choice-body}' # hook line uses {typography.choice-hook}
         rounded: '{rounded.lg}'
         padding: 0.875rem 1rem # 14px 16px
     choice-outline-selected:
@@ -196,8 +206,13 @@ secondary set used only for personality-group identity.
 
 ## Typography
 
-Two families carry the system: **Jua** (a rounded, friendly Korean display face) for
-everything expressive, and **Noto Sans KR** for readable body copy.
+Two families carry the system — **Jua** (a rounded, friendly Korean display face) for
+everything expressive, and **Noto Sans KR** for readable body copy — plus one
+scoped guest: **NEXON Lv2 Gothic**, used exclusively for Choice copy (hook +
+body) on the Test screen, where it brings game-brand personality while staying
+legible at 14px over long lines. The per-screen two-family rule holds: Test
+shows Jua + NEXON Lv2 Gothic. License note: NEXON fonts may be embedded but
+**must ship unmodified — never subset the files**.
 
 - **Display / Headlines / Titles (Jua):** All headlines, MBTI codes, the hero title,
   question text, button labels, counts and badges are set in Jua at weight 400. Jua's soft
@@ -269,9 +284,15 @@ All components inherit the raised-block depth language and the orange action fam
   MBTI code and nickname on one row, a dashed rule, and a short blurb. Always fills its
   container width.
 - **Choice Row (`choice-outline`, canonical):** Cream pill-card with an **A / B letter** in
-  an orange-outline rounded square at the left and the option text to the right. Selecting
-  fills the letter square solid orange, adds an orange focus ring, and presses the card
-  down. (Alternate tweakable styles: solid-orange badge, split orange panel.)
+  an orange-outline rounded square at the left, and the Choice copy to the right as a
+  two-line hierarchy: the **hook** punch line (NEXON Lv2 Gothic bold 17px, ink) over the
+  **body** description (NEXON Lv2 Gothic 14px, muted ink). Tapping runs the "도장 쾅"
+  feedback inside the 420ms auto-advance budget: a ~90ms press-in (deeper sink, depth bar
+  squash), a spring rebound — the row never holds the pressed pose — while a check stamp
+  slams onto the letter tile (scale 1.45→1.0, rotate −8°→−3°, back-out spring) with a
+  fading ink ring; selection then reads from the stamp + orange border/tint, plus a
+  one-line `navigator.vibrate(12)` haptic on Android. Reduced motion swaps states
+  instantly with the same 420ms pacing.
 - **Question Card (Quest Sheet):** The question presented as a parchment commission
   notice pinned to the forest — a brass pin at the top, a slight −1.2° tilt, a Jua
   "No.n" commission-number eyebrow, the question emoji as a tilted postage-stamp tile
@@ -306,4 +327,5 @@ All components inherit the raised-block depth language and the orange action fam
 - **Don't** let overlays (deck, modal) escape the phone frame or shift the underlying hero
   layout.
 - **Don't** show MBTI axis tags (e.g. "E·F") on quiz choices — use plain A / B letters.
-- **Don't** stack more than two type families on a screen (Jua + Noto Sans KR).
+- **Don't** stack more than two type families on a screen (Jua + Noto Sans KR;
+  on Test, Jua + NEXON Lv2 Gothic).
