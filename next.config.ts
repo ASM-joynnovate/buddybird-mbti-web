@@ -8,6 +8,26 @@ const nextConfig: NextConfig = {
     // Preserve directory-style URLs (`/test/`, `/result/`) so shared links and
     // existing navigation stay stable across the static→standalone switch.
     trailingSlash: true,
+    images: {
+        // AVIF first (≈20–30% smaller than WebP for the painterly forest PNGs),
+        // WebP fallback. First-hit encode cost is paid once per size/format and
+        // then served from the optimizer cache (standalone Node server, ADR-0002).
+        formats: ['image/avif', 'image/webp'],
+        // Next 16 requires an explicit quality allowlist. 75 is the component
+        // default; 65 is the parrot character art (clean flat illustration);
+        // 50 is the side decals; 40 is the full-bleed painterly layers
+        // (base/canopy/ground/particles) where the soft illustration style +
+        // the cream legibility veil hide compression artifacts (Lighthouse
+        // image-delivery flagged q60 as still compressible; verified visually
+        // at q40).
+        qualities: [40, 50, 65, 75],
+    },
+    // experimental.inlineCss was tried here and REVERTED: with the 88
+    // @font-face Jua subsets the page CSS is ~92KB raw, and the experiment
+    // embeds it 3× in the document (once in <style>, twice escaped inside the
+    // React Flight payload) — a 319KB HTML document that pushed FCP/LCP up
+    // instead of down. The render-blocking <link> stylesheet is the cheaper
+    // trade (measured: Lighthouse mobile FCP improved when reverted).
 }
 
 export default nextConfig

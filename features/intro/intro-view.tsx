@@ -8,18 +8,25 @@
 // Rendered by the server-component shell in page.tsx, which owns the route
 // metadata (a 'use client' page cannot export it).
 import { useRef, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, m, useReducedMotion } from 'motion/react'
 import { CAROUSEL_TYPES, QUESTION_COUNT } from '@/content'
 import { BackStack, type BackStackControls } from '@/features/deck/back-stack'
 import { DeckOverlay, useDeckController } from '@/features/deck/deck-overlay'
-import { DetailPopup } from '@/features/deck/detail-popup'
 import { useTestProgress } from '@/features/quiz/test-progress-context'
 import type { TypeCode } from '@/lib/mbti'
 import { track } from '@/shared/analytics'
 import { fadeOnly, fadeUp, staggerContainer } from '@/shared/motion'
 import { GameButton } from '@/shared/ui/game-button'
 import { GamePill } from '@/shared/ui/game-pill'
+
+// Detail popup is tap-only UI — code-split out of the initial bundle and
+// fetched on the first card tap (it only ever renders when `detail` is set).
+const DetailPopup = dynamic(
+    () => import('@/features/deck/detail-popup').then((mod) => mod.DetailPopup),
+    { ssr: false },
+)
 
 // Stack order: a curated lead-in, then the remaining types (mirrors the bundle).
 const STACK_LEAD: readonly TypeCode[] = [

@@ -55,7 +55,9 @@ export function ParrotImage({
 
     return (
         // next/image: the standalone Node server (ADR-0002) provides the image
-        // optimizer, so the ~250KB type PNGs ship resized + WebP/AVIF. The
+        // optimizer, so the ~250KB type PNGs ship resized + WebP/AVIF. quality
+        // 65: the clean flat character art compresses transparently in AVIF
+        // (Lighthouse flagged the q75 default as ~30% over-budget). The
         // share-card Canvas composes from the user photo + brand logo only, so
         // it never depends on this element's URL.
         <Image
@@ -64,6 +66,7 @@ export function ParrotImage({
             alt={alt}
             width={width}
             height={height}
+            quality={65}
             loading={loading}
             className={className}
             onError={() => setFailed(true)}

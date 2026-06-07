@@ -150,7 +150,11 @@ export function BackStack({
                             data-testid="stack-active-card"
                             data-code={active}
                         >
-                            <TradingCard code={active} loading="eager" />
+                            {/* default-lazy on purpose: eager would promote the
+                                parrot art to a head preload that competes with
+                                the LCP canopy; lazy-but-in-viewport still loads
+                                in the first wave after layout. */}
+                            <TradingCard code={active} loading="lazy" />
                         </button>
                     </m.div>
                 </m.div>

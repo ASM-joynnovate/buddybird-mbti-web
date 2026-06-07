@@ -13,12 +13,12 @@
 // Under prefers-reduced-motion every entrance degrades to the opacity-only
 // fadeOnly variant; the page is fully readable without motion.
 import { useState, type CSSProperties } from 'react'
+import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AnimatePresence, m, useReducedMotion, type Variants } from 'motion/react'
 import { getTypeInfo, typeGradient } from '@/content'
 import { AppCtaButton } from '@/features/app-install/app-cta-button'
 import { DeckOverlay, useDeckController } from '@/features/deck/deck-overlay'
-import { DetailPopup } from '@/features/deck/detail-popup'
 import { useTestProgress } from '@/features/quiz/test-progress-context'
 import { AxisBars } from '@/features/result/axis-bars'
 import { Confetti } from '@/features/result/confetti'
@@ -41,6 +41,13 @@ import { easeSpring, fadeOnly, fadeUp, popIn, staggerContainer } from '@/shared/
 import { GameButton } from '@/shared/ui/game-button'
 import { GamePanel } from '@/shared/ui/game-panel'
 import { ParrotImage } from '@/shared/ui/parrot-image'
+
+// Detail popup is tap-only UI — code-split out of the initial bundle and
+// fetched on the first match-card tap (it only renders when `detail` is set).
+const DetailPopup = dynamic(
+    () => import('@/features/deck/detail-popup').then((mod) => mod.DetailPopup),
+    { ssr: false },
+)
 
 // Hero-art entrance: rise-from-below + scale envelope, Motion-owned.
 const heroArtRise: Variants = {

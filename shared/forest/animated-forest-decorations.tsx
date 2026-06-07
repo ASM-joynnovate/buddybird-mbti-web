@@ -15,22 +15,30 @@
 // prefers-reduced-motion every loop renders fully static and the mushroom
 // pop-in degrades to opacity-only (fadeOnly).
 //
-// Placement transform vs Motion transform: the anchor transform
-// (translate(-50%,-50%) rotate(--r), Tailwind utilities on the wrapper div)
-// stays on the wrapper; Motion animates the inner img so the two transforms
-// never fight over the same element. The wrapper/img class strings mirror the
-// static decals in mobile-forest-background.tsx (kept in sync by comment — a
-// server module cannot import values from a 'use client' module).
+// Image pipeline: every decal goes through next/image with a static import,
+// so the optimizer serves resized AVIF/WebP instead of the raw PNGs (the
+// monstera/palm sources alone are ~250KB each). Motion therefore animates an
+// m.div WRAPPING the <Image> — three layers, each owning one transform:
+//   placement div (anchor translate/rotate, Tailwind utilities)
+//     → m.div (Motion variants: float/sway/pop/pulse)
+//       → <Image> (static, optimized)
+// The wrapper/img class strings mirror the static decals in
+// mobile-forest-background.tsx (kept in sync by comment — a server module
+// cannot import values from a 'use client' module).
 //
 // Provider note: these layers rely on the app-wide <MotionProvider> in
 // app/layout.tsx, which (since commit 22ab364) mounts ABOVE
 // <MobileForestBackground> — m.* elements silently render static without
 // LazyMotion context, so that ordering is load-bearing.
 import type { CSSProperties } from 'react'
+import Image, { type StaticImageData } from 'next/image'
 import { m, useReducedMotion, type TargetAndTransition, type Variants } from 'motion/react'
+import forestLightParticles from '@/public/assets/mbti/forest-light-particles.png'
+import leafMonstera from '@/public/assets/mbti/leaf-monstera.png'
+import leafPalm from '@/public/assets/mbti/leaf-palm.png'
+import mushroomFlowerCluster from '@/public/assets/mbti/mushroom-flower-cluster.png'
+import vineHanging from '@/public/assets/mbti/vine-hanging.png'
 import { fadeOnly, floatingLeaf, gentleSway, particleFloat, popIn } from '@/shared/motion'
-
-const ASSET_BASE = '/assets/mbti'
 
 // Derive a desynchronised copy of a shared idle variant: identical motion
 // vocabulary (amplitude/easing/mirror), per-decal delay + duration tweak so
@@ -62,14 +70,18 @@ const DECAL_IMG_CLASS =
 
 interface AnimatedDecal {
     name: string
-    src: string
+    src: StaticImageData
     // Same CSS-variable placement contract as the static decals in
     // mobile-forest-background.tsx (anchor %, clamp() width, base rotation).
     vars: { x: string; y: string; w: string; r: string }
+    /** Rendered width hint for the responsive srcset — mirrors the live
+     * clamp() value (vw term below the clamp ceiling, fixed max above it) so
+     * the browser never downloads a srcset step it cannot display. */
+    sizes: string
     /** Extra wrapper classes (narrow-viewport size overrides). */
     wrapperClassName?: string
-    /** Extra img classes (e.g. the vine's hanging pivot). */
-    imgClassName?: string
+    /** Extra classes on the Motion element (e.g. the vine's hanging pivot). */
+    motionClassName?: string
     // 'idle'     — infinite mirrored loop; fully static under reduced motion.
     // 'entrance' — one-shot pop-in on load; opacity-only under reduced motion.
     kind: 'idle' | 'entrance'
@@ -83,8 +95,9 @@ interface AnimatedDecal {
 const ANIMATED_DECALS: readonly AnimatedDecal[] = [
     {
         name: 'monstera',
-        src: `${ASSET_BASE}/leaf-monstera.png`,
+        src: leafMonstera,
         vars: { x: '6%', y: '15%', w: 'clamp(4.5rem, 26vw, 10.625rem)', r: '-10deg' },
+        sizes: '(min-width: 654px) 10.625rem, 26vw',
         wrapperClassName: 'max-[23.75rem]:w-[clamp(3.75rem,22vw,8.125rem)]',
         kind: 'idle',
         variants: floatingLeaf,
@@ -93,8 +106,9 @@ const ANIMATED_DECALS: readonly AnimatedDecal[] = [
     },
     {
         name: 'palm',
-        src: `${ASSET_BASE}/leaf-palm.png`,
+        src: leafPalm,
         vars: { x: '95%', y: '12%', w: 'clamp(6rem, 32vw, 13.75rem)', r: '-14deg' },
+        sizes: '(min-width: 688px) 13.75rem, 32vw',
         wrapperClassName: 'max-[23.75rem]:w-[clamp(5rem,28vw,9.375rem)]',
         kind: 'idle',
         variants: palmFloat,
@@ -103,10 +117,11 @@ const ANIMATED_DECALS: readonly AnimatedDecal[] = [
     },
     {
         name: 'vine',
-        src: `${ASSET_BASE}/vine-hanging.png`,
+        src: vineHanging,
         vars: { x: '97%', y: '24%', w: 'clamp(4.375rem, 22vw, 9.375rem)', r: '0deg' },
+        sizes: '(min-width: 682px) 9.375rem, 22vw',
         // Vine sway (gentleSway) pivots from where it hangs, not its center.
-        imgClassName: 'origin-top',
+        motionClassName: 'origin-top',
         kind: 'idle',
         variants: vineSway,
         initial: 'rest',
@@ -114,8 +129,9 @@ const ANIMATED_DECALS: readonly AnimatedDecal[] = [
     },
     {
         name: 'mushroom',
-        src: `${ASSET_BASE}/mushroom-flower-cluster.png`,
+        src: mushroomFlowerCluster,
         vars: { x: '86%', y: '95%', w: 'clamp(3.75rem, 20vw, 8.125rem)', r: '0deg' },
+        sizes: '(min-width: 650px) 8.125rem, 20vw',
         kind: 'entrance',
         variants: popIn,
         initial: 'hidden',
@@ -135,10 +151,10 @@ function decalStyle(d: AnimatedDecal): CSSProperties {
 // Reduced-motion strategy: the SSR markup is always the non-reduced render
 // (its initial inline styles, e.g. popIn's scale(0.4), are baked into the
 // HTML), and React does NOT patch mismatched style attributes during
-// hydration. So instead of swapping to plain <img> (which would leave those
-// stale styles in place), every element stays Motion-managed and is simply
-// driven to a static target — Motion then actively overwrites whatever the
-// SSR markup contained:
+// hydration. So instead of swapping to a plain div (which would leave those
+// stale styles in place), every Motion wrapper stays Motion-managed and is
+// simply driven to a static target — Motion then actively overwrites whatever
+// the SSR markup contained:
 //   idle decals   → animate to their 'rest' pose (transform: none), no loop
 //   mushroom      → opacity-only fade with scale pinned to 1 (fadeOnlyEntrance)
 //   particles     → one static 'still' target at the CSS resting opacity
@@ -151,7 +167,7 @@ const fadeOnlyEntrance: Variants = {
 }
 
 // Static particle target for reduced motion: matches the resting opacity
-// (opacity-55 on the particle img), zero drift, applied instantly.
+// (opacity-55 on the Motion wrapper), zero drift, applied instantly.
 const particleStill: Variants = {
     ...particleFloat,
     still: { opacity: 0.55, x: 0, y: 0, transition: { duration: 0 } },
@@ -166,7 +182,7 @@ export function AnimatedForestDecals() {
                 const entrance = d.kind === 'entrance'
                 // Idle loops are fully disabled under reduced motion (held at
                 // the 'rest' pose); the entrance pop-in degrades to
-                // opacity-only. Both stay m.img so Motion clears any initial
+                // opacity-only. Both stay m.div so Motion clears any initial
                 // styles baked into the SSR markup.
                 const variants = entrance && reducedMotion ? fadeOnlyEntrance : d.variants
                 const animate = !entrance && reducedMotion ? d.initial : d.animate
@@ -177,16 +193,20 @@ export function AnimatedForestDecals() {
                         className={`${DECAL_WRAPPER_CLASS} ${d.wrapperClassName ?? ''}`}
                         style={decalStyle(d)}
                     >
-                        <m.img
-                            className={`${DECAL_IMG_CLASS} ${d.imgClassName ?? ''}`}
-                            src={d.src}
-                            alt=""
-                            loading="lazy"
-                            decoding="async"
+                        <m.div
+                            className={d.motionClassName}
                             variants={variants}
                             initial={d.initial}
                             animate={animate}
-                        />
+                        >
+                            <Image
+                                className={DECAL_IMG_CLASS}
+                                src={d.src}
+                                alt=""
+                                quality={50}
+                                sizes={d.sizes}
+                            />
+                        </m.div>
                     </div>
                 )
             })}
@@ -198,15 +218,29 @@ export function AnimatedForestParticles() {
     const reducedMotion = useReducedMotion()
 
     return (
-        <m.img
-            className="pointer-events-none absolute -inset-3 h-[calc(100%+1.5rem)] w-[calc(100%+1.5rem)] object-cover object-center opacity-55 select-none"
-            src={`${ASSET_BASE}/forest-light-particles.png`}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            variants={particleStill}
-            initial="rest"
-            animate={reducedMotion ? 'still' : 'drift'}
-        />
+        // -inset-3 overscan gives the micro drift room without exposing edges.
+        // The <Image> stays default-lazy ON PURPOSE: in Next 16 every non-lazy
+        // <Image> is promoted to a <link rel=preload> that competes with the
+        // LCP canopy for bandwidth. Lazy-but-in-viewport still loads right
+        // after layout, and at ~9KB AVIF the layer is far below the LCP
+        // entropy threshold, so it can never become the LCP element again (its
+        // old ~7s LCP was as an 80KB raw lazy PNG).
+        <div className="pointer-events-none absolute -inset-3">
+            <m.div
+                className="h-full w-full opacity-55"
+                variants={particleStill}
+                initial="rest"
+                animate={reducedMotion ? 'still' : 'drift'}
+            >
+                <Image
+                    className="object-cover object-center select-none"
+                    src={forestLightParticles}
+                    alt=""
+                    fill
+                    quality={40}
+                    sizes="100vw"
+                />
+            </m.div>
+        </div>
     )
 }

@@ -41,5 +41,11 @@
         "tailwindcss": "^4",
         "typescript": "^5"
     },
-    "packageManager": "yarn@4.16.0"
+    "packageManager": "yarn@4.16.0",
+    "browserslist": [
+        "chrome >= 100",
+        "edge >= 100",
+        "firefox >= 100",
+        "safari >= 15.4"
+    ]
 }

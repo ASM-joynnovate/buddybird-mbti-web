@@ -36,7 +36,9 @@ interface Decal {
     name: string
     src: StaticImageData
     vars: { x: string; y: string; w: string; r: string }
-    /** Rendered width hint for the responsive srcset (the clamp() max). */
+    /** Rendered width hint for the responsive srcset — mirrors the live
+     * clamp() value (vw term below the clamp ceiling, fixed max above it) so
+     * the browser never downloads a srcset step it cannot display. */
     sizes: string
     /** Extra wrapper classes (e.g. narrow-viewport hiding). */
     className?: string
@@ -51,14 +53,14 @@ const STATIC_DECALS: readonly Decal[] = [
         name: 'general',
         src: leafGeneral,
         vars: { x: '8%', y: '52%', w: 'clamp(2.75rem, 14vw, 6rem)', r: '14deg' },
-        sizes: '6rem',
+        sizes: '(min-width: 686px) 6rem, 14vw',
         className: 'max-[23.75rem]:hidden',
     },
     {
         name: 'rock',
         src: rockCluster,
         vars: { x: '15%', y: '96%', w: 'clamp(6rem, 30vw, 12.5rem)', r: '0deg' },
-        sizes: '12.5rem',
+        sizes: '(min-width: 667px) 12.5rem, 30vw',
     },
 ]
 
@@ -74,14 +76,16 @@ export function MobileForestBackground({ children }: { children: ReactNode }) {
                 aria-hidden="true"
             >
                 {/* z0 — main forest base: covers the viewport (cover, never stretched),
-                 * priority (preload + eager + fetchpriority=high) as the largest
-                 * above-the-fold visual (LCP). Always static (never animated). */}
+                 * preload (Next 16 replacement for the deprecated `priority`) as the
+                 * largest above-the-fold visual (LCP). Always static (never animated).
+                 * quality 40: the soft illustration + cream veil hide artifacts. */}
                 <Image
                     className="object-cover object-center"
                     src={forestMobileBase}
                     alt=""
                     fill
-                    priority
+                    preload
+                    quality={40}
                     sizes="100vw"
                 />
 
@@ -104,23 +108,37 @@ export function MobileForestBackground({ children }: { children: ReactNode }) {
                             className="block h-auto w-full drop-shadow-[0_6px_12px_rgba(46,36,20,0.16)] select-none"
                             src={d.src}
                             alt=""
+                            quality={50}
                             sizes={d.sizes}
                         />
                     </div>
                 ))}
                 <AnimatedForestDecals />
 
-                {/* z2 — top canopy + bottom ground overlays (static). */}
+                {/* z2 — top canopy + bottom ground overlays (static). quality 40
+                 * like the base — full-width painterly layers. The canopy is the
+                 * page's LCP element (the full-viewport base is excluded as a
+                 * background by the LCP heuristic): eager + fetchpriority=high.
+                 * The ground overlay stays default-lazy ON PURPOSE — in Next 16
+                 * every non-lazy <Image> is promoted to a <link rel=preload> in
+                 * <head>, and those preloads share bandwidth with the LCP canopy
+                 * on slow connections. Lazy-but-in-viewport images still load in
+                 * the first wave right after layout (~100ms later), which a
+                 * decorative overlay can afford. */}
                 <Image
                     className="pointer-events-none absolute top-0 left-0 h-auto w-full select-none"
                     src={forestTopCanopy}
                     alt=""
+                    loading="eager"
+                    fetchPriority="high"
+                    quality={40}
                     sizes="100vw"
                 />
                 <Image
                     className="pointer-events-none absolute bottom-0 left-0 h-auto w-full select-none"
                     src={forestBottomGround}
                     alt=""
+                    quality={40}
                     sizes="100vw"
                 />
 
