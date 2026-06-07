@@ -73,6 +73,16 @@ export function useDeckController(): DeckController {
         animRef.current = null
     }, [])
 
+    // Clear the pending scrub-release timer. Reads the ref at call time, so
+    // callers (including the unmount cleanup) always cancel the latest timer
+    // without touching `endTimer.current` inside an effect cleanup directly.
+    const clearEndTimer = useCallback(() => {
+        if (endTimer.current !== null) {
+            clearTimeout(endTimer.current)
+            endTimer.current = null
+        }
+    }, [])
+
     const setOpen = useCallback((open: boolean) => {
         isOpenRef.current = open
         setIsOpen(open)
@@ -82,9 +92,7 @@ export function useDeckController(): DeckController {
     }, [])
 
     const reallyOpen = useCallback(() => {
-        if (endTimer.current !== null) {
-            clearTimeout(endTimer.current)
-        }
+        clearEndTimer()
         stopSnap()
         setOpen(true)
         if (reduced) {
@@ -92,12 +100,10 @@ export function useDeckController(): DeckController {
             return
         }
         animRef.current = animate(progress, 1, { duration: 0.28, ease: easeLeaf })
-    }, [progress, reduced, setOpen, stopSnap])
+    }, [clearEndTimer, progress, reduced, setOpen, stopSnap])
 
     const openAnimated = useCallback(() => {
-        if (endTimer.current !== null) {
-            clearTimeout(endTimer.current)
-        }
+        clearEndTimer()
         stopSnap()
         setOpen(true)
         if (reduced) {
@@ -105,12 +111,10 @@ export function useDeckController(): DeckController {
             return
         }
         animRef.current = animate(progress, 1, { duration: 0.46, ease: easeLeaf })
-    }, [progress, reduced, setOpen, stopSnap])
+    }, [clearEndTimer, progress, reduced, setOpen, stopSnap])
 
     const close = useCallback(() => {
-        if (endTimer.current !== null) {
-            clearTimeout(endTimer.current)
-        }
+        clearEndTimer()
         stopSnap()
         setOpen(false)
         if (reduced) {
@@ -119,7 +123,7 @@ export function useDeckController(): DeckController {
             return
         }
         animRef.current = animate(progress, 0, { duration: 0.3, ease: easeLeaf })
-    }, [progress, reduced, setOpen, stopSnap])
+    }, [clearEndTimer, progress, reduced, setOpen, stopSnap])
 
     // Scrub release: past the threshold the deck commits open, under it snaps shut.
     const snapEnd = useCallback(() => {
@@ -147,9 +151,7 @@ export function useDeckController(): DeckController {
                 event.preventDefault()
                 stopSnap()
                 progress.set(clamp(progress.get() + event.deltaY * WHEEL_GAIN, 0, 1))
-                if (endTimer.current !== null) {
-                    clearTimeout(endTimer.current)
-                }
+                clearEndTimer()
                 endTimer.current = setTimeout(snapEnd, 150)
                 if (progress.get() >= 1) {
                     reallyOpen()
@@ -186,7 +188,7 @@ export function useDeckController(): DeckController {
             el.addEventListener('wheel', onWheel, { passive: false })
             el.addEventListener('touchstart', onTouchStart, { passive: true })
             el.addEventListener('touchmove', onTouchMove, { passive: false })
-            el.addEventListener('touchend', onTouchEnd)
+            el.addEventListener('touchend', onTouchEnd, { passive: true })
             return () => {
                 el.removeEventListener('wheel', onWheel)
                 el.removeEventListener('touchstart', onTouchStart)
@@ -194,18 +196,16 @@ export function useDeckController(): DeckController {
                 el.removeEventListener('touchend', onTouchEnd)
             }
         },
-        [progress, reallyOpen, snapEnd, stopSnap],
+        [clearEndTimer, progress, reallyOpen, snapEnd, stopSnap],
     )
 
     // Clear the pending snap timer on unmount.
     useEffect(() => {
         return () => {
-            if (endTimer.current !== null) {
-                clearTimeout(endTimer.current)
-            }
+            clearEndTimer()
             stopSnap()
         }
-    }, [stopSnap])
+    }, [clearEndTimer, stopSnap])
 
     return { progress, isOpen, isEngaged, bindScrub, openAnimated, close }
 }
@@ -291,7 +291,7 @@ export function DeckOverlay({ controller, onSelect }: DeckOverlayProps) {
         el.addEventListener('wheel', onWheel, { passive: false })
         el.addEventListener('touchstart', onTouchStart, { passive: true })
         el.addEventListener('touchmove', onTouchMove, { passive: false })
-        el.addEventListener('touchend', onTouchEnd)
+        el.addEventListener('touchend', onTouchEnd, { passive: true })
         return () => {
             el.removeEventListener('wheel', onWheel)
             el.removeEventListener('touchstart', onTouchStart)

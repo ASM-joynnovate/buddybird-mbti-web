@@ -17,33 +17,38 @@ export function usePhotoSource(): PhotoSource {
     const [objectUrl, setObjectUrl] = useState<string | null>(null)
     const urlRef = useRef<string | null>(null)
 
-    const setFile = useCallback((next: File | null) => {
+    // Revoke the live object URL. Reads the ref at call time, so the unmount
+    // cleanup below always frees the latest blob without touching
+    // `urlRef.current` inside an effect cleanup directly.
+    const revokeUrl = useCallback(() => {
         if (urlRef.current !== null) {
             URL.revokeObjectURL(urlRef.current)
             urlRef.current = null
         }
-
-        if (next !== null) {
-            const url = URL.createObjectURL(next)
-            urlRef.current = url
-            setObjectUrl(url)
-        } else {
-            setObjectUrl(null)
-        }
-
-        setFileState(next)
     }, [])
+
+    const setFile = useCallback(
+        (next: File | null) => {
+            revokeUrl()
+
+            if (next !== null) {
+                const url = URL.createObjectURL(next)
+                urlRef.current = url
+                setObjectUrl(url)
+            } else {
+                setObjectUrl(null)
+            }
+
+            setFileState(next)
+        },
+        [revokeUrl],
+    )
 
     const clear = useCallback(() => setFile(null), [setFile])
 
     useEffect(() => {
-        return () => {
-            if (urlRef.current !== null) {
-                URL.revokeObjectURL(urlRef.current)
-                urlRef.current = null
-            }
-        }
-    }, [])
+        return () => revokeUrl()
+    }, [revokeUrl])
 
     return { file, objectUrl, setFile, clear }
 }
