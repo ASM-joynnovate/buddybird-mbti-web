@@ -7,7 +7,7 @@ interface DashedRuleProps {
 
 export function DashedRule({ className }: DashedRuleProps) {
     const classes = [
-        'h-0.5 rounded-[2px] bg-[repeating-linear-gradient(90deg,var(--color-border-action)_0_7px,transparent_7px_12px)]',
+        'h-0.5 rounded-xs bg-[repeating-linear-gradient(90deg,var(--color-border-action)_0_7px,transparent_7px_12px)]',
         className,
     ]
         .filter(Boolean)

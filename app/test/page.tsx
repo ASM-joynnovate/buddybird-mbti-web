@@ -60,14 +60,14 @@ const choiceTap = { y: 3, scale: 0.99, transition: { duration: 0.14, ease: easeL
 // Full class string per state (prettier-plugin-tailwindcss compatible — no
 // conditional fragments).
 const CHOICE_CLASS =
-    'relative flex cursor-pointer items-center gap-3.5 rounded-lg border-2 border-border-action bg-surface-cream px-4 py-3.5 text-left text-[14.5px] leading-normal text-ink shadow-[0_5px_0_var(--color-depth-action),0_12px_22px_-14px_rgba(58,46,26,0.35)] transition-[border-color,background-color,box-shadow] duration-150 ease-leaf hover:border-primary focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-faction-sentinel disabled:cursor-not-allowed'
+    'relative flex cursor-pointer items-center gap-3.5 rounded-lg border-2 border-border-action bg-surface-cream px-4 py-3.5 text-left text-sm leading-normal text-ink shadow-[0_5px_0_var(--color-depth-action),0_12px_22px_-14px_rgba(58,46,26,0.35)] transition-[border-color,background-color,box-shadow] duration-150 ease-leaf hover:border-primary focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-faction-sentinel disabled:cursor-not-allowed'
 const CHOICE_PICKED_CLASS =
-    'relative flex cursor-pointer items-center gap-3.5 rounded-lg border-2 border-primary bg-[#fff7ec] px-4 py-3.5 text-left text-[14.5px] leading-normal text-ink shadow-[0_1px_0_var(--color-depth-action),0_0_0_3px_var(--color-primary-glow)] transition-[border-color,background-color,box-shadow] duration-150 ease-leaf focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-faction-sentinel disabled:cursor-not-allowed'
+    'relative flex cursor-pointer items-center gap-3.5 rounded-lg border-2 border-primary bg-[#fff7ec] px-4 py-3.5 text-left text-sm leading-normal text-ink shadow-[0_1px_0_var(--color-depth-action),0_0_0_3px_var(--color-primary-glow)] transition-[border-color,background-color,box-shadow] duration-150 ease-leaf focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-faction-sentinel disabled:cursor-not-allowed'
 
 const LETTER_CLASS =
     'grid size-10 flex-none place-items-center rounded-sm border-2 border-primary bg-white font-display text-lg leading-none text-primary-active shadow-[0_2px_0_var(--color-depth-action)] transition-[background-color,color] duration-150 ease-leaf'
 const LETTER_PICKED_CLASS =
-    'grid size-10 flex-none place-items-center rounded-sm border-2 border-primary bg-primary font-display text-lg leading-none text-on-primary shadow-[0_2px_0_var(--color-primary-active)] transition-[background-color,color] duration-150 ease-leaf'
+    'grid size-10 flex-none place-items-center rounded-sm border-2 border-primary bg-primary font-display text-lg leading-none text-on-primary shadow-raise-bar-primary transition-[background-color,color] duration-150 ease-leaf'
 
 export default function TestPage() {
     const router = useRouter()
@@ -174,7 +174,7 @@ export default function TestPage() {
     return (
         <main
             data-testid="test-root"
-            className="relative flex min-h-dvh flex-col px-gutter pt-[60px] pb-10"
+            className="relative flex min-h-dvh flex-col px-gutter pt-15 pb-10"
         >
             <div className="flex items-center gap-3">
                 <GameButton
@@ -197,7 +197,7 @@ export default function TestPage() {
                     aria-valuetext={`${QUESTION_COUNT}문항 중 ${currentIndex + 1}번째`}
                 >
                     <m.div
-                        className="h-full rounded-full bg-[linear-gradient(90deg,var(--color-gold),var(--color-primary))] shadow-[inset_0_2px_0_rgba(255,255,255,0.4)]"
+                        className="h-full rounded-full bg-[linear-gradient(90deg,var(--color-gold),var(--color-primary))] shadow-inset-highlight"
                         initial={false}
                         animate={{ width: `${pct}%` }}
                         transition={
@@ -206,7 +206,7 @@ export default function TestPage() {
                     />
                 </div>
 
-                <GamePill bare className="px-3 py-1 font-display text-[15px] text-ink">
+                <GamePill bare className="px-3 py-1 font-display text-base text-ink">
                     <b className="font-normal text-primary">{currentIndex + 1}</b>
                     &nbsp;/ {QUESTION_COUNT}
                 </GamePill>
@@ -227,10 +227,10 @@ export default function TestPage() {
                 >
                     <GamePanel
                         dashedFrame
-                        className="mt-[26px] flex flex-col items-center gap-4 px-[22px] pt-[26px] pb-7 text-center"
+                        className="mt-6 flex flex-col items-center gap-4 px-gutter pt-6 pb-7 text-center"
                     >
                         <m.div
-                            className="grid size-[84px] place-items-center rounded-card border-[3px] border-border-action bg-primary-soft text-[42px] shadow-[0_4px_0_var(--color-depth-action),inset_0_2px_0_rgba(255,255,255,0.7)]"
+                            className="grid size-21 place-items-center rounded-card border-[3px] border-border-action bg-primary-soft text-[2.75rem] shadow-[0_4px_0_var(--color-depth-action),inset_0_2px_0_rgba(255,255,255,0.7)]"
                             aria-hidden="true"
                             variants={reducedMotion ? fadeOnly : popIn}
                             initial="hidden"
@@ -238,12 +238,12 @@ export default function TestPage() {
                         >
                             {question.emoji}
                         </m.div>
-                        <h1 className="m-0 font-display text-[22px] leading-[1.45] break-keep whitespace-pre-line text-ink">
+                        <h1 className="m-0 font-display text-xl leading-normal break-keep whitespace-pre-line text-ink">
                             {question.text}
                         </h1>
                     </GamePanel>
 
-                    <div className="mt-auto flex flex-col gap-3.5 pt-[22px]">
+                    <div className="mt-auto flex flex-col gap-3.5 pt-5">
                         {question.choices.map((choice, i) => {
                             const isPicked = picked === choice.id
                             const interactive = picked === null && !reducedMotion

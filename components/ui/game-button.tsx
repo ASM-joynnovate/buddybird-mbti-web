@@ -8,7 +8,7 @@
 // :active state only squashes the depth shadow in concert — CSS never touches
 // transform, so the two can't fight.
 //
-// Variants (DESIGN.md components): primary (orange gradient pill, Jua 23px) ·
+// Variants (DESIGN.md components): primary (orange gradient pill, Jua 2xl) ·
 // secondary (cream pill, orange border + depth-action bar) · ghost (quiet
 // inline text) · icon (40px round close-button chrome). Size --sm keeps the
 // 44px touch floor while reading smaller. Under prefers-reduced-motion the tap
@@ -27,22 +27,22 @@ const BASE_CLASS =
 // no conditional fragments). Disabled flattens via the base class above.
 const VARIANT_CLASS: Record<GameButtonVariant, Record<GameButtonSize, string>> = {
     primary: {
-        md: 'min-h-[58px] bg-[linear-gradient(180deg,#eb8a4b,var(--color-primary))] px-10 py-4 text-[23px] text-on-primary shadow-raise-primary hover:brightness-[1.04] hover:saturate-[1.06] active:shadow-raise-primary-down disabled:hover:brightness-100 disabled:hover:saturate-[0.4]',
-        sm: 'min-h-[50px] bg-[linear-gradient(180deg,#eb8a4b,var(--color-primary))] px-6 py-3 text-[19px] text-on-primary shadow-raise-primary hover:brightness-[1.04] hover:saturate-[1.06] active:shadow-raise-primary-down disabled:hover:brightness-100 disabled:hover:saturate-[0.4]',
+        md: 'min-h-14 bg-(image:--gradient-cta) px-10 py-4 text-2xl text-on-primary shadow-raise-primary hover:brightness-[1.04] hover:saturate-[1.06] active:shadow-raise-primary-down disabled:hover:brightness-100 disabled:hover:saturate-[0.4]',
+        sm: 'min-h-12 bg-(image:--gradient-cta) px-6 py-3 text-lg text-on-primary shadow-raise-primary hover:brightness-[1.04] hover:saturate-[1.06] active:shadow-raise-primary-down disabled:hover:brightness-100 disabled:hover:saturate-[0.4]',
     },
     secondary: {
-        md: 'min-h-[46px] border-2 border-border-action bg-surface-cream px-[22px] py-[11px] text-[15px] text-primary-active shadow-raise-cream hover:border-primary hover:bg-[#fffcf0] active:shadow-raise-cream-down',
-        sm: 'min-h-[44px] border-2 border-border-action bg-surface-cream px-4 py-2.5 text-[15px] text-primary-active shadow-raise-cream hover:border-primary hover:bg-[#fffcf0] active:shadow-raise-cream-down',
+        md: 'min-h-11 border-2 border-border-action bg-surface-cream px-5 py-3 text-base text-primary-active shadow-raise-cream hover:border-primary hover:bg-cream-hover active:shadow-raise-cream-down',
+        sm: 'min-h-11 border-2 border-border-action bg-surface-cream px-4 py-2.5 text-base text-primary-active shadow-raise-cream hover:border-primary hover:bg-cream-hover active:shadow-raise-cream-down',
     },
     ghost: {
-        md: 'min-h-[44px] px-4 py-2.5 text-[15px] text-ink-muted hover:bg-surface-cream hover:text-ink',
-        sm: 'min-h-[44px] px-3 py-2 text-[14px] text-ink-muted hover:bg-surface-cream hover:text-ink',
+        md: 'min-h-11 px-4 py-2.5 text-base text-ink-muted hover:bg-surface-cream hover:text-ink',
+        sm: 'min-h-11 px-3 py-2 text-sm text-ink-muted hover:bg-surface-cream hover:text-ink',
     },
     // icon md = 44px round (quiz back — keeps the touch floor); icon sm = 40px
     // round (the DESIGN.md close-button inside modals/overlays).
     icon: {
-        md: 'size-11 border-2 border-border-action bg-surface-cream p-0 text-xl text-primary-active shadow-raise-cream-sm hover:border-primary hover:bg-[#fffcf0] active:shadow-[0_1px_0_var(--color-depth-action)]',
-        sm: 'size-10 border-2 border-border-action bg-surface-cream p-0 text-[15px] text-primary-active shadow-raise-cream-sm hover:border-primary hover:bg-[#fffcf0] active:shadow-[0_1px_0_var(--color-depth-action)]',
+        md: 'size-11 border-2 border-border-action bg-surface-cream p-0 text-xl text-primary-active shadow-raise-cream-sm hover:border-primary hover:bg-cream-hover active:shadow-raise-bar-action-sm',
+        sm: 'size-10 border-2 border-border-action bg-surface-cream p-0 text-base text-primary-active shadow-raise-cream-sm hover:border-primary hover:bg-cream-hover active:shadow-raise-bar-action-sm',
     },
 }
 

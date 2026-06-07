@@ -47,7 +47,7 @@ export function ParrotImage({
                 <span className="text-[2.5rem] leading-none" aria-hidden="true">
                     🦜
                 </span>
-                <span className="font-display text-xl tracking-[0.04em] text-ink">{type}</span>
+                <span className="font-display text-xl tracking-wider text-ink">{type}</span>
             </span>
         )
     }

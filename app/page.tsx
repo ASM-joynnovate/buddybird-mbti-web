@@ -67,7 +67,7 @@ export default function Home() {
     return (
         <main
             data-testid="intro-root"
-            className="relative flex h-dvh flex-col items-center overflow-hidden px-gutter pt-[clamp(84px,12dvh,112px)] pb-[clamp(40px,9dvh,88px)] text-center"
+            className="relative flex h-dvh flex-col items-center overflow-hidden px-gutter pt-[clamp(5.25rem,12dvh,7rem)] pb-[clamp(2.5rem,9dvh,5.5rem)] text-center"
         >
             <m.div
                 className="flex min-h-0 w-full flex-1 flex-col items-center"
@@ -76,8 +76,8 @@ export default function Home() {
                 animate="visible"
             >
                 {/* Group 1 — headline + back stack (pinned to the top). */}
-                <m.div className="flex w-full flex-col items-center gap-[18px]" variants={entrance}>
-                    <h1 className="isolate m-0 font-display text-[clamp(34px,11vw,46px)] leading-[1.08] tracking-[-0.01em] text-ink [text-shadow:0_2px_0_var(--color-surface-cream),0_0_16px_rgba(255,248,227,0.9)]">
+                <m.div className="flex w-full flex-col items-center gap-4" variants={entrance}>
+                    <h1 className="isolate m-0 font-display text-[clamp(2.125rem,11vw,2.875rem)] leading-[1.08] text-ink [text-shadow:0_2px_0_var(--color-surface-cream),0_0_16px_rgba(255,248,227,0.9)]">
                         우리 앵무새
                         <br />
                         <span className="whitespace-nowrap">
@@ -113,25 +113,25 @@ export default function Home() {
 
                     <GamePill
                         bare
-                        className="items-stretch gap-[clamp(10px,4vw,18px)] px-[clamp(16px,6vw,26px)] py-[13px] text-[13px] font-semibold text-ink-muted"
+                        className="items-stretch gap-[clamp(0.625rem,4vw,1.125rem)] px-[clamp(1rem,6vw,1.625rem)] py-3 text-sm font-semibold text-ink-muted"
                         data-testid="hero-stats"
                     >
                         <span className="flex flex-col items-center whitespace-nowrap">
-                            <b className="font-display text-[21px] leading-none font-normal text-primary">
+                            <b className="font-display text-xl leading-none font-normal text-primary">
                                 16
                             </b>
                             유형
                         </span>
-                        <i className="w-0.5 rounded-[2px] bg-border-action" aria-hidden="true" />
+                        <i className="w-0.5 rounded-xs bg-border-action" aria-hidden="true" />
                         <span className="flex flex-col items-center whitespace-nowrap">
-                            <b className="font-display text-[21px] leading-none font-normal text-primary">
+                            <b className="font-display text-xl leading-none font-normal text-primary">
                                 {QUESTION_COUNT}
                             </b>
                             질문
                         </span>
-                        <i className="w-0.5 rounded-[2px] bg-border-action" aria-hidden="true" />
+                        <i className="w-0.5 rounded-xs bg-border-action" aria-hidden="true" />
                         <span className="flex flex-col items-center whitespace-nowrap">
-                            <b className="font-display text-[21px] leading-none font-normal text-primary">
+                            <b className="font-display text-xl leading-none font-normal text-primary">
                                 1분
                             </b>
                             소요
@@ -144,7 +144,7 @@ export default function Home() {
                             the forest backdrop has no opaque mix target). */}
                         {!reducedMotion && (
                             <m.span
-                                className="pointer-events-none absolute inset-x-0 -inset-y-1.5 -z-10 mx-auto w-full max-w-[352px] rounded-full bg-[radial-gradient(closest-side,rgba(232,119,46,0.35),transparent)]"
+                                className="pointer-events-none absolute inset-x-0 -inset-y-1.5 -z-10 mx-auto w-full max-w-[22rem] rounded-full bg-[radial-gradient(closest-side,rgba(232,119,46,0.35),transparent)]"
                                 animate={{ opacity: [0.4, 0.9, 0.4], scale: [0.98, 1.04, 0.98] }}
                                 transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
                                 aria-hidden="true"
@@ -153,7 +153,7 @@ export default function Home() {
                         <GameButton
                             data-testid="start-button"
                             onClick={handleStart}
-                            className="w-full max-w-[340px]"
+                            className="w-full max-w-[21.25rem]"
                         >
                             테스트 시작하기 <span aria-hidden="true">→</span>
                         </GameButton>

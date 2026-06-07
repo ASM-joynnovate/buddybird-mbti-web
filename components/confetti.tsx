@@ -64,7 +64,7 @@ export function Confetti() {
                         } as CSSProperties
                         return (
                             <m.span
-                                className="absolute top-0 block size-[9px]"
+                                className="absolute top-0 block size-2"
                                 key={i}
                                 style={style}
                                 initial={{ y: '-12vh', rotate: 0, opacity: 1 }}

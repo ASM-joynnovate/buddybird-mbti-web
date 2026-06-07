@@ -120,7 +120,7 @@ export function DetailPopup({ code, onClose, onSelectType, cta }: DetailPopupPro
                 aria-modal="true"
                 aria-label={`${code} ${info.name}`}
                 data-testid={`detail-popup-${code}`}
-                className="relative z-1 flex max-h-[calc(100dvh-44px)] w-full max-w-md flex-col rounded-card bg-[linear-gradient(160deg,var(--color-primary-glow),var(--color-primary)_55%,var(--color-primary-active))] p-1.5 shadow-[0_8px_0_var(--color-primary-active),0_26px_50px_-16px_rgba(20,12,6,0.7),inset_0_2px_0_rgba(255,255,255,0.5)]"
+                className="relative z-1 flex max-h-[calc(100dvh-2.75rem)] w-full max-w-md flex-col rounded-card bg-(image:--gradient-card-frame) p-1.5 shadow-[0_8px_0_var(--color-primary-active),0_26px_50px_-16px_rgba(20,12,6,0.7),inset_0_2px_0_rgba(255,255,255,0.5)]"
                 variants={reducedMotion ? reducedFade : cardPop}
                 initial="hidden"
                 animate="visible"
@@ -142,25 +142,25 @@ export function DetailPopup({ code, onClose, onSelectType, cta }: DetailPopupPro
                     code={code}
                     imgSize={190}
                     variant="hero"
-                    className="h-[200px] flex-none rounded-t-[20px]"
+                    className="h-50 flex-none rounded-t-lg"
                 >
                     <span
-                        className="absolute bottom-3 left-4 z-3 font-display text-[44px] leading-[0.9] tracking-[0.04em] text-white [text-shadow:0_3px_10px_rgba(0,0,0,0.45)]"
+                        className="absolute bottom-3 left-4 z-3 font-display text-[2.75rem] leading-[0.9] tracking-wider text-white [text-shadow:0_3px_10px_rgba(0,0,0,0.45)]"
                         aria-hidden="true"
                     >
                         {code}
                     </span>
                 </PortraitWindow>
 
-                <div className="min-h-0 flex-1 overflow-y-auto rounded-b-[20px] border-[1.5px] border-t-0 border-white bg-surface-cream px-[18px] pt-4 pb-[18px] [-webkit-overflow-scrolling:touch]">
+                <div className="min-h-0 flex-1 overflow-y-auto rounded-b-lg border-[1.5px] border-t-0 border-white bg-surface-cream px-4 pt-4 pb-4 [-webkit-overflow-scrolling:touch]">
                     <p className="m-0 font-display text-xl text-primary-active">{info.name}</p>
                     <DashedRule className="my-3" />
-                    <p className="m-0 mb-4 text-sm leading-[1.65] break-keep text-ink">
+                    <p className="m-0 mb-4 text-sm leading-relaxed break-keep text-ink">
                         {info.description}
                     </p>
 
                     {info.match.length > 0 && (
-                        <div className="mb-4 flex items-center gap-3 rounded-md border-2 border-border-action bg-white px-3.5 py-[11px] shadow-[0_3px_0_var(--color-depth-action),inset_0_2px_0_rgba(255,255,255,0.9)]">
+                        <div className="mb-4 flex items-center gap-3 rounded-md border-2 border-border-action bg-white px-3.5 py-3 shadow-[0_3px_0_var(--color-depth-action),inset_0_2px_0_rgba(255,255,255,0.9)]">
                             <span className="flex-none font-display text-sm whitespace-nowrap text-primary-active">
                                 찰떡궁합
                             </span>
@@ -170,7 +170,7 @@ export function DetailPopup({ code, onClose, onSelectType, cta }: DetailPopupPro
                                         <button
                                             key={matchCode}
                                             type="button"
-                                            className="inline-flex cursor-pointer items-center rounded-full bg-[linear-gradient(180deg,#eb8a4b,var(--color-primary))] px-3.5 py-1 font-display text-sm tracking-[0.04em] text-on-primary shadow-[0_2px_0_var(--color-primary-active)] active:shadow-[0_1px_0_var(--color-primary-active)]"
+                                            className="inline-flex cursor-pointer items-center rounded-full bg-(image:--gradient-cta) px-3.5 py-1 font-display text-sm tracking-wider text-on-primary shadow-raise-bar-primary active:shadow-[0_1px_0_var(--color-primary-active)]"
                                             onClick={() => onSelectType(matchCode)}
                                             data-testid={`detail-match-${matchCode}`}
                                         >
@@ -179,7 +179,7 @@ export function DetailPopup({ code, onClose, onSelectType, cta }: DetailPopupPro
                                     ) : (
                                         <span
                                             key={matchCode}
-                                            className="inline-flex items-center rounded-full bg-[linear-gradient(180deg,#eb8a4b,var(--color-primary))] px-3.5 py-1 font-display text-sm tracking-[0.04em] text-on-primary shadow-[0_2px_0_var(--color-primary-active)]"
+                                            className="inline-flex items-center rounded-full bg-(image:--gradient-cta) px-3.5 py-1 font-display text-sm tracking-wider text-on-primary shadow-raise-bar-primary"
                                         >
                                             {matchCode}
                                         </span>

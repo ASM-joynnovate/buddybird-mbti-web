@@ -42,13 +42,13 @@ const STATIC_DECALS: readonly Decal[] = [
     {
         name: 'general',
         src: `${ASSET_BASE}/leaf-general.png`,
-        vars: { x: '8%', y: '52%', w: 'clamp(44px, 14vw, 96px)', r: '14deg' },
-        className: 'max-[380px]:hidden',
+        vars: { x: '8%', y: '52%', w: 'clamp(2.75rem, 14vw, 6rem)', r: '14deg' },
+        className: 'max-[23.75rem]:hidden',
     },
     {
         name: 'rock',
         src: `${ASSET_BASE}/rock-cluster.png`,
-        vars: { x: '15%', y: '96%', w: 'clamp(96px, 30vw, 200px)', r: '0deg' },
+        vars: { x: '15%', y: '96%', w: 'clamp(6rem, 30vw, 12.5rem)', r: '0deg' },
     },
 ]
 

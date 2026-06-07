@@ -55,7 +55,7 @@ export function PhotoInput({ objectUrl, onPick, onClear }: PhotoInputProps) {
 
             {objectUrl !== null ? (
                 <div className="flex flex-col gap-3" data-testid="photo-preview">
-                    <div className="overflow-hidden rounded-md border-2 border-border-action bg-white shadow-[0_3px_0_var(--color-depth-action)]">
+                    <div className="overflow-hidden rounded-md border-2 border-border-action bg-white shadow-raise-bar-action">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             className="block max-h-72 w-full object-cover"
@@ -91,7 +91,7 @@ export function PhotoInput({ objectUrl, onPick, onClear }: PhotoInputProps) {
                 </div>
             ) : (
                 <div className="flex flex-col gap-3">
-                    <p className="m-0 text-center text-[13px] text-ink-muted">
+                    <p className="m-0 text-center text-sm text-ink-muted">
                         우리 새 사진을 더하면 공유 카드에 함께 담겨요.
                     </p>
                     <div className="flex flex-wrap justify-center gap-2">

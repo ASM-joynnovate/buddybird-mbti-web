@@ -39,10 +39,10 @@ export function AxisBars({ axisScores }: AxisBarsProps) {
             as="section"
             aria-label="성향 스펙트럼"
             data-testid="axis-bars"
-            className="px-[18px] pt-[18px] pb-5"
+            className="px-4 pt-4 pb-5"
         >
             <h2 className="m-0 mb-4 font-display text-lg font-normal text-ink">성향 스펙트럼</h2>
-            <div className="flex flex-col gap-[17px]">
+            <div className="flex flex-col gap-4">
                 {AXES.map((axis) => {
                     const meta = AXIS_META[axis]
                     const { left, right } = axisScores[axis]
@@ -59,10 +59,10 @@ export function AxisBars({ axisScores }: AxisBarsProps) {
 
                     return (
                         <div key={axis} style={style}>
-                            <div className="mb-2 flex items-baseline justify-between text-[13px] font-semibold text-ink-muted">
+                            <div className="mb-2 flex items-baseline justify-between text-sm font-semibold text-ink-muted">
                                 <span className={leftActive ? END_ACTIVE_CLASS : END_CLASS}>
                                     {meta.left.label}
-                                    <em className="text-[11px] not-italic opacity-65">
+                                    <em className="text-xs not-italic opacity-65">
                                         ({meta.left.letter})
                                     </em>
                                     {leftActive && (
@@ -78,14 +78,14 @@ export function AxisBars({ axisScores }: AxisBarsProps) {
                                         </b>
                                     )}
                                     {meta.right.label}
-                                    <em className="text-[11px] not-italic opacity-65">
+                                    <em className="text-xs not-italic opacity-65">
                                         ({meta.right.letter})
                                     </em>
                                 </span>
                             </div>
                             <div className="relative h-3.5 rounded-full border-2 border-border-action bg-white shadow-inset-track">
                                 <m.span
-                                    className="absolute top-0 bottom-0 rounded-full bg-[var(--axis-color)] shadow-[inset_0_2px_0_rgba(255,255,255,0.4)]"
+                                    className="absolute top-0 bottom-0 rounded-full bg-[var(--axis-color)] shadow-inset-highlight"
                                     initial={reducedMotion ? false : { left: '50%', width: '0%' }}
                                     animate={{ left: `${segStart}%`, width: `${segWidth}%` }}
                                     transition={barTransition}

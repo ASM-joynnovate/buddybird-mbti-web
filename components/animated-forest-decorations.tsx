@@ -84,8 +84,8 @@ const ANIMATED_DECALS: readonly AnimatedDecal[] = [
     {
         name: 'monstera',
         src: `${ASSET_BASE}/leaf-monstera.png`,
-        vars: { x: '6%', y: '15%', w: 'clamp(72px, 26vw, 170px)', r: '-10deg' },
-        wrapperClassName: 'max-[380px]:w-[clamp(60px,22vw,130px)]',
+        vars: { x: '6%', y: '15%', w: 'clamp(4.5rem, 26vw, 10.625rem)', r: '-10deg' },
+        wrapperClassName: 'max-[23.75rem]:w-[clamp(3.75rem,22vw,8.125rem)]',
         kind: 'idle',
         variants: floatingLeaf,
         initial: 'rest',
@@ -94,8 +94,8 @@ const ANIMATED_DECALS: readonly AnimatedDecal[] = [
     {
         name: 'palm',
         src: `${ASSET_BASE}/leaf-palm.png`,
-        vars: { x: '95%', y: '12%', w: 'clamp(96px, 32vw, 220px)', r: '-14deg' },
-        wrapperClassName: 'max-[380px]:w-[clamp(80px,28vw,150px)]',
+        vars: { x: '95%', y: '12%', w: 'clamp(6rem, 32vw, 13.75rem)', r: '-14deg' },
+        wrapperClassName: 'max-[23.75rem]:w-[clamp(5rem,28vw,9.375rem)]',
         kind: 'idle',
         variants: palmFloat,
         initial: 'rest',
@@ -104,7 +104,7 @@ const ANIMATED_DECALS: readonly AnimatedDecal[] = [
     {
         name: 'vine',
         src: `${ASSET_BASE}/vine-hanging.png`,
-        vars: { x: '97%', y: '24%', w: 'clamp(70px, 22vw, 150px)', r: '0deg' },
+        vars: { x: '97%', y: '24%', w: 'clamp(4.375rem, 22vw, 9.375rem)', r: '0deg' },
         // Vine sway (gentleSway) pivots from where it hangs, not its center.
         imgClassName: 'origin-top',
         kind: 'idle',
@@ -115,7 +115,7 @@ const ANIMATED_DECALS: readonly AnimatedDecal[] = [
     {
         name: 'mushroom',
         src: `${ASSET_BASE}/mushroom-flower-cluster.png`,
-        vars: { x: '86%', y: '95%', w: 'clamp(60px, 20vw, 130px)', r: '0deg' },
+        vars: { x: '86%', y: '95%', w: 'clamp(3.75rem, 20vw, 8.125rem)', r: '0deg' },
         kind: 'entrance',
         variants: popIn,
         initial: 'hidden',
@@ -199,7 +199,7 @@ export function AnimatedForestParticles() {
 
     return (
         <m.img
-            className="pointer-events-none absolute -inset-3 h-[calc(100%+24px)] w-[calc(100%+24px)] object-cover object-center opacity-55 select-none"
+            className="pointer-events-none absolute -inset-3 h-[calc(100%+1.5rem)] w-[calc(100%+1.5rem)] object-cover object-center opacity-55 select-none"
             src={`${ASSET_BASE}/forest-light-particles.png`}
             alt=""
             loading="lazy"

@@ -11,7 +11,7 @@ const PANEL_CLASS =
 // Dashed inner frame, inset 6px, in a softened orange (opaque color-mix into the
 // cream surface — chrome carries no decorative alpha by rule, DESIGN.md).
 const DASHED_FRAME_CLASS =
-    'before:pointer-events-none before:absolute before:inset-[6px] before:rounded-[19px] before:border-[1.5px] before:border-dashed before:border-[color-mix(in_srgb,var(--color-primary)_28%,var(--color-surface-cream))] before:content-[""]'
+    'before:pointer-events-none before:absolute before:inset-1.5 before:rounded-lg before:border-[1.5px] before:border-dashed before:border-[color-mix(in_srgb,var(--color-primary)_28%,var(--color-surface-cream))] before:content-[""]'
 
 interface GamePanelProps {
     children: ReactNode

@@ -26,12 +26,12 @@ export function CardGhost({ code, className }: CardGhostProps) {
             style={{ '--type-grad': typeGradient(code) } as CSSProperties}
             aria-hidden="true"
         >
-            <span className="pointer-events-none absolute inset-[3px] rounded-[20px] border-[1.5px] border-white/50" />
+            <span className="pointer-events-none absolute inset-0.5 rounded-lg border-[1.5px] border-white/50" />
             {/* Translucent tag is required here: it floats over an arbitrary
                 per-type gradient, so no opaque mix target exists. */}
-            <span className="absolute bottom-[5px] left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-[rgba(20,14,8,0.42)] px-3 py-[3px] font-display text-xs tracking-[0.06em] text-white">
+            <span className="absolute bottom-1 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-[rgba(20,14,8,0.42)] px-3 py-0.5 font-display text-xs tracking-wider text-white">
                 <i
-                    className="size-[9px] rounded-full shadow-[inset_0_0_0_1.5px_rgba(255,255,255,0.7)]"
+                    className="size-2 rounded-full shadow-[inset_0_0_0_1.5px_rgba(255,255,255,0.7)]"
                     style={{ background: c1 }}
                 />
                 {code}

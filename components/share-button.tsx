@@ -70,7 +70,7 @@ export function ShareButton({ type, photoUrl }: ShareButtonProps) {
             </GameButton>
             {hint !== null && (
                 <p
-                    className="m-0 text-center text-[13px] text-ink-muted"
+                    className="m-0 text-center text-sm text-ink-muted"
                     role="status"
                     data-testid="share-hint"
                 >

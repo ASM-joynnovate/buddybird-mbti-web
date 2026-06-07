@@ -26,7 +26,7 @@ export function MatchCard({ code, onSelect }: MatchCardProps) {
     return (
         <m.button
             type="button"
-            className="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 rounded-full border-2 border-border-action bg-surface-cream py-[9px] pr-3 pl-[9px] shadow-[0_3px_0_var(--color-depth-action),inset_0_2px_0_rgba(255,255,255,0.7)] transition-[border-color] duration-150 ease-leaf hover:border-primary focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 rounded-full border-2 border-border-action bg-surface-cream py-2 pr-3 pl-2 shadow-[0_3px_0_var(--color-depth-action),inset_0_2px_0_rgba(255,255,255,0.7)] transition-[border-color] duration-150 ease-leaf hover:border-primary focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-primary"
             style={{ '--type-grad': typeGradient(code) } as CSSProperties}
             onClick={() => onSelect(code)}
             whileTap={reducedMotion ? undefined : cardTap}
@@ -37,10 +37,10 @@ export function MatchCard({ code, onSelect }: MatchCardProps) {
                 <ParrotImage type={code} width={38} height={38} className="object-contain" />
             </span>
             <span className="flex min-w-0 flex-col text-left">
-                <b className="font-display text-[15px] leading-tight font-normal tracking-[0.03em] text-primary-active">
+                <b className="font-display text-base leading-tight font-normal tracking-wide text-primary-active">
                     {code}
                 </b>
-                <em className="truncate text-[11px] text-ink-muted not-italic">{info.name}</em>
+                <em className="truncate text-xs text-ink-muted not-italic">{info.name}</em>
             </span>
         </m.button>
     )

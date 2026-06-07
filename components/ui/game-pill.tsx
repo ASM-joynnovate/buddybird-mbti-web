@@ -11,13 +11,13 @@ import type { ReactNode } from 'react'
 export type GamePillVariant = 'cream' | 'orange'
 
 const CHROME_CLASS: Record<GamePillVariant, string> = {
-    cream: 'inline-flex items-center rounded-full border-2 border-border-action bg-surface-cream shadow-[0_3px_0_var(--color-depth-action)]',
-    orange: 'inline-flex items-center rounded-full bg-[linear-gradient(180deg,#eb8a4b,var(--color-primary))] shadow-[0_2px_0_var(--color-primary-active)]',
+    cream: 'inline-flex items-center rounded-full border-2 border-border-action bg-surface-cream shadow-raise-bar-action',
+    orange: 'inline-flex items-center rounded-full bg-(image:--gradient-cta) shadow-raise-bar-primary',
 }
 
 const SIZE_CLASS: Record<GamePillVariant, string> = {
-    cream: 'gap-2 px-4 py-[7px] text-[13px] font-bold text-primary-active',
-    orange: 'gap-1.5 px-3.5 py-1 font-display text-[13px] tracking-[0.04em] text-on-primary',
+    cream: 'gap-2 px-4 py-1.5 text-sm font-bold text-primary-active',
+    orange: 'gap-1.5 px-3.5 py-1 font-display text-sm tracking-wider text-on-primary',
 }
 
 interface GamePillProps {

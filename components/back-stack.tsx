@@ -118,7 +118,7 @@ export function BackStack({
                 step: md = 28rem. */}
             <div ref={hostRef} className="w-full max-w-md [touch-action:none]">
                 <m.div
-                    className="relative w-full pb-[26px]"
+                    className="relative w-full pb-6"
                     style={{
                         opacity: stackOpacity,
                         y: stackY,

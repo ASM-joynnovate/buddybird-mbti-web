@@ -316,10 +316,10 @@ export function DeckOverlay({ controller, onSelect }: DeckOverlayProps) {
             data-open={isOpen ? 'true' : 'false'}
         >
             <m.div
-                className="flex flex-none items-center justify-between px-5 pt-[calc(env(safe-area-inset-top)+24px)] pb-3"
+                className="flex flex-none items-center justify-between px-5 pt-[calc(env(safe-area-inset-top)+1.5rem)] pb-3"
                 style={{ opacity: headOpacity }}
             >
-                <GamePill bare className="px-[18px] py-2 font-display text-xl text-ink">
+                <GamePill bare className="px-4 py-2 font-display text-xl text-ink">
                     전체 유형&nbsp;<b className="font-normal text-primary">16</b>
                 </GamePill>
                 <GameButton
@@ -335,7 +335,7 @@ export function DeckOverlay({ controller, onSelect }: DeckOverlayProps) {
 
             <div
                 ref={scrollRef}
-                className="min-h-0 flex-1 overflow-x-hidden overscroll-contain px-[18px] pt-1 pb-7 [-webkit-overflow-scrolling:touch]"
+                className="min-h-0 flex-1 overflow-x-hidden overscroll-contain px-4 pt-1 pb-7 [-webkit-overflow-scrolling:touch]"
                 style={{ overflowY: isOpen ? 'auto' : 'hidden' }}
             >
                 <div className="grid grid-cols-2 gap-4">

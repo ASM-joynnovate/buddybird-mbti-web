@@ -148,7 +148,7 @@ export function ResultView() {
                 their own `variants`. */}
             <m.div variants={staggerContainer} initial="hidden" animate="visible">
                 <m.header
-                    className="relative flex flex-col items-center overflow-hidden rounded-b-[32px] px-gutter pt-[60px] pb-[26px] text-center shadow-[0_16px_32px_-14px_rgba(20,12,6,0.6),inset_0_-2px_0_rgba(0,0,0,0.12)] [background:var(--type-grad)]"
+                    className="relative flex flex-col items-center overflow-hidden rounded-b-4xl px-gutter pt-15 pb-6 text-center shadow-[0_16px_32px_-14px_rgba(20,12,6,0.6),inset_0_-2px_0_rgba(0,0,0,0.12)] [background:var(--type-grad)]"
                     style={heroStyle}
                     variants={staggerContainer}
                 >
@@ -159,13 +159,13 @@ export function ResultView() {
                     />
 
                     <m.p
-                        className="relative z-1 m-0 font-display text-[19px] text-white [text-shadow:0_2px_6px_rgba(0,0,0,0.4)]"
+                        className="relative z-1 m-0 font-display text-lg text-white [text-shadow:0_2px_6px_rgba(0,0,0,0.4)]"
                         variants={rise}
                     >
                         🎉 나의 앵무새 성격은
                     </m.p>
 
-                    <m.div className="relative z-1 my-1.5 size-[152px]" variants={art}>
+                    <m.div className="relative z-1 my-1.5 size-38" variants={art}>
                         {reducedMotion ? (
                             <ParrotImage
                                 type={type}
@@ -194,14 +194,14 @@ export function ResultView() {
                     <div className="relative z-1 mb-3 flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
                         <m.p
                             data-testid="result-type"
-                            className="m-0 font-display text-4xl leading-none tracking-[0.05em] text-white [text-shadow:0_3px_10px_rgba(0,0,0,0.4)]"
+                            className="m-0 font-display text-4xl leading-none tracking-wider text-white [text-shadow:0_3px_10px_rgba(0,0,0,0.4)]"
                             variants={pop}
                         >
                             {type}
                         </m.p>
                         {info !== null && (
                             <m.h1
-                                className="m-0 font-display text-[19px] leading-[1.1] font-normal break-keep text-gold [text-shadow:0_2px_6px_rgba(0,0,0,0.45)]"
+                                className="m-0 font-display text-lg leading-[1.1] font-normal break-keep text-gold [text-shadow:0_2px_6px_rgba(0,0,0,0.45)]"
                                 variants={rise}
                             >
                                 {info.name}
@@ -219,17 +219,13 @@ export function ResultView() {
                 </m.header>
 
                 <m.div
-                    className="flex flex-col gap-[18px] px-gutter pt-[22px] pb-9"
+                    className="flex flex-col gap-4 px-gutter pt-5 pb-9"
                     variants={staggerContainer}
                 >
                     {info !== null && (
                         <m.div variants={rise}>
-                            <GamePanel
-                                as="section"
-                                aria-label="성격 설명"
-                                className="px-[18px] py-5"
-                            >
-                                <p className="m-0 text-[14.5px] leading-[1.7] break-keep text-ink">
+                            <GamePanel as="section" aria-label="성격 설명" className="px-4 py-5">
+                                <p className="m-0 text-sm leading-relaxed break-keep text-ink">
                                     {info.description}
                                 </p>
                             </GamePanel>
@@ -246,7 +242,7 @@ export function ResultView() {
                             <GamePanel
                                 as="section"
                                 aria-label="환상의 궁합"
-                                className="px-[18px] pt-[18px] pb-5"
+                                className="px-4 pt-4 pb-5"
                             >
                                 <h2 className="m-0 mb-4 font-display text-lg font-normal text-ink">
                                     🤝 환상의 궁합
@@ -267,7 +263,7 @@ export function ResultView() {
                     {/* Photo (#08) — own results only; feeds the share card (#09). */}
                     {!isSharedVisitor && (
                         <m.div variants={rise}>
-                            <GamePanel className="px-[18px] py-[18px]">
+                            <GamePanel className="px-4 py-4">
                                 <PhotoInput
                                     objectUrl={photo.objectUrl}
                                     onPick={photo.setFile}
