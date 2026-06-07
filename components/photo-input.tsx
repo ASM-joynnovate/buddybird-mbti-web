@@ -41,6 +41,7 @@ export function PhotoInput({ objectUrl, onPick, onClear }: PhotoInputProps) {
                 accept="image/*"
                 capture="environment"
                 hidden
+                aria-label="카메라로 사진 촬영"
                 data-testid="photo-camera-input"
                 onChange={handleChange('camera')}
             />
@@ -49,6 +50,7 @@ export function PhotoInput({ objectUrl, onPick, onClear }: PhotoInputProps) {
                 type="file"
                 accept="image/*"
                 hidden
+                aria-label="갤러리에서 사진 선택"
                 data-testid="photo-gallery-input"
                 onChange={handleChange('gallery')}
             />
