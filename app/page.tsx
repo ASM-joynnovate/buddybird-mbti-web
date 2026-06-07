@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { IntroView } from './intro-view'
+import { IntroView } from '@/features/intro/intro-view'
 
 // Server component shell. The intro itself is fully interactive ('use client',
 // IntroView), so the route metadata export must live here — mirrors the

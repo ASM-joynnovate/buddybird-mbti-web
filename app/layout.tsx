@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import { Jua, Noto_Sans_KR } from 'next/font/google'
-import { MobileForestBackground } from '@/components/mobile-forest-background'
-import { MotionProvider } from '@/components/motion-provider'
-import { TestProgressProvider } from '@/lib/state/test-progress-context'
+import { TestProgressProvider } from '@/features/quiz/test-progress-context'
+import { MobileForestBackground } from '@/shared/forest/mobile-forest-background'
+import { MotionProvider } from '@/shared/motion/motion-provider'
 import './globals.css'
 
 // Display — Jua (rounded Korean gothic). Single weight (400); hierarchy from size.

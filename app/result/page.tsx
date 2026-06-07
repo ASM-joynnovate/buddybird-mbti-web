@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
-import { ResultView } from './result-view'
+import { ResultView } from '@/features/result/result-view'
 
 // Shared/social-preview surface — gets its own metadata instead of inheriting
 // the layout default, since this is the page people land on from shared links.
