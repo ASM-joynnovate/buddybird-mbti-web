@@ -4,6 +4,7 @@
 
 import { execSync, spawn } from 'child_process'
 import { cpSync, existsSync } from 'fs'
+import { createConnection } from 'net'
 import { join } from 'path'
 
 // ---------------------------------------------------------------------------
@@ -44,9 +45,38 @@ async function curlProbe(url) {
     })
 }
 
+// Resolve true when something already listens on the port. Raw TCP connect (not
+// curl) so even a wedged non-HTTP listener is detected. Guards against zombie
+// servers from interrupted runs: their stale 200s would otherwise satisfy the
+// readiness poll while our own spawn dies silently on EADDRINUSE.
+function isPortInUse(port) {
+    return new Promise((resolve) => {
+        const socket = createConnection({ port, host: '127.0.0.1' })
+        socket.setTimeout(1000)
+        socket.once('connect', () => {
+            socket.destroy()
+            resolve(true)
+        })
+        socket.once('timeout', () => {
+            socket.destroy()
+            resolve(false)
+        })
+        socket.once('error', () => resolve(false))
+    })
+}
+
 // Poll the server with curl until it answers or the attempt ceiling is hit.
-async function pollUntilReady() {
+// `getExit` reports the spawned process's early death (e.g. a crash on boot) so
+// the poll aborts immediately with the real error instead of timing out blind.
+async function pollUntilReady(getExit) {
     for (let i = 0; i < 50; i++) {
+        const exit = getExit()
+        if (exit !== null) {
+            throw new Error(
+                `App server exited with code ${exit.code} before becoming ready` +
+                    (exit.stderr ? ` — stderr:\n${exit.stderr}` : ''),
+            )
+        }
         const ok = await curlProbe(`${BASE_URL}/`)
         if (ok) return
         await sleep(200)
@@ -82,6 +112,15 @@ export async function startAppServer(rootDir) {
         `.next/standalone/server.js not found at ${serverEntry} — run yarn build first`,
     )
 
+    // Refuse to start over a zombie server (interrupted prior run). Its stale
+    // responses would pass the readiness poll and every flow would then run
+    // against an outdated build — fail loud with the cleanup command instead.
+    assert(
+        !(await isPortInUse(PORT)),
+        `port ${PORT} is already in use — a previous e2e server is still running. ` +
+            `Kill it first: lsof -ti :${PORT} | xargs kill`,
+    )
+
     // Mirror the Dockerfile asset copy so CSS/JS/images/fonts resolve.
     cpSync(join(rootDir, 'public'), join(standaloneDir, 'public'), { recursive: true })
     cpSync(join(rootDir, '.next', 'static'), join(standaloneDir, '.next', 'static'), {
@@ -94,10 +133,19 @@ export async function startAppServer(rootDir) {
         env: { ...process.env, PORT: String(PORT), HOSTNAME: '127.0.0.1' },
     })
 
-    serverProcess.stderr.on('data', () => {})
+    // Keep stderr (capped) so a boot failure reports its actual cause; stdout
+    // stays drained-and-dropped to avoid backpressure on a chatty server.
+    let stderrTail = ''
+    let exitInfo = null
+    serverProcess.stderr.on('data', (chunk) => {
+        stderrTail = (stderrTail + chunk).slice(-4000)
+    })
     serverProcess.stdout.on('data', () => {})
+    serverProcess.on('exit', (code) => {
+        exitInfo = { code, stderr: stderrTail.trim() }
+    })
 
-    await pollUntilReady()
+    await pollUntilReady(() => exitInfo)
     return stopServer
 }
 
