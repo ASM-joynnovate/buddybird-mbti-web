@@ -13,7 +13,8 @@
         "type-check": "tsc --noEmit",
         "prepare": "husky",
         "e2e": "yarn build && node e2e/run.mjs",
-        "e2e:run": "node e2e/run.mjs"
+        "e2e:run": "node e2e/run.mjs",
+        "doctor": "react-doctor"
     },
     "dependencies": {
         "motion": "^12.40.0",
@@ -36,6 +37,7 @@
         "lint-staged": "^17.0.7",
         "prettier": "^3.8.3",
         "prettier-plugin-tailwindcss": "^0.8.0",
+        "react-doctor": "^0.4.0",
         "tailwindcss": "^4",
         "typescript": "^5"
     },
