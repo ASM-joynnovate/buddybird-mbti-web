@@ -7,6 +7,10 @@
  * component classes, no @layer/@utility, no keyframes; styling lives inline on
  * components (reuse via the components/ui primitives), and every animation is
  * Motion-owned (m.* / MotionValues).
+ *
+ * Units (ADR-0009): length tokens are rem. Shadow recipes are the exception —
+ * their px offsets are hand-tuned effect hairlines (DESIGN.md verbatim) and
+ * intentionally do not scale with root font size.
  */
 @theme {
     /* Action anchor — bell orange, the SOLE driver of action and emphasis
@@ -30,9 +34,12 @@
      * Never colors a primary action (DESIGN.md). */
     --color-gold: #e8b53a;
 
-    /* Base world — parchment page base + cream foreground surfaces. */
+    /* Base world — parchment page base + cream foreground surfaces.
+     * cream-hover is the hover wash for raised cream surfaces (secondary/icon
+     * buttons) — a touch brighter than surface-cream. */
     --color-bg: #fbf3df;
     --color-surface-cream: #fff8e3;
+    --color-cream-hover: #fffcf0;
 
     /* Ink — warm near-black text + muted brown secondary copy. */
     --color-ink: #2a2118;
@@ -53,15 +60,16 @@
 
     /* Rounded vocabulary (DESIGN.md): sm = letter tiles, md = inset windows,
      * lg = choice rows, card = trading cards / detail modal, panel = larger
-     * surfaces. NOTE: md/lg are SMALLER than Tailwind defaults — ADR-0008. */
-    --radius-sm: 12px;
-    --radius-md: 16px;
-    --radius-lg: 20px;
-    --radius-card: 24px;
-    --radius-panel: 26px;
+     * surfaces. NOTE: md/lg are SMALLER than Tailwind defaults — ADR-0008.
+     * Length tokens are rem (ADR-0009); px noted alongside. */
+    --radius-sm: 0.75rem; /* 12px */
+    --radius-md: 1rem; /* 16px */
+    --radius-lg: 1.25rem; /* 20px */
+    --radius-card: 1.5rem; /* 24px */
+    --radius-panel: 1.625rem; /* 26px */
 
-    /* Global 22px side gutter — every full-width surface honors it (DESIGN.md). */
-    --spacing-gutter: 22px;
+    /* Global side gutter (22px) — every full-width surface honors it (DESIGN.md). */
+    --spacing-gutter: 1.375rem; /* 22px */
 
     /* Type families — bound to next/font variables set on <html> (layout.tsx). */
     --font-sans: var(--font-noto-kr);
@@ -71,6 +79,20 @@
      * mirrored by lib/motion/variants.ts (easeLeaf / easeSpring, keep in sync). */
     --ease-leaf: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* ── Shared gradient recipes (plain vars — consumed via bg-(image:--…)). ── */
+
+    /* Orange CTA face: bright top lip melting into bell orange (primary buttons,
+     * orange pills, detail-popup match buttons). */
+    --gradient-cta: linear-gradient(180deg, #eb8a4b, var(--color-primary));
+
+    /* Trading-card foil frame: glow → orange → deep press, on a 160deg bias. */
+    --gradient-card-frame: linear-gradient(
+        160deg,
+        var(--color-primary-glow),
+        var(--color-primary) 55%,
+        var(--color-primary-active)
+    );
 
     /* ── Raised-block shadow recipes (DESIGN.md elevation language) — every
      * value layers: bottom depth bar + soft ambient drop + inset top highlight.
@@ -121,6 +143,16 @@
 
     /* Recessed track (progress bar, axis spectrum track). */
     --shadow-inset-track: inset 0 2px 4px rgba(58, 46, 26, 0.15);
+
+    /* Bare depth bars (no ambient drop) — flat chips, selected rows, small
+     * raised accents that sit on an already-shadowed parent. */
+    --shadow-raise-bar-primary: 0 2px 0 var(--color-primary-active);
+    --shadow-raise-bar-action: 0 3px 0 var(--color-depth-action);
+    --shadow-raise-bar-action-sm: 0 1px 0 var(--color-depth-action);
+
+    /* Lone inset top highlight — glossy lip on tinted fills (axis bars, window
+     * accents) that bring their own drop shadow. */
+    --shadow-inset-highlight: inset 0 2px 0 rgba(255, 255, 255, 0.4);
 }
 
 /* Single fixed theme: NO automatic prefers-color-scheme dark mode (ADR-0001) —
