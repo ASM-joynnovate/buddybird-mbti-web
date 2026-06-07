@@ -3,9 +3,10 @@
 // exits 1 if any flow failed.
 //
 // Usage:
-//   node e2e/run.mjs          (after yarn build)
-//   yarn e2e                  (runs yarn build then this file)
-//   yarn e2e:run              (this file only, assumes prior build)
+//   node e2e/run.mjs                    (after yarn build — all flows)
+//   node e2e/run.mjs deck-overlay ...   (only the named flows)
+//   yarn e2e                            (runs yarn build then this file)
+//   yarn e2e:run                        (this file only, assumes prior build)
 
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
@@ -37,6 +38,22 @@ const FLOWS = [
     { name: 'responsive', fn: runResponsive },
 ]
 
+// CLI flow filter: `node e2e/run.mjs deck-overlay responsive` runs only those.
+function selectFlows(argv) {
+    const requested = argv.slice(2)
+    if (requested.length === 0) {
+        return FLOWS
+    }
+    const known = new Set(FLOWS.map((f) => f.name))
+    const unknown = requested.filter((name) => !known.has(name))
+    if (unknown.length > 0) {
+        console.error(`Unknown flow(s): ${unknown.join(', ')}`)
+        console.error(`Available flows: ${[...known].join(', ')}`)
+        process.exit(1)
+    }
+    return FLOWS.filter((f) => requested.includes(f.name))
+}
+
 // ---------------------------------------------------------------------------
 // Runner
 // ---------------------------------------------------------------------------
@@ -59,19 +76,23 @@ async function main() {
     }
 
     const results = []
+    const flows = selectFlows(process.argv)
+    console.log(`Flows: ${flows.map((f) => f.name).join(', ')}\n`)
 
-    for (let i = 0; i < FLOWS.length; i++) {
+    for (let i = 0; i < flows.length; i++) {
         // Give the agent-browser daemon a moment to settle between flows.
         if (i > 0) await settle()
-        const flow = FLOWS[i]
-        process.stdout.write(`  Running flow: ${flow.name} ... `)
+        const flow = flows[i]
+        process.stdout.write(`  [${i + 1}/${flows.length}] ${flow.name} ... `)
+        const startedAt = Date.now()
+        const elapsed = () => `${((Date.now() - startedAt) / 1000).toFixed(1)}s`
         try {
             const data = await flow.fn()
             const summary = JSON.stringify(data)
-            console.log(`PASS  ${summary}`)
+            console.log(`PASS (${elapsed()})  ${summary}`)
             results.push({ name: flow.name, passed: true, data })
         } catch (err) {
-            console.log(`FAIL`)
+            console.log(`FAIL (${elapsed()})`)
             console.error(`    ${err.message}`)
             results.push({ name: flow.name, passed: false, error: err.message })
         }
