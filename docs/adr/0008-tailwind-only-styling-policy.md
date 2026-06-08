@@ -63,5 +63,13 @@ hard to trace.
   policy violation, not a convenience.
 - Long utility strings are accepted as the cost of traceability; shared
   recipes belong in a primitive the moment a second consumer appears.
+- **Arbitrary _property_ utilities (`[prop:value]`) are the narrow escape hatch**
+  for effects with no standard Tailwind class — and `@utility`/`@layer` are
+  banned here, so a custom utility is not an option. Allowed cases: gradients,
+  masks, shadows, dynamic CSS vars, and (currently only in
+  `features/result/emphasize.tsx`) `[box-decoration-break:clone]` +
+  `[-webkit-box-decoration-break:clone]`, which repaints the marker highlighter
+  stroke per line when the emphasized text wraps — load-bearing, not decorative,
+  and the `-webkit-` prefix is required on iOS Safari.
 - ADR-0006's token-layer description is superseded where it conflicts (its
   motion/LazyMotion decisions still stand).
