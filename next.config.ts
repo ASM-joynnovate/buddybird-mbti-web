@@ -1,5 +1,15 @@
 import type { NextConfig } from 'next'
 
+// Firebase config is optional but easy to forget on the deploy host: NEXT_PUBLIC_*
+// values are frozen into the bundle at build time, so a build without them ships
+// with analytics silently OFF (ADR-0011). Warn loudly, never fail — env-less
+// builds (local dev, E2E, CI) are a supported configuration.
+if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+    console.warn(
+        '[build] NEXT_PUBLIC_FIREBASE_* not set — Firebase analytics will be DISABLED in this build (see docs/adr/0011).',
+    )
+}
+
 const nextConfig: NextConfig = {
     // Deployed as a Next standalone Node server behind the existing Caddy proxy
     // (see docs/adr/0002). `next build` emits `.next/standalone/server.js`;

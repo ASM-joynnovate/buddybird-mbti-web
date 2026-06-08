@@ -19,19 +19,36 @@ client-side and there is no database (ADR-0002). `/api/healthz/` is a stateless
 
 On the Oracle Cloud ARM (Ampere) instance:
 
-1. **Docker + Compose v2** installed; the deploy user can run docker without sudo:
+1.  **Docker + Compose v2** installed; the deploy user can run docker without sudo:
     ```bash
     sudo usermod -aG docker "$USER"   # then re-login
     docker compose version
     ```
-2. **The `proxy` network exists** (the Caddy container already uses it):
+2.  **The `proxy` network exists** (the Caddy container already uses it):
     ```bash
     docker network inspect proxy >/dev/null 2>&1 || docker network create proxy
     ```
-3. **Clone the repo** at a stable path:
+3.  **Clone the repo** at a stable path:
     ```bash
     git clone https://github.com/ASM-joynnovate/buddybird-mbti-web.git /opt/buddybird-mbti
     ```
+4.  **Firebase web config** (ADR-0011): create a `.env` file next to
+    `docker-compose.yml` (compose loads it automatically and passes the values as
+    build args). Copy the keys from `.env.example` and fill in the values from
+    the Firebase console (Project settings → Your apps → Web app):
+
+        ```bash
+        cd /opt/buddybird-mbti
+        cp .env.example .env
+        vi .env   # fill in all seven NEXT_PUBLIC_FIREBASE_* values
+        ```
+
+        ⚠️ `NEXT_PUBLIC_*` values are **frozen into the bundle at build time**. If the
+        `.env` is missing or incomplete, the build succeeds but ships with analytics
+        **silently OFF** (the build log prints a `[build] NEXT_PUBLIC_FIREBASE_*
+
+    not set` warning). After every deploy, confirm events arrive in the GA4
+    Realtime report.
 
 ## 2. Caddy reverse proxy (one-time)
 

@@ -34,9 +34,10 @@ See `docs/deploy.md`.
 
 - **Runtime model change only — data guarantees are unchanged.** Photos are still
   processed 100% client-side, there is still **no server storage / backend database**
-  and **no analytics backend** (client event emission only). What changes is _how the
-  app is served_ (static hosting → Node standalone container), not how user data
-  flows. `/api/healthz` is a stateless endpoint that returns 200 and handles no user
+  and **no analytics backend** (client event emission only; ADR-0011 later wires
+  that client emission to Firebase GA4 without changing this guarantee). What
+  changes is _how the app is served_ (static hosting → Node standalone container),
+  not how user data flows. `/api/healthz` is a stateless endpoint that returns 200 and handles no user
   data.
 - **`next.config.ts` switches** `output: 'export'` → `'standalone'`; `yarn build`
   now emits `.next/standalone/server.js` instead of `out/`.

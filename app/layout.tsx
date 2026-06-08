@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Jua } from 'next/font/google'
 import { TestProgressProvider } from '@/features/quiz/test-progress-context'
+import { FirebaseBootstrap } from '@/shared/firebase'
 import { MobileForestBackground } from '@/shared/forest/mobile-forest-background'
 import { MotionProvider } from '@/shared/motion/motion-provider'
 import './globals.css'
@@ -37,6 +38,10 @@ export default function RootLayout({
                  * sits outermost so the forest's own m.* decorations (issue #26) get
                  * the LazyMotion context too; the background stays a Server Component
                  * (passed as children to the client provider). */}
+                {/* Null-render client component: lazily boots Firebase (GA4 /
+                 * Performance / Remote Config) on idle or first interaction so
+                 * the SDK chunk stays off the critical path (ADR-0011). */}
+                <FirebaseBootstrap />
                 <MotionProvider>
                     <MobileForestBackground>
                         <TestProgressProvider>{children}</TestProgressProvider>

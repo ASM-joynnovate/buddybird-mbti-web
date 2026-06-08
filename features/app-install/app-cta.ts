@@ -1,6 +1,5 @@
-// Single source for the BuddyBird app deep link. Surfaced from both the intro and
-// result App CTA placements via <AppCtaButton>. Issue #10 (HITL) replaces the
-// placeholder with a real OneLink/Branch deep link here and nowhere else.
+// The CTA link and copy moved to content/cta.ts so shared/firebase can use the
+// label as the Remote Config default (shared must not import features). This
+// re-export keeps existing '@/features/app-install' imports working.
 
-export const APP_CTA_URL = 'https://buddybird.example/app' // PLACEHOLDER (issue #10)
-export const APP_CTA_LABEL = '버디버드 앱에서 더 알아보기'
+export { APP_CTA_LABEL, APP_CTA_URL } from '@/content/cta'
