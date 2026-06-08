@@ -55,16 +55,18 @@ export function PortraitWindow({
                 aria-hidden="true"
             />
 
-            {/* Holo sweep — slow infinite light band, omitted under reduced motion. */}
+            {/* Holo sweep — slow infinite light band. Animates `x` (transform) not
+                backgroundPosition so the loop stays on the compositor and never
+                repaints; the parent's overflow-hidden clips the off-edge travel.
+                Omitted under reduced motion. */}
             {!reducedMotion && (
                 <m.span
                     className="pointer-events-none absolute inset-0 mix-blend-overlay"
                     style={{
                         background:
                             'linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.45) 47%, transparent 64%)',
-                        backgroundSize: '240% 100%',
                     }}
-                    animate={{ backgroundPosition: ['130% 0%', '-130% 0%'] }}
+                    animate={{ x: ['120%', '-120%'] }}
                     transition={{ duration: 3.6, repeat: Infinity, ease: 'linear' }}
                     aria-hidden="true"
                 />
@@ -94,7 +96,7 @@ export function PortraitWindow({
                 </span>
             ) : (
                 <m.div
-                    className="absolute bottom-[-8px] left-1/2"
+                    className="absolute -bottom-2 left-1/2"
                     initial={{ x: '-50%' }}
                     animate={
                         reducedMotion

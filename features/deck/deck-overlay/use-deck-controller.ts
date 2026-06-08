@@ -12,7 +12,7 @@
 //
 // Snaps run through the standalone animate() — safe alongside LazyMotion
 // strict, which only guards m.* components.
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
     animate,
     useMotionValue,
@@ -226,5 +226,12 @@ export function useDeckController(source: DeckSource): DeckController {
         }
     }, [clearEndTimer, stopSnap])
 
-    return { progress, isOpen, isEngaged, bindScrub, openAnimated, close }
+    // Stable identity: consumers use `controller` as an effect dependency
+    // (BackStack re-binds scrub listeners on change). Every member is already a
+    // stable ref (MotionValue / useCallback) or tracked state, so this only
+    // changes when isOpen / isEngaged flip — not on unrelated parent renders.
+    return useMemo(
+        () => ({ progress, isOpen, isEngaged, bindScrub, openAnimated, close }),
+        [progress, isOpen, isEngaged, bindScrub, openAnimated, close],
+    )
 }
