@@ -12,7 +12,7 @@
 // (popIn/fadeUp + stagger) — important information animates a single time.
 // Under prefers-reduced-motion every entrance degrades to the opacity-only
 // fadeOnly variant; the page is fully readable without motion.
-import { useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AnimatePresence, m, useReducedMotion, type Variants } from 'motion/react'
@@ -37,6 +37,7 @@ import {
 } from '@/lib/mbti'
 import { GROUP_CSS_VAR } from '@/lib/mbti/temperament'
 import { decodeResult, RESULT_PARAM } from '@/lib/result-url'
+import { trackEvent, withTrack } from '@/shared/analytics'
 import { easeSpring, fadeOnly, fadeUp, popIn, staggerContainer } from '@/shared/motion'
 import { GameButton } from '@/shared/ui/game-button'
 import { GamePanel } from '@/shared/ui/game-panel'
@@ -95,7 +96,7 @@ export function ResultView() {
     const photo = usePhotoSource()
     const reducedMotion = useReducedMotion()
 
-    const deck = useDeckController()
+    const deck = useDeckController('result')
     const [detail, setDetail] = useState<TypeCode | null>(null)
 
     // One-shot reveal vocabulary; every entrance degrades to an opacity-only
@@ -109,7 +110,10 @@ export function ResultView() {
     // page appends ?t= even for the player's own result, so the param alone cannot
     // distinguish the two — in-memory presence is the real signal.
     const ownType = result?.type ?? null
-    const decoded = decodeResult(searchParams.get(RESULT_PARAM))
+    // Primitive token read — used both for decoding and to classify a result_error
+    // without putting the unstable searchParams object in the effect deps below.
+    const resultParam = searchParams.get(RESULT_PARAM)
+    const decoded = decodeResult(resultParam)
     const sharedType = decoded?.type ?? null
     const type = ownType ?? sharedType
     const isSharedVisitor = ownType === null && sharedType !== null
@@ -119,12 +123,31 @@ export function ResultView() {
         router.push('/')
     }
 
+    // Entry event: result_view (owner vs shared-link visitor) or result_error
+    // when no type resolves. The ref guard limits it to the FIRST run (StrictMode
+    // dev double-effect); the deps are all primitives so they stay honest.
+    const entryTracked = useRef(false)
+    useEffect(() => {
+        if (entryTracked.current) return
+        entryTracked.current = true
+        if (type !== null) {
+            trackEvent('result_view', { type, visitor: isSharedVisitor ? 'shared' : 'owner' })
+        } else {
+            trackEvent('result_error', { reason: resultParam === null ? 'missing' : 'invalid' })
+        }
+    }, [type, isSharedVisitor, resultParam])
+
     if (type === null) {
         return (
             <main data-testid="result-root" className={PAPER_CLASS}>
                 <div className="flex min-h-dvh flex-col items-center justify-center gap-4 px-gutter">
                     <p className="m-0 text-ink-muted">결과 없음</p>
-                    <GameButton variant="secondary" onClick={() => router.push('/')}>
+                    <GameButton
+                        variant="secondary"
+                        onClick={withTrack('restart_click', { source: 'error' }, () =>
+                            router.push('/'),
+                        )}
+                    >
                         처음으로
                     </GameButton>
                 </div>
@@ -259,7 +282,14 @@ export function ResultView() {
                                         <MatchCard
                                             key={matchCode}
                                             code={matchCode}
-                                            onSelect={setDetail}
+                                            onSelect={withTrack(
+                                                'detail_open',
+                                                (code: TypeCode) => ({
+                                                    type: code,
+                                                    source: 'match',
+                                                }),
+                                                setDetail,
+                                            )}
                                         />
                                     ))}
                                 </div>
@@ -287,7 +317,11 @@ export function ResultView() {
                                 size="sm"
                                 className="w-full"
                                 data-testid="retake-button"
-                                onClick={handleRestart}
+                                onClick={withTrack(
+                                    'restart_click',
+                                    { source: 'shared' },
+                                    handleRestart,
+                                )}
                             >
                                 나도 테스트하기
                             </GameButton>
@@ -306,7 +340,11 @@ export function ResultView() {
                                     variant="secondary"
                                     className="flex-1"
                                     data-testid="restart-button"
-                                    onClick={handleRestart}
+                                    onClick={withTrack(
+                                        'restart_click',
+                                        { source: 'owner' },
+                                        handleRestart,
+                                    )}
                                 >
                                     ↺ 다시하기
                                 </GameButton>
@@ -320,13 +358,24 @@ export function ResultView() {
             </m.div>
 
             {/* Deck overlay + detail popup, mounted locally (no /dex route). */}
-            <DeckOverlay controller={deck} onSelect={setDetail} />
+            <DeckOverlay
+                controller={deck}
+                onSelect={withTrack(
+                    'detail_open',
+                    (code: TypeCode) => ({ type: code, source: 'deck' }),
+                    setDetail,
+                )}
+            />
             <AnimatePresence>
                 {detail !== null && (
                     <DetailPopup
                         code={detail}
                         onClose={() => setDetail(null)}
-                        onSelectType={setDetail}
+                        onSelectType={withTrack(
+                            'detail_open',
+                            (code: TypeCode) => ({ type: code, source: 'chip' }),
+                            setDetail,
+                        )}
                     />
                 )}
             </AnimatePresence>

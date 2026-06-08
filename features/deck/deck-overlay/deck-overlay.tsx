@@ -38,7 +38,7 @@ export function DeckOverlay({ controller, onSelect }: DeckOverlayProps) {
         const onWheel = (event: WheelEvent) => {
             if (event.deltaY < 0 && el.scrollTop <= 0) {
                 event.preventDefault()
-                close()
+                close('gesture')
             }
         }
         const onTouchStart = (event: TouchEvent) => {
@@ -52,7 +52,7 @@ export function DeckOverlay({ controller, onSelect }: DeckOverlayProps) {
             const dy = touchY.current - (event.touches[0]?.clientY ?? touchY.current)
             if (dy < -6 && el.scrollTop <= 0) {
                 event.preventDefault()
-                close()
+                close('gesture')
                 touchY.current = null
             }
         }
@@ -96,7 +96,8 @@ export function DeckOverlay({ controller, onSelect }: DeckOverlayProps) {
                 <GameButton
                     variant="icon"
                     size="sm"
-                    onClick={close}
+                    // Wrapped so the MouseEvent never lands in the trigger slot.
+                    onClick={() => close('button')}
                     aria-label="닫기"
                     data-testid="deck-close"
                 >

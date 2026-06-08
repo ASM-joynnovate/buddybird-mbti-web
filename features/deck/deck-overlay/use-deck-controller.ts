@@ -21,11 +21,16 @@ import {
     type AnimationPlaybackControls,
     type MotionValue,
 } from 'motion/react'
+import { trackEvent, type PayloadOf } from '@/shared/analytics'
 import { easeLeaf } from '@/shared/motion'
 
 const OPEN_THRESHOLD = 0.34
 const WHEEL_GAIN = 0.0016
 const TOUCH_GAIN = 0.0042
+
+// Analytics vocabulary, derived from the event contract so it cannot drift.
+export type DeckSource = PayloadOf<'deck_open'>['source']
+export type DeckCloseTrigger = PayloadOf<'deck_close'>['trigger']
 
 export const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v))
 
@@ -39,10 +44,17 @@ export interface DeckController {
     /** Attach wheel/touch scrub listeners to the stack host. Returns cleanup. */
     bindScrub: (el: HTMLElement | null) => (() => void) | undefined
     openAnimated: () => void
-    close: () => void
+    /**
+     * Close the deck. Pass the trigger for USER closes (emits deck_close);
+     * omit it for programmatic closes (e.g. the detail-popup CTA), which
+     * must not count as a user closing the deck.
+     */
+    close: (trigger?: DeckCloseTrigger) => void
 }
 
-export function useDeckController(): DeckController {
+// `source` names the surface that owns this deck instance (intro/result) and
+// rides along on every deck_open / deck_close event.
+export function useDeckController(source: DeckSource): DeckController {
     const progress = useMotionValue(0)
     const reduced = useReducedMotion()
     const [isOpen, setIsOpen] = useState(false)
@@ -81,6 +93,12 @@ export function useDeckController(): DeckController {
     }, [])
 
     const reallyOpen = useCallback(() => {
+        // Guard BEFORE setOpen: the wheel path can reach progress 1 (immediate
+        // reallyOpen) and then fire the 150ms snapEnd timer's reallyOpen again
+        // — only the first commit counts as a deck_open.
+        if (!isOpenRef.current) {
+            trackEvent('deck_open', { source, trigger: 'scrub' })
+        }
         clearEndTimer()
         stopSnap()
         setOpen(true)
@@ -89,9 +107,13 @@ export function useDeckController(): DeckController {
             return
         }
         animRef.current = animate(progress, 1, { duration: 0.28, ease: easeLeaf })
-    }, [clearEndTimer, progress, reduced, setOpen, stopSnap])
+    }, [clearEndTimer, progress, reduced, setOpen, source, stopSnap])
 
     const openAnimated = useCallback(() => {
+        // Same duplicate guard as reallyOpen (covers button double-taps).
+        if (!isOpenRef.current) {
+            trackEvent('deck_open', { source, trigger: 'button' })
+        }
         clearEndTimer()
         stopSnap()
         setOpen(true)
@@ -100,19 +122,27 @@ export function useDeckController(): DeckController {
             return
         }
         animRef.current = animate(progress, 1, { duration: 0.46, ease: easeLeaf })
-    }, [clearEndTimer, progress, reduced, setOpen, stopSnap])
+    }, [clearEndTimer, progress, reduced, setOpen, source, stopSnap])
 
-    const close = useCallback(() => {
-        clearEndTimer()
-        stopSnap()
-        setOpen(false)
-        if (reduced) {
-            progress.set(0)
-            setIsEngaged(false)
-            return
-        }
-        animRef.current = animate(progress, 0, { duration: 0.3, ease: easeLeaf })
-    }, [clearEndTimer, progress, reduced, setOpen, stopSnap])
+    const close = useCallback(
+        (trigger?: DeckCloseTrigger) => {
+            // Only USER closes (trigger given) of an actually-open deck emit;
+            // programmatic closes and snap-shut of a partial scrub stay silent.
+            if (trigger !== undefined && isOpenRef.current) {
+                trackEvent('deck_close', { source, trigger })
+            }
+            clearEndTimer()
+            stopSnap()
+            setOpen(false)
+            if (reduced) {
+                progress.set(0)
+                setIsEngaged(false)
+                return
+            }
+            animRef.current = animate(progress, 0, { duration: 0.3, ease: easeLeaf })
+        },
+        [clearEndTimer, progress, reduced, setOpen, source, stopSnap],
+    )
 
     // Scrub release: past the threshold the deck commits open, under it snaps shut.
     const snapEnd = useCallback(() => {

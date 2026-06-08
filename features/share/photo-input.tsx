@@ -8,7 +8,7 @@
 // Skinned inline with the raised-block vocabulary (lives inside the result's
 // photo GamePanel).
 import { useRef, type ChangeEvent } from 'react'
-import { track } from '@/shared/analytics'
+import { track, withTrack } from '@/shared/analytics'
 import { GameButton } from '@/shared/ui/game-button'
 
 interface PhotoInputProps {
@@ -85,7 +85,7 @@ export function PhotoInput({ objectUrl, onPick, onClear }: PhotoInputProps) {
                             variant="ghost"
                             size="sm"
                             data-testid="photo-clear"
-                            onClick={onClear}
+                            onClick={withTrack('photo_removed', {}, onClear)}
                         >
                             제거
                         </GameButton>

@@ -6,12 +6,20 @@
 // Asserts: the overlay reaches data-open=true with 16 labelled card buttons,
 // tapping a card opens its detail popup, the popup closes cleanly, and the
 // deck close button retires the overlay (unmount — progress animates to 0).
+// Also asserts the deck/detail analytics events fire exactly once each with
+// the right source/trigger/method payloads (tracking expansion).
 
 import { assert, clickTestId, evalJs, openUrl, waitFor, waitForSurface } from '../helpers.mjs'
 
 export async function run() {
     openUrl('/')
     await waitForSurface('intro-root')
+
+    // Install the capturing analytics adapter before any interaction.
+    const hookInstalled = evalJs(
+        "(function(){if(typeof window.__setAnalyticsAdapter!=='function')return false;window.__setAnalyticsAdapter();return true;})()",
+    )
+    assert(hookInstalled === true || hookInstalled === 'true', 'analytics test hook must install')
 
     // Open the deck via the deterministic button path.
     clickTestId('deck-button')
@@ -53,5 +61,42 @@ export async function run() {
         'deck overlay unmounts after close',
     )
 
-    return { ok: true }
+    // --- Analytics: each deck/detail event fired exactly once with the right
+    // payload. The "exactly one deck_open" check is the regression guard for
+    // the duplicate-open protection (button double-tap / wheel+snapEnd).
+    const json = evalJs('JSON.stringify(window.__analyticsEvents || [])')
+    let events
+    try {
+        events = JSON.parse(json)
+    } catch {
+        throw new Error(`Failed to parse window.__analyticsEvents JSON: ${json}`)
+    }
+
+    const expectOne = (name, check, label) => {
+        const matches = events.filter((e) => e.name === name)
+        assert(matches.length === 1, `expected exactly 1 ${name}; got ${matches.length}`)
+        assert(
+            check(matches[0].payload),
+            `${name} payload mismatch (${label}): ${JSON.stringify(matches[0].payload)}`,
+        )
+    }
+
+    expectOne(
+        'deck_open',
+        (p) => p.source === 'intro' && p.trigger === 'button',
+        'source=intro trigger=button',
+    )
+    expectOne(
+        'detail_open',
+        (p) => p.type === 'INTJ' && p.source === 'deck',
+        'type=INTJ source=deck',
+    )
+    expectOne('detail_close', (p) => p.method === 'button', 'method=button')
+    expectOne(
+        'deck_close',
+        (p) => p.source === 'intro' && p.trigger === 'button',
+        'source=intro trigger=button',
+    )
+
+    return { ok: true, events: events.map((e) => e.name) }
 }

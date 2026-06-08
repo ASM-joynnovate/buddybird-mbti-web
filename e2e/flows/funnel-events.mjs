@@ -80,6 +80,10 @@ export async function run() {
     assert(evalJs(CLICK_CTA_EXPR) === true, 'result app CTA must be clickable')
     await new Promise((r) => setTimeout(r, 200))
 
+    // Deck from the result surface -> deck_open { source: 'result' }.
+    clickTestId('deck-open-button')
+    await new Promise((r) => setTimeout(r, 600))
+
     // Read and assert the captured events.
     const json = evalJs('JSON.stringify(window.__analyticsEvents || [])')
     let events
@@ -109,6 +113,26 @@ export async function run() {
     assert(
         cta.payload.placement === 'result',
         `app_cta_click.placement must be result; got ${cta.payload.placement}`,
+    )
+
+    // result_view: exactly once (the ref guard regression check), owner visit.
+    const views = events.filter((e) => e.name === 'result_view')
+    assert(views.length === 1, `expected exactly 1 result_view; got ${views.length}`)
+    assert(
+        views[0].payload.visitor === 'owner',
+        `result_view.visitor must be owner; got ${views[0].payload.visitor}`,
+    )
+    assert(
+        /^[EI][SN][TF][JP]$/.test(views[0].payload.type),
+        `result_view.type must be a type; got ${views[0].payload.type}`,
+    )
+
+    // deck_open from the result surface.
+    const deckOpen = events.find((e) => e.name === 'deck_open')
+    assert(deckOpen !== undefined, 'deck_open must fire')
+    assert(
+        deckOpen.payload.source === 'result' && deckOpen.payload.trigger === 'button',
+        `deck_open payload must be {source:result, trigger:button}; got ${JSON.stringify(deckOpen.payload)}`,
     )
 
     return { events: names }

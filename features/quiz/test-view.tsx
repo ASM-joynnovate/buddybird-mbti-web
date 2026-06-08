@@ -23,7 +23,7 @@ import { QUESTION_COUNT, QUESTIONS } from '@/content'
 import { useTestProgress } from '@/features/quiz/test-progress-context'
 import { computeResult, type Choice } from '@/lib/mbti'
 import { encodeResult, RESULT_PARAM } from '@/lib/result-url'
-import { track } from '@/shared/analytics'
+import { track, trackEvent } from '@/shared/analytics'
 import { easeLeaf, easeSpring, fadeOnly, popIn } from '@/shared/motion'
 import { GameButton } from '@/shared/ui/game-button'
 import { GamePanel } from '@/shared/ui/game-panel'
@@ -186,6 +186,8 @@ export function TestView() {
     }
 
     const handleBack = () => {
+        // index 0 means backing out of the quiz to the intro.
+        trackEvent('test_back', { index: currentIndex })
         if (advanceTimer.current !== null) {
             clearTimeout(advanceTimer.current)
         }

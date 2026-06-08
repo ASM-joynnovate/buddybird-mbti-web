@@ -47,9 +47,14 @@ export function ShareButton({ type, photoUrl }: ShareButtonProps) {
             } else if (outcome.kind === 'fallback') {
                 track({ name: 'share_fallback', payload: { type, reason: outcome.reason } })
                 setHint('카드를 저장했어요. 인스타그램에 올려 주세요!')
+            } else {
+                // 'canceled' — user dismissed the share sheet (UI stays quiet,
+                // but the funnel leak is worth measuring).
+                track({ name: 'share_cancel', payload: { type } })
             }
-            // 'canceled' — user dismissed the share sheet; stay quiet.
         } catch {
+            // Card composition failed (image decode, canvas, etc.).
+            track({ name: 'share_error', payload: { type } })
             setHint('카드를 만들지 못했어요. 잠시 후 다시 시도해 주세요.')
         } finally {
             setBusy(false)

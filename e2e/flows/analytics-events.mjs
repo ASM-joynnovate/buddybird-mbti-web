@@ -29,7 +29,27 @@ const EXPECTED_QUESTION_COUNT = 13
 // Expected result type when all 'a' choices are picked ('a' letters win each axis).
 const EXPECTED_TYPE = 'ESTJ'
 
-const DEFERRED_EVENTS = ['photo_attached', 'share_success', 'share_fallback', 'app_cta_click']
+// Events that must NOT appear in this slice: the flow only starts the test,
+// answers every question, and lands on the result — it never touches the deck,
+// popups, back button, share, photos, or error paths. result_view IS expected
+// (fires on result mount) and is deliberately absent from this list.
+const DEFERRED_EVENTS = [
+    'photo_attached',
+    'share_success',
+    'share_fallback',
+    'app_cta_click',
+    'deck_open',
+    'deck_close',
+    'detail_open',
+    'detail_close',
+    'detail_cta_click',
+    'test_back',
+    'restart_click',
+    'share_cancel',
+    'share_error',
+    'photo_removed',
+    'result_error',
+]
 
 // Safety ceiling for the drive loop.
 const MAX_QUESTIONS = 50
@@ -128,6 +148,10 @@ export async function run() {
     }
 
     assert(Array.isArray(events), 'window.__analyticsEvents must be an array')
+
+    // Drop diagnostic image_error events (only fire when an asset is missing in
+    // the environment) so they can never break the ordered-sequence assertions.
+    events = events.filter((e) => e.name !== 'image_error')
 
     // --- Assert ordered sequence ---
 

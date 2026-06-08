@@ -24,7 +24,7 @@ import { BackStack, type BackStackControls } from '@/features/deck/back-stack'
 import { DeckOverlay, useDeckController } from '@/features/deck/deck-overlay'
 import { useTestProgress } from '@/features/quiz/test-progress-context'
 import type { TypeCode } from '@/lib/mbti'
-import { track } from '@/shared/analytics'
+import { track, trackEvent, withTrack } from '@/shared/analytics'
 import { fadeOnly, fadeUp, staggerContainer } from '@/shared/motion'
 import { GameButton } from '@/shared/ui/game-button'
 import { GamePill } from '@/shared/ui/game-pill'
@@ -57,7 +57,7 @@ export function IntroView() {
     const { reset, setIndex } = useTestProgress()
     const reducedMotion = useReducedMotion()
 
-    const deck = useDeckController()
+    const deck = useDeckController('intro')
     const stackControls = useRef<BackStackControls | null>(null)
     const [detail, setDetail] = useState<TypeCode | null>(null)
 
@@ -72,9 +72,12 @@ export function IntroView() {
         router.push('/test')
     }
 
-    // Detail popup CTA: surface that type on the hero stack.
+    // Detail popup CTA: surface that type on the hero stack. Tracked inline
+    // (not via withTrack) — wrapping this handler at render time trips the
+    // react-hooks/refs rule because it closes over stackControls.
     const handlePickHome = () => {
         if (detail !== null) {
+            trackEvent('detail_cta_click', { type: detail })
             stackControls.current?.setActive(detail)
         }
         setDetail(null)
@@ -109,7 +112,11 @@ export function IntroView() {
                         pool={STACK_POOL}
                         intervalMs={3000}
                         controller={deck}
-                        onCardTap={setDetail}
+                        onCardTap={withTrack(
+                            'detail_open',
+                            (code: TypeCode) => ({ type: code, source: 'stack' }),
+                            setDetail,
+                        )}
                         paused={detail !== null}
                         controlsRef={stackControls}
                     />
@@ -178,14 +185,25 @@ export function IntroView() {
                 </m.div>
             </m.div>
 
-            <DeckOverlay controller={deck} onSelect={setDetail} />
+            <DeckOverlay
+                controller={deck}
+                onSelect={withTrack(
+                    'detail_open',
+                    (code: TypeCode) => ({ type: code, source: 'deck' }),
+                    setDetail,
+                )}
+            />
 
             <AnimatePresence>
                 {detail !== null && (
                     <DetailPopup
                         code={detail}
                         onClose={() => setDetail(null)}
-                        onSelectType={setDetail}
+                        onSelectType={withTrack(
+                            'detail_open',
+                            (code: TypeCode) => ({ type: code, source: 'chip' }),
+                            setDetail,
+                        )}
                         cta={{ label: '이 친구 홈에서 보기', onClick: handlePickHome }}
                     />
                 )}

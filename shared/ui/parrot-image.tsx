@@ -9,6 +9,19 @@ import { useCallback, useState } from 'react'
 import Image from 'next/image'
 import { getTypeInfo, parrotImageSrc } from '@/content'
 import type { TypeCode } from '@/lib/mbti'
+import { trackEvent } from '@/shared/analytics'
+
+// Report a broken parrot asset once per type per page load — without the
+// dedupe a single missing PNG would re-fire on every deck open / re-render.
+const reportedTypes = new Set<TypeCode>()
+
+function reportImageError(type: TypeCode): void {
+    if (reportedTypes.has(type)) {
+        return
+    }
+    reportedTypes.add(type)
+    trackEvent('image_error', { type })
+}
 
 interface ParrotImageProps {
     type: TypeCode
@@ -31,11 +44,15 @@ export function ParrotImage({
 
     // A 404 can fire before React attaches onError during hydration, so also probe
     // the element on mount: a finished load with zero natural width means it failed.
-    const checkBroken = useCallback((node: HTMLImageElement | null) => {
-        if (node !== null && node.complete && node.naturalWidth === 0) {
-            setFailed(true)
-        }
-    }, [])
+    const checkBroken = useCallback(
+        (node: HTMLImageElement | null) => {
+            if (node !== null && node.complete && node.naturalWidth === 0) {
+                reportImageError(type)
+                setFailed(true)
+            }
+        },
+        [type],
+    )
 
     // Fallback fills its frame so the deck/result/preview layout never shifts.
     if (failed) {
@@ -69,7 +86,10 @@ export function ParrotImage({
             quality={65}
             loading={loading}
             className={className}
-            onError={() => setFailed(true)}
+            onError={() => {
+                reportImageError(type)
+                setFailed(true)
+            }}
         />
     )
 }

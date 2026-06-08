@@ -16,6 +16,7 @@ import { useEffect, useEffectEvent, useRef } from 'react'
 import { m, useReducedMotion, type Variants } from 'motion/react'
 import { getTypeInfo } from '@/content'
 import type { TypeCode } from '@/lib/mbti'
+import { trackEvent, withTrack } from '@/shared/analytics'
 import { durationBase, durationFast, easeSpring } from '@/shared/motion'
 import { DashedRule } from '@/shared/ui/dashed-rule'
 import { GameButton } from '@/shared/ui/game-button'
@@ -69,6 +70,7 @@ export function DetailPopup({ code, onClose, onSelectType, cta }: DetailPopupPro
 
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
+                trackEvent('detail_close', { method: 'escape' })
                 handleClose()
                 return
             }
@@ -113,7 +115,7 @@ export function DetailPopup({ code, onClose, onSelectType, cta }: DetailPopupPro
             {/* Scrim — translucent by necessity (it dims arbitrary content below). */}
             <m.div
                 className="absolute inset-0 bg-[rgba(24,38,24,0.55)] backdrop-blur-[3px]"
-                onClick={onClose}
+                onClick={withTrack('detail_close', { method: 'scrim' }, onClose)}
                 variants={reducedMotion ? reducedFade : scrimFade}
                 initial="hidden"
                 animate="visible"
@@ -138,7 +140,7 @@ export function DetailPopup({ code, onClose, onSelectType, cta }: DetailPopupPro
                     variant="icon"
                     size="sm"
                     className="absolute top-3.5 right-3.5 z-4"
-                    onClick={onClose}
+                    onClick={withTrack('detail_close', { method: 'button' }, onClose)}
                     aria-label="닫기"
                     data-testid="detail-close"
                 >
