@@ -72,7 +72,7 @@ export function MobileForestBackground({ children }: { children: ReactNode }) {
              * browser chrome changes. pointer-events-none is belt-and-suspenders
              * (the layer already sits behind everything at z -1). */}
             <div
-                className="pointer-events-none fixed inset-0 z-[-1] h-dvh min-h-svh overflow-hidden bg-bg"
+                className="pointer-events-none fixed inset-0 -z-1 h-dvh min-h-svh overflow-hidden bg-bg"
                 aria-hidden="true"
             >
                 {/* z0 — main forest base: covers the viewport (cover, never stretched),

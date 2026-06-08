@@ -126,11 +126,8 @@ export function BackStack({
                         pointerEvents: stackPointer,
                     }}
                 >
-                    <CardGhost
-                        code={next2}
-                        className="z-1 translate-y-[26px] scale-x-[0.84] opacity-[0.92]"
-                    />
-                    <CardGhost code={next1} className="z-2 translate-y-[14px] scale-x-[0.93]" />
+                    <CardGhost code={next2} className="z-1 translate-y-6.5 scale-x-90 opacity-90" />
+                    <CardGhost code={next1} className="z-2 translate-y-3.5 scale-x-95" />
 
                     {/* Keyed swap entrance — each advance remounts the active card. */}
                     <m.div

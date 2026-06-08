@@ -101,7 +101,7 @@ export function IntroView() {
                         우리 앵무새
                         <br />
                         <span className="whitespace-nowrap">
-                            <span className="relative whitespace-nowrap text-primary-active after:absolute after:-right-[4%] after:bottom-[4%] after:-left-[4%] after:-z-10 after:h-[40%] after:-rotate-[1.5deg] after:rounded-full after:bg-[linear-gradient(180deg,var(--color-primary-glow),var(--color-gold))] after:opacity-85 after:content-['']">
+                            <span className="relative whitespace-nowrap text-primary-active after:absolute after:-right-[4%] after:bottom-[4%] after:-left-[4%] after:-z-10 after:h-2/5 after:-rotate-2 after:rounded-full after:bg-[linear-gradient(180deg,var(--color-primary-glow),var(--color-gold))] after:opacity-85 after:content-['']">
                                 진짜 성격
                             </span>
                             은?
@@ -168,7 +168,7 @@ export function IntroView() {
                             the forest backdrop has no opaque mix target). */}
                         {!reducedMotion && (
                             <m.span
-                                className="pointer-events-none absolute inset-x-0 -inset-y-1.5 -z-10 mx-auto w-full max-w-[22rem] rounded-full bg-[radial-gradient(closest-side,rgba(232,119,46,0.35),transparent)]"
+                                className="pointer-events-none absolute inset-x-0 -inset-y-1.5 -z-10 mx-auto w-full max-w-88 rounded-full bg-[radial-gradient(closest-side,rgba(232,119,46,0.35),transparent)]"
                                 animate={{ opacity: [0.4, 0.9, 0.4], scale: [0.98, 1.04, 0.98] }}
                                 transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
                                 aria-hidden="true"
@@ -177,7 +177,7 @@ export function IntroView() {
                         <GameButton
                             data-testid="start-button"
                             onClick={handleStart}
-                            className="w-full max-w-[21.25rem]"
+                            className="w-full max-w-85"
                         >
                             테스트 시작하기 <span aria-hidden="true">→</span>
                         </GameButton>

@@ -71,6 +71,17 @@
     /* Global side gutter (22px) — every full-width surface honors it (DESIGN.md). */
     --spacing-gutter: 1.375rem; /* 22px */
 
+    /* Raised-block chrome border widths (DESIGN.md elevation) — tokenized so
+     * consumers reference a token (border-(length:--border-hair)) instead of
+     * inline px arbitraries. Px, like the shadow recipes (ADR-0009): these are
+     * hand-tuned effect hairlines that intentionally do not scale with the root
+     * font. hair = cream-surface chrome (panels' dashed frame, ghost, trading
+     * card, popup, badges); panel = the GamePanel surface edge; ring = the axis
+     * spectrum knob. */
+    --border-hair: 1.5px;
+    --border-panel: 2.5px;
+    --border-ring: 3px;
+
     /* Type families — display bound to next/font variable set on <html>
      * (layout.tsx); body uses the system Korean stack (EXPERIMENT). */
     --font-sans:

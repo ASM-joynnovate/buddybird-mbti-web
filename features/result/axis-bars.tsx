@@ -18,6 +18,7 @@
 import type { CSSProperties } from 'react'
 import { m, useReducedMotion } from 'motion/react'
 import { AXIS_META } from '@/content'
+import { Marker } from '@/features/result/emphasize'
 import { AXES, type Axis, type AxisScore } from '@/lib/mbti'
 import { easeSpring } from '@/shared/motion'
 import { GamePanel } from '@/shared/ui/game-panel'
@@ -41,7 +42,9 @@ export function AxisBars({ axisScores }: AxisBarsProps) {
             data-testid="axis-bars"
             className="px-4 pt-4 pb-5"
         >
-            <h2 className="m-0 mb-4 font-display text-lg font-normal text-ink">성향 스펙트럼</h2>
+            <h2 className="m-0 mb-4 font-display text-lg font-normal text-ink">
+                <Marker variant="head">성향 스펙트럼</Marker>
+            </h2>
             <div className="flex flex-col gap-4">
                 {AXES.map((axis) => {
                     const meta = AXIS_META[axis]
@@ -66,14 +69,14 @@ export function AxisBars({ axisScores }: AxisBarsProps) {
                                         ({meta.left.letter})
                                     </em>
                                     {leftActive && (
-                                        <b className="mx-0.5 font-display text-sm font-normal">
+                                        <b className="mx-0.5 rounded-xs px-1 font-display text-sm font-normal [background:linear-gradient(180deg,transparent_52%,color-mix(in_srgb,var(--axis-color)_32%,#fff)_52%,color-mix(in_srgb,var(--axis-color)_32%,#fff)_96%,transparent_96%)]">
                                             {dominantPct}%
                                         </b>
                                     )}
                                 </span>
                                 <span className={leftActive ? END_CLASS : END_ACTIVE_CLASS}>
                                     {!leftActive && (
-                                        <b className="mx-0.5 font-display text-sm font-normal">
+                                        <b className="mx-0.5 rounded-xs px-1 font-display text-sm font-normal [background:linear-gradient(180deg,transparent_52%,color-mix(in_srgb,var(--axis-color)_32%,#fff)_52%,color-mix(in_srgb,var(--axis-color)_32%,#fff)_96%,transparent_96%)]">
                                             {dominantPct}%
                                         </b>
                                     )}
@@ -83,15 +86,15 @@ export function AxisBars({ axisScores }: AxisBarsProps) {
                                     </em>
                                 </span>
                             </div>
-                            <div className="relative h-3.5 rounded-full border-2 border-border-action bg-white shadow-inset-track">
+                            <div className="relative h-4.5 rounded-full border-2 border-border-action bg-white shadow-inset-track">
                                 <m.span
-                                    className="absolute top-0 bottom-0 rounded-full bg-[var(--axis-color)] shadow-inset-highlight"
+                                    className="absolute top-0 bottom-0 rounded-full shadow-inset-highlight [background:linear-gradient(180deg,color-mix(in_srgb,#fff_24%,var(--axis-color)),var(--axis-color))]"
                                     initial={reducedMotion ? false : { left: '50%', width: '0%' }}
                                     animate={{ left: `${segStart}%`, width: `${segWidth}%` }}
                                     transition={barTransition}
                                 />
                                 <m.span
-                                    className="absolute top-1/2 size-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-[var(--axis-color)] bg-white shadow-[0_2px_6px_-1px_rgba(0,0,0,0.35)]"
+                                    className="absolute top-1/2 size-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[length:var(--border-ring)] border-[var(--axis-color)] bg-white shadow-[0_2px_6px_-1px_rgba(0,0,0,0.35)]"
                                     initial={reducedMotion ? false : { left: '50%' }}
                                     animate={{ left: `${knob}%` }}
                                     transition={barTransition}

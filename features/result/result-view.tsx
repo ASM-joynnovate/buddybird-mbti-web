@@ -1,18 +1,22 @@
 'use client'
 
-// Result reveal — 동화숲 월드 v2: opaque kraft-paper backdrop (occludes the
-// forest), full-bleed --type-grad hero (bobbing art, CODE + 이름 on one row,
-// faction badge), then the raised-block panels: 설명 / 성향 스펙트럼 / 환상의
-// 궁합 (MatchCard → DetailPopup in place) / 사진. Actions: 친구에게 공유하기
-// (primary, the existing canvas share logic) + 도감 보기 (opens the deck
-// overlay right here) + 다시하기 + the app CTA. The ?t= deep-link / share /
-// photo logic is untouched.
+// Result reveal — 동화숲 월드 v2 (polaroid redesign, ADR-0012). ONE unified
+// layout (ADR-0013 removed the separate shared-visitor variant): the result comes
+// from the in-memory result (just took the test) OR is restored by decoding the
+// ?t= param, so a refresh — and anyone opening the result URL — sees the same
+// page. ?t= stays as the durable record of which result came out. Only a load
+// with no result at all (no in-memory AND no/invalid ?t=) redirects to the intro.
 //
-// Motion: hero and body sections enter once via the shared variants
-// (popIn/fadeUp + stagger) — important information animates a single time.
-// Under prefers-reduced-motion every entrance degrades to the opacity-only
-// fadeOnly variant; the page is fully readable without motion.
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+// Layout: opaque kraft-paper backdrop, eyebrow + adaptive polaroid hero (캐릭터
+// 한 장, or 내 앵무새 → 캐릭터 두 장 once a photo is attached) + faction badge;
+// then 사진 + 친구에게 공유하기 + 버디버드 앱 CTA (pulled above the report), the
+// raised-block panels 성격 분석 (report lead + desc, 형광펜 marker) / 성향
+// 스펙트럼 / 환상의 궁합 (MatchCard → DetailPopup), and 도감 보기 + 다시하기.
+//
+// Motion: hero and body sections enter once via the shared variants (popIn/
+// fadeUp + stagger). Under prefers-reduced-motion every entrance degrades to the
+// opacity-only fadeOnly variant; the page is fully readable without motion.
+import { useEffect, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AnimatePresence, m, useReducedMotion, type Variants } from 'motion/react'
@@ -22,7 +26,9 @@ import { DeckOverlay, useDeckController } from '@/features/deck/deck-overlay'
 import { useTestProgress } from '@/features/quiz/test-progress-context'
 import { AxisBars } from '@/features/result/axis-bars'
 import { Confetti } from '@/features/result/confetti'
+import { emphasize, Marker } from '@/features/result/emphasize'
 import { MatchCard } from '@/features/result/match-card'
+import { ResultPolaroid } from '@/features/result/result-polaroid'
 import { PhotoInput } from '@/features/share/photo-input'
 import { ShareButton } from '@/features/share/share-button'
 import { usePhotoSource } from '@/features/share/use-photo-source'
@@ -38,10 +44,9 @@ import {
 import { GROUP_CSS_VAR } from '@/lib/mbti/temperament'
 import { decodeResult, RESULT_PARAM } from '@/lib/result-url'
 import { trackEvent, withTrack } from '@/shared/analytics'
-import { easeSpring, fadeOnly, fadeUp, popIn, staggerContainer } from '@/shared/motion'
+import { easeSpring, fadeOnly, fadeUp, staggerContainer } from '@/shared/motion'
 import { GameButton } from '@/shared/ui/game-button'
 import { GamePanel } from '@/shared/ui/game-panel'
-import { ParrotImage } from '@/shared/ui/parrot-image'
 
 // Detail popup is tap-only UI — code-split out of the initial bundle and
 // fetched on the first match-card tap (it only renders when `detail` is set).
@@ -74,9 +79,9 @@ const GROUP_LABEL: Record<TemperamentGroup, string> = {
 const PAPER_CLASS =
     'relative min-h-dvh bg-[radial-gradient(130%_80%_at_50%_0%,#fff6e0_0%,#f4e7cb_70%,#efdfbf_100%)]'
 
-// Fallback axis tallies for a shared visitor arriving on a legacy/manual bare code
-// (no encoded tally). The exact per-axis counts aren't recoverable from the type code
-// alone, so lean each axis fully toward its winning letter — the bars still read as
+// Fallback axis tallies for a legacy/manual bare code (?t=ENFP with no encoded
+// tally). The exact per-axis counts aren't recoverable from the type code alone,
+// so lean each axis fully toward its winning letter — the bars still read as
 // intentional. Tokens from the current encoder carry exact tallies and skip this.
 function fallbackScores(type: TypeCode): Record<Axis, AxisScore> {
     return AXES.reduce(
@@ -102,72 +107,53 @@ export function ResultView() {
     // One-shot reveal vocabulary; every entrance degrades to an opacity-only
     // fade under reduced motion (ADR-0006 convention).
     const rise = reducedMotion ? fadeOnly : fadeUp
-    const pop = reducedMotion ? fadeOnly : popIn
     const art = reducedMotion ? fadeOnly : heroArtRise
-
-    // Own result = the visitor finished the test this session (in-memory result).
-    // Shared visitor = arrived via a shared URL with only the ?t= token. The Test
-    // page appends ?t= even for the player's own result, so the param alone cannot
-    // distinguish the two — in-memory presence is the real signal.
-    const ownType = result?.type ?? null
-    // Primitive token read — used both for decoding and to classify a result_error
-    // without putting the unstable searchParams object in the effect deps below.
-    const resultParam = searchParams.get(RESULT_PARAM)
-    const decoded = decodeResult(resultParam)
-    const sharedType = decoded?.type ?? null
-    const type = ownType ?? sharedType
-    const isSharedVisitor = ownType === null && sharedType !== null
 
     const handleRestart = () => {
         reset()
         router.push('/')
     }
 
-    // Entry event: result_view (owner vs shared-link visitor) or result_error
-    // when no type resolves. The ref guard limits it to the FIRST run (StrictMode
-    // dev double-effect); the deps are all primitives so they stay honest.
-    const entryTracked = useRef(false)
+    // Result source: the in-memory result (just took the test) OR the ?t= param
+    // decoded back into a type + tallies (refresh or a shared link). Primitive
+    // reads keep the entry effect's deps honest. `visitor` is analytics-only —
+    // the layout is identical for both.
+    const ownType = result?.type ?? null
+    const resultParam = searchParams.get(RESULT_PARAM)
+    const decoded = decodeResult(resultParam)
+    const type = ownType ?? decoded?.type ?? null
+
+    // Entry: result_view (owner vs link visitor), OR — when nothing resolves (no
+    // in-memory result AND no/invalid ?t=) — record result_error and redirect to
+    // the intro. The ref guard limits it to the FIRST run (StrictMode dev double
+    // effect); router.replace avoids leaving a dead /result in history.
+    const entryHandled = useRef(false)
     useEffect(() => {
-        if (entryTracked.current) return
-        entryTracked.current = true
+        if (entryHandled.current) return
+        entryHandled.current = true
         if (type !== null) {
-            trackEvent('result_view', { type, visitor: isSharedVisitor ? 'shared' : 'owner' })
+            trackEvent('result_view', { type, visitor: ownType !== null ? 'owner' : 'shared' })
         } else {
             trackEvent('result_error', { reason: resultParam === null ? 'missing' : 'invalid' })
+            router.replace('/')
         }
-    }, [type, isSharedVisitor, resultParam])
+    }, [type, ownType, resultParam, router])
 
+    // No result at all — redirecting; render only the paper base (no content flash).
     if (type === null) {
-        return (
-            <main data-testid="result-root" className={PAPER_CLASS}>
-                <div className="flex min-h-dvh flex-col items-center justify-center gap-4 px-gutter">
-                    <p className="m-0 text-ink-muted">결과 없음</p>
-                    <GameButton
-                        variant="secondary"
-                        onClick={withTrack('restart_click', { source: 'error' }, () =>
-                            router.push('/'),
-                        )}
-                    >
-                        처음으로
-                    </GameButton>
-                </div>
-            </main>
-        )
+        return <main data-testid="result-root" className={PAPER_CLASS} />
     }
 
     const info = getTypeInfo(type)
     const group = temperamentGroup(type)
+    // Real tallies for the player, the exact URL-encoded tallies for a link
+    // visitor, or a full-lean fallback for a legacy bare code.
+    const axisScores = result?.axisScores ?? decoded?.axisScores ?? fallbackScores(type)
 
-    // Axis bars: real tallies for the player, the exact URL-encoded tallies for a
-    // shared visitor, or a full-lean fallback for a legacy bare code.
-    const axisScores =
-        result !== null && ownType !== null
-            ? result.axisScores
-            : (decoded?.axisScores ?? fallbackScores(type))
-
-    // Per-type identity gradient is the primary hero visual; the temperament
-    // group is demoted to the faction badge.
-    const heroStyle = { '--type-grad': typeGradient(type) } as CSSProperties
+    // Per-type identity gradient now lives inside the polaroid photo window
+    // (the hero itself sits on plain kraft paper). The temperament group is the
+    // faction badge.
+    const gradient = typeGradient(type)
 
     return (
         <main data-testid="result-root" className={PAPER_CLASS}>
@@ -178,69 +164,31 @@ export function ResultView() {
                 their own `variants`. */}
             <m.div variants={staggerContainer} initial="hidden" animate="visible">
                 <m.header
-                    className="relative flex flex-col items-center overflow-hidden rounded-b-4xl px-gutter pt-15 pb-6 text-center shadow-[0_16px_32px_-14px_rgba(20,12,6,0.6),inset_0_-2px_0_rgba(0,0,0,0.12)] [background:var(--type-grad)]"
-                    style={heroStyle}
+                    className="relative flex flex-col items-center px-gutter pt-14 pb-2 text-center"
                     variants={staggerContainer}
                 >
-                    {/* Gradient washes — sheen above, grounding shade below. */}
-                    <span
-                        className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_-10%,rgba(255,255,255,0.4),transparent_55%),radial-gradient(140%_90%_at_50%_130%,rgba(0,0,0,0.32),transparent_60%)]"
-                        aria-hidden="true"
-                    />
-
                     <m.p
-                        className="relative z-1 m-0 font-display text-lg text-white [text-shadow:0_2px_6px_rgba(0,0,0,0.4)]"
+                        className="relative z-1 m-0 font-display text-lg text-primary-active"
                         variants={rise}
                     >
                         🎉 나의 앵무새 성격은
                     </m.p>
 
-                    <m.div className="relative z-1 my-1.5 size-38" variants={art}>
-                        {reducedMotion ? (
-                            <ParrotImage
-                                type={type}
-                                width={304}
-                                height={304}
-                                loading="eager"
-                                className="h-full w-full object-contain drop-shadow-[0_12px_16px_rgba(0,0,0,0.4)]"
-                            />
-                        ) : (
-                            <m.div
-                                className="h-full w-full"
-                                animate={{ y: [0, -8, 0] }}
-                                transition={{ duration: 3.4, repeat: Infinity, ease: 'easeInOut' }}
-                            >
-                                <ParrotImage
-                                    type={type}
-                                    width={304}
-                                    height={304}
-                                    loading="eager"
-                                    className="h-full w-full object-contain drop-shadow-[0_12px_16px_rgba(0,0,0,0.4)]"
-                                />
-                            </m.div>
-                        )}
+                    {/* Adaptive polaroid: character only, or pet → character when a
+                        photo is attached. Code + name live in its caption. The
+                        per-type gradient fills the photo window. */}
+                    <m.div className="relative z-1 my-4 w-full" variants={art}>
+                        <ResultPolaroid
+                            type={type}
+                            name={info?.name ?? type}
+                            gradient={gradient}
+                            photoUrl={photo.objectUrl}
+                            reducedMotion={reducedMotion === true}
+                        />
                     </m.div>
 
-                    <div className="relative z-1 mb-3 flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
-                        <m.p
-                            data-testid="result-type"
-                            className="m-0 font-display text-4xl leading-none tracking-wider text-white [text-shadow:0_3px_10px_rgba(0,0,0,0.4)]"
-                            variants={pop}
-                        >
-                            {type}
-                        </m.p>
-                        {info !== null && (
-                            <m.h1
-                                className="m-0 font-display text-lg leading-[1.1] font-normal break-keep text-gold [text-shadow:0_2px_6px_rgba(0,0,0,0.45)]"
-                                variants={rise}
-                            >
-                                {info.name}
-                            </m.h1>
-                        )}
-                    </div>
-
                     <m.span
-                        className="relative z-1 rounded-full border-[1.5px] border-white/70 px-4 py-1.5 font-display text-sm whitespace-nowrap text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_4px_10px_-4px_rgba(0,0,0,0.4)]"
+                        className="relative z-1 rounded-full border-[length:var(--border-hair)] border-white/70 px-4 py-1.5 font-display text-sm whitespace-nowrap text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_4px_10px_-4px_rgba(0,0,0,0.4)]"
                         style={{ background: GROUP_CSS_VAR[group] }}
                         variants={rise}
                     >
@@ -252,11 +200,36 @@ export function ResultView() {
                     className="flex flex-col gap-4 px-gutter pt-5 pb-9"
                     variants={staggerContainer}
                 >
+                    {/* 사진 + 공유 + 앱 CTA (#08/#09) — pulled above 성격 분석. The
+                        attached photo feeds both the hero polaroid (two photos) and
+                        the share card. */}
+                    <m.div className="flex flex-col gap-3" variants={rise}>
+                        <GamePanel className="px-4 py-4">
+                            <PhotoInput
+                                objectUrl={photo.objectUrl}
+                                onPick={photo.setFile}
+                                onClear={photo.clear}
+                            />
+                        </GamePanel>
+                        <ShareButton type={type} photoUrl={photo.objectUrl} />
+                        <AppCtaButton placement="result" />
+                    </m.div>
+
                     {info !== null && (
                         <m.div variants={rise}>
-                            <GamePanel as="section" aria-label="성격 설명" className="px-4 py-5">
+                            <GamePanel
+                                as="section"
+                                aria-label="성격 분석"
+                                className="px-4 pt-4 pb-5"
+                            >
+                                <h2 className="m-0 mb-4 font-display text-lg font-normal text-ink">
+                                    <Marker variant="head">성격 분석</Marker>
+                                </h2>
+                                <p className="m-0 mb-3.5 font-display text-lg leading-normal break-keep text-ink">
+                                    <Marker variant="lead">{info.report}</Marker>
+                                </p>
                                 <p className="m-0 text-sm leading-relaxed break-keep text-ink">
-                                    {info.description}
+                                    {emphasize(info.description)}
                                 </p>
                             </GamePanel>
                         </m.div>
@@ -275,7 +248,7 @@ export function ResultView() {
                                 className="px-4 pt-4 pb-5"
                             >
                                 <h2 className="m-0 mb-4 font-display text-lg font-normal text-ink">
-                                    🤝 환상의 궁합
+                                    🤝 <Marker variant="head">환상의 궁합</Marker>
                                 </h2>
                                 <div className="flex gap-3">
                                     {info.match.map((matchCode) => (
@@ -297,62 +270,23 @@ export function ResultView() {
                         </m.div>
                     )}
 
-                    {/* Photo (#08) — own results only; feeds the share card (#09). */}
-                    {!isSharedVisitor && (
-                        <m.div variants={rise}>
-                            <GamePanel className="px-4 py-4">
-                                <PhotoInput
-                                    objectUrl={photo.objectUrl}
-                                    onPick={photo.setFile}
-                                    onClear={photo.clear}
-                                />
-                            </GamePanel>
-                        </m.div>
-                    )}
-
-                    <m.div className="mt-1 flex flex-col gap-3" variants={rise}>
-                        {!isSharedVisitor && <ShareButton type={type} photoUrl={photo.objectUrl} />}
-                        {isSharedVisitor && (
-                            <GameButton
-                                size="sm"
-                                className="w-full"
-                                data-testid="retake-button"
-                                onClick={withTrack(
-                                    'restart_click',
-                                    { source: 'shared' },
-                                    handleRestart,
-                                )}
-                            >
-                                나도 테스트하기
-                            </GameButton>
-                        )}
-                        <div className="flex gap-3">
-                            <GameButton
-                                variant="secondary"
-                                className="flex-1"
-                                data-testid="deck-open-button"
-                                onClick={deck.openAnimated}
-                            >
-                                🗂 도감 보기
-                            </GameButton>
-                            {!isSharedVisitor && (
-                                <GameButton
-                                    variant="secondary"
-                                    className="flex-1"
-                                    data-testid="restart-button"
-                                    onClick={withTrack(
-                                        'restart_click',
-                                        { source: 'owner' },
-                                        handleRestart,
-                                    )}
-                                >
-                                    ↺ 다시하기
-                                </GameButton>
-                            )}
-                        </div>
-                        <div className="flex justify-center">
-                            <AppCtaButton placement="result" />
-                        </div>
+                    <m.div className="mt-1 flex gap-3" variants={rise}>
+                        <GameButton
+                            variant="secondary"
+                            className="flex-1"
+                            data-testid="deck-open-button"
+                            onClick={deck.openAnimated}
+                        >
+                            🗂 도감 보기
+                        </GameButton>
+                        <GameButton
+                            variant="secondary"
+                            className="flex-1"
+                            data-testid="restart-button"
+                            onClick={withTrack('restart_click', { source: 'owner' }, handleRestart)}
+                        >
+                            ↺ 다시하기
+                        </GameButton>
                     </m.div>
                 </m.div>
             </m.div>

@@ -21,16 +21,22 @@ export function AppCtaButton({ placement }: AppCtaButtonProps) {
     // The intro CTA stays on the static label: it renders immediately on load,
     // where a late remote value would flicker the copy.
     const remoteResultLabel = useRemoteConfigString('result_cta_label')
-    const label = placement === 'result' ? remoteResultLabel : APP_CTA_LABEL
+    const isResult = placement === 'result'
+    const label = isResult ? remoteResultLabel : APP_CTA_LABEL
 
     const handleClick = () => {
         track({ name: 'app_cta_click', payload: { placement } })
     }
 
+    // On the result surface the app install is the product's primary conversion,
+    // so the CTA is promoted to the full-width primary button (sits under
+    // 친구에게 공유하기). The intro keeps the quieter secondary so it never
+    // competes with the 테스트 시작하기 primary.
     return (
         <GameButtonLink
-            variant="secondary"
+            variant={isResult ? 'primary' : 'secondary'}
             size="sm"
+            className={isResult ? 'w-full' : undefined}
             href={APP_CTA_URL}
             target="_blank"
             rel="noopener noreferrer"

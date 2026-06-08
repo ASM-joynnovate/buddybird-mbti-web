@@ -62,7 +62,7 @@ export function ParrotImage({
                 role="img"
                 aria-label={alt}
             >
-                <span className="text-[2.5rem] leading-none" aria-hidden="true">
+                <span className="text-4xl leading-none" aria-hidden="true">
                     🦜
                 </span>
                 <span className="font-display text-xl tracking-wider text-ink">{type}</span>

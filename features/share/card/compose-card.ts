@@ -1,34 +1,66 @@
-// Composes the 1080×1080 share card on a client Canvas (issue #09): a cover-cropped
-// parrot photo hero over a temperament-colored band with the type, name, copy, and
-// BuddyBird branding. Returns a PNG Blob. Same-origin inputs only (blob: photo,
-// /brand logo) so the canvas is never tainted and toBlob can read it back.
+// Share-card composition (design handoff Design B "polaroid scrapbook",
+// 1080x1080). Warm paper -> slightly tilted white polaroid card (2 washi tapes +
+// round brand stamp) -> photo window (solo: one character / duo: my parrot cover
+// -> character, before->after) -> caption (code/name/tagline). Returns a PNG Blob.
+//
+// Only same-origin inputs are used (blob: pet photo, /parrots-mbti-charactor/*,
+// /brand) so the canvas stays untainted and is readable back via toBlob. Uses the
+// same tokens as the on-screen ResultPolaroid (tape/tag/gradient/caption hierarchy)
+// so the two outputs read as one design.
 
 import type { TypeCode } from '@/lib/mbti'
-import { BAND, BAND_TEXT, CARD_BG, CARD_SIZE, HERO, HERO_PLACEHOLDER_BG } from './card-layout'
+import { loadFonts, roundRectPath, wrapLines } from './canvas-utils'
+import {
+    CAP_BOTTOM_PAD,
+    CAP_CODE_SIZE,
+    CAP_NAME_SIZE,
+    CAP_TAG_LINE,
+    CAP_TAG_SIZE,
+    CAP_TOP_PAD,
+    CARD_BG,
+    CARD_PAD,
+    CARD_RADIUS,
+    CARD_ROTATE,
+    CARD_SIZE,
+    CARD_W,
+    CARD_X,
+    DUO_GAP,
+    DUO_PHOTO_H,
+    DUO_PHOTO_R,
+    FONT_BODY,
+    FONT_DISPLAY,
+    GOLD,
+    INK,
+    INK_MUTED,
+    PHOTO_INNER,
+    PRIMARY,
+    PRIMARY_ACTIVE,
+    SOLO_PHOTO_H,
+    SOLO_PHOTO_R,
+} from './card-layout'
+import {
+    drawCharWindow,
+    drawPetWindow,
+    drawStamp,
+    drawTag,
+    drawTape,
+    paintPaper,
+} from './card-parts'
 
 interface ComposeCardInput {
     type: TypeCode
     typeName: string
     copy: string
+    /** User-uploaded parrot photo. null means a single character card (solo). */
     photo: HTMLImageElement | null
-    bandHex: string
-    logo: HTMLImageElement | null
+    /** MBTI character PNG (same-origin). */
+    character: HTMLImageElement | null
+    /** Type identity 2-color — character photo-window gradient. */
+    colors: readonly [string, string]
 }
 
 export async function composeCard(input: ComposeCardInput): Promise<Blob> {
-    // Load the brand fonts before drawing — otherwise the first compose silently
-    // renders with a fallback face.
-    if (typeof document !== 'undefined' && document.fonts) {
-        await document.fonts.ready
-        try {
-            await Promise.all([
-                document.fonts.load('116px "Jua"'),
-                document.fonts.load('700 32px "Noto Sans KR"'),
-            ])
-        } catch {
-            // Font load is best-effort; fall back to whatever is available.
-        }
-    }
+    await loadFonts()
 
     const canvas = document.createElement('canvas')
     canvas.width = CARD_SIZE
@@ -38,148 +70,111 @@ export async function composeCard(input: ComposeCardInput): Promise<Blob> {
         throw new Error('Canvas 2D context unavailable')
     }
 
-    ctx.fillStyle = CARD_BG
-    ctx.fillRect(0, 0, CARD_SIZE, CARD_SIZE)
+    // 1) Paper base (warm radial spreading from near the top).
+    paintPaper(ctx)
 
-    // Photo hero (rounded, cover-cropped) or a placeholder mark.
+    // 2) Layout — measure the tagline line count first to fix the card height.
+    const hasPhoto = input.photo !== null
+    const photoH = hasPhoto ? DUO_PHOTO_H : SOLO_PHOTO_H
+    ctx.font = `${CAP_TAG_SIZE}px ${FONT_BODY}`
+    const taglineLines = wrapLines(ctx, input.copy, CARD_W - CARD_PAD * 2 - 24, 2)
+    const captionH =
+        CAP_TOP_PAD +
+        CAP_CODE_SIZE +
+        12 +
+        CAP_NAME_SIZE +
+        22 +
+        taglineLines.length * CAP_TAG_LINE +
+        CAP_BOTTOM_PAD
+    const cardH = CARD_PAD + photoH + captionH
+    const cardY = Math.round((CARD_SIZE - cardH) / 2)
+    const cardCx = CARD_X + CARD_W / 2
+    const cardCy = cardY + cardH / 2
+
+    // 3) Card group — rotated -2.5deg about its center.
     ctx.save()
-    roundRectPath(ctx, HERO.x, HERO.y, HERO.w, HERO.h, HERO.radius)
-    ctx.clip()
-    if (input.photo !== null) {
-        drawCover(ctx, input.photo, HERO.x, HERO.y, HERO.w, HERO.h)
-    } else {
-        ctx.fillStyle = HERO_PLACEHOLDER_BG
-        ctx.fillRect(HERO.x, HERO.y, HERO.w, HERO.h)
-        ctx.fillStyle = '#4c6151'
-        ctx.font = '200px "Jua", system-ui, sans-serif'
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'middle'
-        ctx.fillText('🦜', HERO.x + HERO.w / 2, HERO.y + HERO.h / 2)
-    }
+    ctx.translate(cardCx, cardCy)
+    ctx.rotate(CARD_ROTATE)
+    ctx.translate(-cardCx, -cardCy)
+
+    // Card base (with shadow).
+    ctx.save()
+    ctx.shadowColor = 'rgba(40,20,8,0.45)'
+    ctx.shadowBlur = 60
+    ctx.shadowOffsetY = 34
+    ctx.fillStyle = CARD_BG
+    roundRectPath(ctx, CARD_X, cardY, CARD_W, cardH, CARD_RADIUS)
+    ctx.fill()
     ctx.restore()
 
-    // Info band.
-    roundRectPath(ctx, BAND.x, BAND.y, BAND.w, BAND.h, BAND.radius)
-    ctx.fillStyle = input.bandHex
-    ctx.fill()
+    const photoX = CARD_X + CARD_PAD
+    const photoY = cardY + CARD_PAD
 
-    const cx = BAND.x + BAND.w / 2
-    ctx.fillStyle = BAND_TEXT
+    if (hasPhoto && input.photo !== null) {
+        const shotW = (PHOTO_INNER - DUO_GAP) / 2
+        // My parrot — cover.
+        drawPetWindow(ctx, input.photo, photoX, photoY, shotW, DUO_PHOTO_H, DUO_PHOTO_R)
+        drawTag(ctx, '📷 내 앵무새', photoX + shotW / 2, photoY + DUO_PHOTO_H - 22, false)
+        // MBTI character.
+        const rx = photoX + shotW + DUO_GAP
+        drawCharWindow(
+            ctx,
+            input.character,
+            input.colors,
+            rx,
+            photoY,
+            shotW,
+            DUO_PHOTO_H,
+            DUO_PHOTO_R,
+        )
+        drawTag(ctx, `✨ ${input.type} 캐릭터`, rx + shotW / 2, photoY + DUO_PHOTO_H - 22, true)
+    } else {
+        drawCharWindow(
+            ctx,
+            input.character,
+            input.colors,
+            photoX,
+            photoY,
+            PHOTO_INNER,
+            SOLO_PHOTO_H,
+            SOLO_PHOTO_R,
+        )
+    }
+
+    // Washi tape — straddling the card's top corners (orange left / gold right).
+    drawTape(ctx, CARD_X + 110, cardY - 18, 230, 50, (-7 * Math.PI) / 180, PRIMARY)
+    drawTape(ctx, CARD_X + CARD_W - 110 - 200, cardY - 14, 200, 50, (6 * Math.PI) / 180, GOLD)
+
+    // Round brand stamp (top-right, 9deg).
+    drawStamp(ctx, CARD_X + CARD_W - 22 - 65, cardY + 50 + 65, 65)
+
+    // Caption — code / name / tagline.
+    const cx = CARD_X + CARD_W / 2
+    let baseline = photoY + photoH + CAP_TOP_PAD + CAP_CODE_SIZE
     ctx.textAlign = 'center'
     ctx.textBaseline = 'alphabetic'
 
-    ctx.font = '116px "Jua", system-ui, sans-serif'
-    ctx.fillText(input.type, cx, BAND.y + 138)
+    ctx.fillStyle = PRIMARY_ACTIVE
+    ctx.font = `${CAP_CODE_SIZE}px ${FONT_DISPLAY}`
+    ctx.fillText(input.type, cx, baseline)
 
-    ctx.font = '46px "Jua", system-ui, sans-serif'
-    ctx.fillText(input.typeName, cx, BAND.y + 198)
+    baseline += 12 + CAP_NAME_SIZE
+    ctx.fillStyle = INK
+    ctx.font = `${CAP_NAME_SIZE}px ${FONT_DISPLAY}`
+    ctx.fillText(input.typeName, cx, baseline)
 
-    ctx.font = '400 32px "Noto Sans KR", system-ui, sans-serif'
-    wrapText(ctx, input.copy, cx, BAND.y + 252, BAND.w - 140, 44, 2)
+    baseline += 22 + CAP_TAG_SIZE
+    ctx.fillStyle = INK_MUTED
+    ctx.font = `${CAP_TAG_SIZE}px ${FONT_BODY}`
+    taglineLines.forEach((line, index) => {
+        ctx.fillText(line, cx, baseline + index * CAP_TAG_LINE)
+    })
 
-    // Brand footer (logo mark if provided, else wordmark text).
-    ctx.font = '700 30px "Noto Sans KR", system-ui, sans-serif'
-    ctx.globalAlpha = 0.92
-    if (input.logo !== null) {
-        const logoH = 40
-        const logoW = (input.logo.naturalWidth / input.logo.naturalHeight) * logoH
-        ctx.drawImage(input.logo, cx - logoW / 2, BAND.y + BAND.h - 60, logoW, logoH)
-    } else {
-        ctx.fillText('버디버드 앵무새 MBTI', cx, BAND.y + BAND.h - 34)
-    }
-    ctx.globalAlpha = 1
+    ctx.restore()
 
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'))
     if (blob === null) {
         throw new Error('Canvas toBlob returned null')
     }
     return blob
-}
-
-// --- Canvas helpers ---
-
-function roundRectPath(
-    ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    r: number,
-): void {
-    ctx.beginPath()
-    if (typeof ctx.roundRect === 'function') {
-        ctx.roundRect(x, y, w, h, r)
-        return
-    }
-    ctx.moveTo(x + r, y)
-    ctx.arcTo(x + w, y, x + w, y + h, r)
-    ctx.arcTo(x + w, y + h, x, y + h, r)
-    ctx.arcTo(x, y + h, x, y, r)
-    ctx.arcTo(x, y, x + w, y, r)
-    ctx.closePath()
-}
-
-// Draw `img` covering the destination rect, center-cropping the overflow.
-function drawCover(
-    ctx: CanvasRenderingContext2D,
-    img: HTMLImageElement,
-    dx: number,
-    dy: number,
-    dw: number,
-    dh: number,
-): void {
-    const imageRatio = img.naturalWidth / img.naturalHeight
-    const destRatio = dw / dh
-
-    let sx = 0
-    let sy = 0
-    let sw = img.naturalWidth
-    let sh = img.naturalHeight
-
-    if (imageRatio > destRatio) {
-        sw = sh * destRatio
-        sx = (img.naturalWidth - sw) / 2
-    } else {
-        sh = sw / destRatio
-        sy = (img.naturalHeight - sh) / 2
-    }
-
-    ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh)
-}
-
-// Center-wrap `text` to at most `maxLines`, char by char (Korean has no word breaks),
-// ellipsizing the final line when it overflows.
-function wrapText(
-    ctx: CanvasRenderingContext2D,
-    text: string,
-    cx: number,
-    y: number,
-    maxWidth: number,
-    lineHeight: number,
-    maxLines: number,
-): void {
-    const lines: string[] = []
-    let line = ''
-
-    for (const char of [...text]) {
-        const candidate = line + char
-        if (line !== '' && ctx.measureText(candidate).width > maxWidth) {
-            lines.push(line)
-            line = char
-        } else {
-            line = candidate
-        }
-    }
-    if (line !== '') {
-        lines.push(line)
-    }
-
-    const clipped = lines.slice(0, maxLines)
-    if (lines.length > maxLines && clipped.length > 0) {
-        clipped[clipped.length - 1] = `${clipped[clipped.length - 1].slice(0, -1)}…`
-    }
-
-    clipped.forEach((entry, index) => {
-        ctx.fillText(entry, cx, y + index * lineHeight)
-    })
 }

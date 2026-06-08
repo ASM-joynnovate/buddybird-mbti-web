@@ -4,10 +4,10 @@
 // optional photo, then shares it natively or downloads it as a fallback, emitting the
 // matching funnel event (issue #11). Works with no photo (placeholder hero).
 import { useState } from 'react'
-import { BRAND_LOGO_SRC, getTypeInfo } from '@/content'
+import { getTypeInfo, parrotImageSrc } from '@/content'
 import { shareCard } from '@/features/share'
-import { composeCard, loadImage } from '@/features/share/card'
-import { GROUP_TEXT_SAFE_HEX, temperamentGroup, type TypeCode } from '@/lib/mbti'
+import { CHAR_GRAD_FALLBACK, composeCard, loadImage } from '@/features/share/card'
+import type { TypeCode } from '@/lib/mbti'
 import { track } from '@/shared/analytics'
 import { GameButton } from '@/shared/ui/game-button'
 
@@ -30,15 +30,15 @@ export function ShareButton({ type, photoUrl }: ShareButtonProps) {
         try {
             const info = getTypeInfo(type)
             const photo = photoUrl !== null ? await loadImage(photoUrl).catch(() => null) : null
-            const logo = await loadImage(BRAND_LOGO_SRC).catch(() => null)
+            const character = await loadImage(parrotImageSrc(type)).catch(() => null)
 
             const blob = await composeCard({
                 type,
                 typeName: info?.name ?? type,
                 copy: info?.report ?? '',
                 photo,
-                bandHex: GROUP_TEXT_SAFE_HEX[temperamentGroup(type)],
-                logo,
+                character,
+                colors: info?.colors ?? CHAR_GRAD_FALLBACK,
             })
 
             const outcome = await shareCard(blob, type)
@@ -64,7 +64,7 @@ export function ShareButton({ type, photoUrl }: ShareButtonProps) {
     return (
         <div className="flex w-full flex-col gap-2">
             <GameButton
-                variant="primary"
+                variant="secondary"
                 size="sm"
                 className="w-full"
                 data-testid="share-button"

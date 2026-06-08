@@ -28,7 +28,7 @@ export function TradingCard({ code, compact = false, loading = 'eager' }: Tradin
                     : 'relative w-full rounded-card bg-(image:--gradient-card-frame) p-1.5 shadow-card-frame'
             }
         >
-            <div className="relative overflow-hidden rounded-lg border-[1.5px] border-white bg-surface-cream">
+            <div className="relative overflow-hidden rounded-lg border-[length:var(--border-hair)] border-white bg-surface-cream">
                 {/* Compact deck cards centre the parrot in the window; the full
                     hero card keeps the bottom perch. */}
                 <PortraitWindow

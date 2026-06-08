@@ -114,7 +114,7 @@ export function DetailPopup({ code, onClose, onSelectType, cta }: DetailPopupPro
         <div className="fixed inset-0 z-60 flex items-center justify-center p-gutter">
             {/* Scrim — translucent by necessity (it dims arbitrary content below). */}
             <m.div
-                className="absolute inset-0 bg-[rgba(24,38,24,0.55)] backdrop-blur-[3px]"
+                className="absolute inset-0 bg-[rgba(24,38,24,0.55)] backdrop-blur-sm"
                 onClick={withTrack('detail_close', { method: 'scrim' }, onClose)}
                 variants={reducedMotion ? reducedFade : scrimFade}
                 initial="hidden"
@@ -154,14 +154,14 @@ export function DetailPopup({ code, onClose, onSelectType, cta }: DetailPopupPro
                     className="h-50 flex-none rounded-t-lg"
                 >
                     <span
-                        className="absolute bottom-3 left-4 z-3 font-display text-[2.75rem] leading-[0.9] tracking-wider text-white [text-shadow:0_3px_10px_rgba(0,0,0,0.45)]"
+                        className="absolute bottom-3 left-4 z-3 font-display text-5xl leading-[0.9] tracking-wider text-white [text-shadow:0_3px_10px_rgba(0,0,0,0.45)]"
                         aria-hidden="true"
                     >
                         {code}
                     </span>
                 </PortraitWindow>
 
-                <div className="min-h-0 flex-1 overflow-y-auto rounded-b-lg border-[1.5px] border-t-0 border-white bg-surface-cream px-4 pt-4 pb-4 [-webkit-overflow-scrolling:touch]">
+                <div className="min-h-0 flex-1 overflow-y-auto rounded-b-lg border-[length:var(--border-hair)] border-t-0 border-white bg-surface-cream px-4 pt-4 pb-4 [-webkit-overflow-scrolling:touch]">
                     <p className="m-0 font-display text-xl text-primary-active">{info.name}</p>
                     <DashedRule className="my-3" />
                     <p className="m-0 mb-4 text-sm leading-relaxed break-keep text-ink">
