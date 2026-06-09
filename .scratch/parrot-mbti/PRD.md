@@ -1,4 +1,4 @@
-# PRD: 앵무새 MBTI 테스트 (Parrot MBTI)
+# PRD: 앵BTI (구 앵무새 MBTI 테스트)
 
 Status: ready-for-agent
 
