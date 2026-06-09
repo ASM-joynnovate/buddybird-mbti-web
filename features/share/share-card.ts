@@ -22,7 +22,7 @@ export async function shareCard(blob: Blob, type: TypeCode): Promise<ShareOutcom
         try {
             await navigator.share({
                 files: [file],
-                title: '우리 앵무새 MBTI',
+                title: '우리 앵무새의 앵BTI 결과',
                 text: `우리 앵무새는 ${type}! 너희 앵무새도 테스트해봐 🦜`,
             })
             return { kind: 'shared' }

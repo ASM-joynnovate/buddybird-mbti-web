@@ -5,7 +5,7 @@ import { TestView } from '@/features/quiz/test-view'
 // TestView) — same split as page.tsx ↔ intro-view and result/page.tsx ↔
 // result-view (ADR-0010 screen-composition pattern).
 export const metadata: Metadata = {
-    title: '앵무새 MBTI 테스트 · 버디버드',
+    title: '앵BTI 테스트 · 버디버드',
     description: '우리 앵무새를 떠올리며 질문에 답하면 1분 만에 우리 아이의 진짜 성격이 나와요.',
 }
 

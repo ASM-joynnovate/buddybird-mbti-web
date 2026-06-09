@@ -21,8 +21,8 @@ const jua = Jua({
 // EXPERIMENT: body font → system Korean stack (see globals.css --font-sans).
 
 export const metadata: Metadata = {
-    title: '앵무새 MBTI · 버디버드',
-    description: '우리 앵무새의 성격은? 12문항으로 알아보는 앵무새 MBTI 테스트.',
+    title: '앵BTI · 버디버드',
+    description: '우리 앵무새의 성격은? 12문항으로 알아보는 앵BTI 테스트.',
 }
 
 export default function RootLayout({

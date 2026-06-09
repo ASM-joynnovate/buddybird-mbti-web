@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 /*
- * Parrot MBTI design system — "동화숲 월드" v2 (DESIGN.md is the norm; this file
+ * 앵BTI design system — "동화숲 월드" v2 (DESIGN.md is the norm; this file
  * is its Tailwind v4 @theme binding). Tailwind-only policy (ADR-0008): this is
  * the ONE stylesheet — design tokens + the body base and nothing else. No
  * component classes, no @layer/@utility, no keyframes; styling lives inline on
