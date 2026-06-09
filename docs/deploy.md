@@ -1,6 +1,6 @@
 # Deployment
 
-BuddyBird MBTI ships as a **Next standalone Node container** behind the **Caddy
+앵BTI ships as a **Next standalone Node container** behind the **Caddy
 reverse proxy that already runs on the server** (see `docs/adr/0002`). Deployment
 is **manual**: build and run the container on the server with Docker Compose; the
 existing Caddy reverse-proxies the domain to it.

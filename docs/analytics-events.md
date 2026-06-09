@@ -1,6 +1,6 @@
 # Analytics 이벤트 사전
 
-버디버드 앵무새 MBTI 웹이 전송하는 모든 GA4 이벤트의 사전이다. 코드상 단일 진실
+버디버드 앵BTI 웹이 전송하는 모든 GA4 이벤트의 사전이다. 코드상 단일 진실
 원천은 `shared/analytics/events.ts`(타입 계약)이며, 이 문서는 GA4 대시보드를 보는
 사람을 위한 풀이판이다. 전송 백엔드는 지연 로딩 Firebase GA4(ADR-0011); payload 키는
 GA4에서 snake_case로, `type`(앵무새 유형 코드)은 `parrot_type` 파라미터로 나타난다.

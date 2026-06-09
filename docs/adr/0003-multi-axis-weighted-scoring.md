@@ -4,7 +4,7 @@ status: accepted
 
 # Multi-axis weighted scoring for behaviour-observation questions
 
-The Parrot MBTI test scores a parrot's type from **13 two-choice questions** where
+The 앵BTI test scores a parrot's type from **13 two-choice questions** where
 **each choice weights one or more axis letters by +1**, instead of the original
 "12 questions, one choice = exactly one axis +1" model. The two choices of a
 question are **symmetric**: they cover the same axes with the opposite letters, so a

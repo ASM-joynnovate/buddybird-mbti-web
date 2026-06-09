@@ -4,7 +4,7 @@ status: accepted
 
 # Visual design direction: tropical jungle, single fixed theme
 
-The Parrot MBTI web adopts a **tropical daylight-jungle** visual direction on a
+The 앵BTI web adopts a **tropical daylight-jungle** visual direction on a
 **green base** (not cream/ivory), with parrot-feather accents and an organic-leaf
 shape language. We chose it because the product's required signature motion —
 "part the foliage and move forward" between questions — becomes _native_ to the

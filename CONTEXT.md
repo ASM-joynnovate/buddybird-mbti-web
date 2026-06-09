@@ -1,6 +1,6 @@
-# Parrot MBTI
+# 앵BTI
 
-The shared language for the BuddyBird Parrot MBTI viral web — a mobile web that
+The shared language for the BuddyBird 앵BTI viral web — a mobile web that
 derives a _parrot's_ MBTI from its guardian's answers and turns the result into a
 shareable card that funnels toward installing the BuddyBird app.
 

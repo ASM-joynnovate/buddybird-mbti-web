@@ -4,7 +4,7 @@ status: accepted
 
 # Deployment: Next standalone Node container behind the existing Caddy
 
-The Parrot MBTI web is deployed as a **Next.js `output: 'standalone'` Node server
+The 앵BTI web is deployed as a **Next.js `output: 'standalone'` Node server
 container** (port 3000), reverse-proxied by the **Caddy container that already runs
 on the server's external `proxy` bridge network**. This replaces the earlier
 "static `output: 'export'`, client-only static hosting" assumption recorded in the

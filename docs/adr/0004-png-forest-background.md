@@ -4,7 +4,7 @@ status: accepted
 
 # App-wide PNG forest background (replaces the SVG leaf backdrop)
 
-The Parrot MBTI web adopts a single **PNG-based, layered mobile forest** as the
+The 앵BTI web adopts a single **PNG-based, layered mobile forest** as the
 app-wide backdrop behind every surface (Intro / Test / Result / Dex). It is
 mounted once via `<MobileForestBackground>` in `app/layout.tsx` as a
 `position: fixed; inset: 0; z-index: -1` layer, so the same forest world is shared

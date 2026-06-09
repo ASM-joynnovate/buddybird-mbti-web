@@ -8,7 +8,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## Product
 
-**버디버드(BuddyBird) 앵무새 MBTI** — 앵무새 보호자를 버디버드 앱 설치로 유도하는
+**버디버드(BuddyBird) 앵BTI** — 앵무새 보호자를 버디버드 앱 설치로 유도하는
 바이럴 모바일 웹. 보호자가 자기 앵무새를 관찰한 내용을 2지선다로 답하면 앵무새의
 MBTI를 도출하고, 결과 카드를 인스타로 공유하게 해 앱 유입을 일으킨다.
 

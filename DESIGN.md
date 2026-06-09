@@ -2,7 +2,7 @@
 version: alpha
 name: 동화숲 월드 (Fairytale Forest World)
 description: >-
-    A playful, game-like mobile design system for the Parrot MBTI test. Warm cream
+    A playful, game-like mobile design system for the 앵BTI test. Warm cream
     parchment surfaces sit over a low-poly fairytale forest, and a single bell-orange
     accent drives every action. Depth is conveyed through a tactile "raised block"
     language — a colored bottom depth-bar, a soft drop shadow, and an inset top
@@ -157,7 +157,7 @@ components:
         rounded: '{rounded.full}'
 ---
 
-# 동화숲 월드 — Parrot MBTI Design System
+# 동화숲 월드 — 앵BTI Design System
 
 ## Overview
 
