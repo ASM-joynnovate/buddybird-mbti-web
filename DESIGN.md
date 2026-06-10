@@ -290,9 +290,8 @@ All components inherit the raised-block depth language and the orange action fam
   feedback inside the 420ms auto-advance budget: a ~90ms press-in (deeper sink, depth bar
   squash), a spring rebound — the row never holds the pressed pose — while a check stamp
   slams onto the letter tile (scale 1.45→1.0, rotate −8°→−3°, back-out spring) with a
-  fading ink ring; selection then reads from the stamp + orange border/tint, plus a
-  one-line `navigator.vibrate(12)` haptic on Android. Reduced motion swaps states
-  instantly with the same 420ms pacing.
+  fading ink ring; selection then reads from the stamp + orange border/tint. Reduced
+  motion swaps states instantly with the same 420ms pacing.
 - **Question Card (Quest Sheet):** The question presented as a parchment commission
   notice pinned to the forest — a brass pin at the top, a slight −1.2° tilt, a Jua
   "No.n" commission-number eyebrow, the question emoji as a tilted postage-stamp tile

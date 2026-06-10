@@ -9,16 +9,6 @@ import { m } from 'motion/react'
 import type { Choice } from '@/lib/mbti'
 import { easeLeaf, easeSpring } from '@/shared/motion'
 
-// Progressive-enhancement haptic tick on choice tap (Android only; iOS Safari
-// no-ops). Never load-bearing.
-function buzz() {
-    try {
-        navigator.vibrate?.(12)
-    } catch {
-        /* unsupported — fine */
-    }
-}
-
 // Choice press-in — deeper sink than before (y4/0.97): the press and the
 // stamp-slam rebound together make the tap read as an event, not a state fade
 // (2026-06-07 Choice Row prototype round, recipe "도장 쾅").
@@ -58,10 +48,7 @@ export function QuizChoice({ choice, index, picked, reducedMotion, onPick }: Qui
             // now-disabled button.
             data-testid={picked !== null ? `opt-${choice.id}` : `choice-${choice.id}`}
             aria-label={choice.label}
-            onClick={() => {
-                buzz()
-                onPick(choice)
-            }}
+            onClick={() => onPick(choice)}
             disabled={picked !== null}
             className={isPicked ? CHOICE_PICKED_CLASS : CHOICE_CLASS}
             whileTap={interactive ? choiceTap : undefined}
