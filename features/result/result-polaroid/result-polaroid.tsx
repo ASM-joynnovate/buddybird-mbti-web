@@ -109,11 +109,15 @@ export function ResultPolaroid({
                 <div className="flex h-60 gap-2.5">
                     {/* 내 앵무새 — uploaded pet photo (cover) */}
                     <div className="relative flex-1 overflow-hidden rounded-sm bg-surface-cream shadow-[inset_0_0_0_2px_rgba(0,0,0,0.05)]">
+                        {/* data-clarity-mask: the pet photo must never appear in
+                         * Clarity session recordings — the PRD promises photos are
+                         * 100% client-side (ADR-0015). */}
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             className="absolute inset-0 h-full w-full object-cover"
                             src={photoUrl}
                             alt="내 앵무새 사진"
+                            data-clarity-mask="True"
                         />
                         <span className={`${TAG_BASE} bg-white/90 text-ink`}>📷 내 앵무새</span>
                     </div>

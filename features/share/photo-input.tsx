@@ -58,11 +58,15 @@ export function PhotoInput({ objectUrl, onPick, onClear }: PhotoInputProps) {
             {objectUrl !== null ? (
                 <div className="flex flex-col gap-3" data-testid="photo-preview">
                     <div className="overflow-hidden rounded-md border-2 border-border-action bg-white shadow-raise-bar-action">
+                        {/* data-clarity-mask: the pet photo must never appear in
+                         * Clarity session recordings — the PRD promises photos are
+                         * 100% client-side (ADR-0015). */}
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             className="block max-h-72 w-full object-cover"
                             src={objectUrl}
                             alt="선택한 우리 새 사진 미리보기"
+                            data-clarity-mask="True"
                         />
                     </div>
                     <div className="flex flex-wrap justify-center gap-2">

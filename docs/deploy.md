@@ -32,23 +32,26 @@ On the Oracle Cloud ARM (Ampere) instance:
     ```bash
     git clone https://github.com/ASM-joynnovate/buddybird-mbti-web.git /opt/buddybird-mbti
     ```
-4.  **Firebase web config** (ADR-0011): create a `.env` file next to
-    `docker-compose.yml` (compose loads it automatically and passes the values as
-    build args). Copy the keys from `.env.example` and fill in the values from
-    the Firebase console (Project settings → Your apps → Web app):
+4.  **Analytics web config** (Firebase ADR-0011, Clarity ADR-0015): create a
+    `.env` file next to `docker-compose.yml` (compose loads it automatically and
+    passes the values as build args). Copy the keys from `.env.example` and fill
+    in the values from the Firebase console (Project settings → Your apps → Web
+    app) and the Clarity dashboard (Settings → Overview → Project ID):
 
         ```bash
         cd /opt/buddybird-mbti
         cp .env.example .env
         vi .env   # fill in all seven NEXT_PUBLIC_FIREBASE_* values
+                  # plus NEXT_PUBLIC_CLARITY_PROJECT_ID
         ```
 
         ⚠️ `NEXT_PUBLIC_*` values are **frozen into the bundle at build time**. If the
         `.env` is missing or incomplete, the build succeeds but ships with analytics
-        **silently OFF** (the build log prints a `[build] NEXT_PUBLIC_FIREBASE_*
+        **silently OFF** (the build log prints `[build] NEXT_PUBLIC_FIREBASE_*
 
-    not set` warning). After every deploy, confirm events arrive in the GA4
-    Realtime report.
+    not set`/`[build] NEXT_PUBLIC_CLARITY_PROJECT_ID not set` warnings). After
+    every deploy, confirm events arrive in the GA4 Realtime report and a new
+    recording appears in the Clarity dashboard.
 
 ## 2. Caddy reverse proxy (one-time)
 

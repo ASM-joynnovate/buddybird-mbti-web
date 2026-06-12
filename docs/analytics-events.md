@@ -4,6 +4,8 @@
 원천은 `shared/analytics/events.ts`(타입 계약)이며, 이 문서는 GA4 대시보드를 보는
 사람을 위한 풀이판이다. 전송 백엔드는 지연 로딩 Firebase GA4(ADR-0011); payload 키는
 GA4에서 snake_case로, `type`(앵무새 유형 코드)은 `parrot_type` 파라미터로 나타난다.
+모든 이벤트는 Microsoft Clarity에도 팬아웃된다(ADR-0015) — 아래
+[Clarity 매핑](#microsoft-clarity-매핑) 참조.
 
 ## 핵심 퍼널
 
@@ -52,3 +54,21 @@ GA4에서 snake_case로, `type`(앵무새 유형 코드)은 `parrot_type` 파라
 - **바이럴 루프**: `result_view{visitor=shared}` → `restart_click{source=shared}` → `test_start`
 - **중도 이탈**: `test_back{index=0}` / 문항별 `question_answered` index 드롭오프
 - **탐색 인게이지먼트**: `deck_open` 비율, `detail_open`의 source 분포
+
+## Microsoft Clarity 매핑
+
+위의 모든 이벤트는 Clarity 세션 타임라인에도 **이름 그대로** 찍힌다
+(`shared/analytics/clarity-adapter.ts`, ADR-0015). Clarity 커스텀 이벤트는
+파라미터를 받지 못하므로 파라미터 단위 분석은 GA4 전용이고, Clarity는 대신
+세션 태그와 우선 녹화(upgrade)를 싣는다.
+
+| 종류       | 값                                                                  | 발화 시점                                               |
+| ---------- | ------------------------------------------------------------------- | ------------------------------------------------------- |
+| 세션 태그  | `parrot_type`                                                       | `test_completed`, `result_view` — 유형별 리코딩 필터링  |
+| 세션 태그  | `visitor` (`owner`/`shared`)                                        | `result_view` — 공유 유입 세션 구분                     |
+| 업그레이드 | `test_completed` / `share_success` / `share_error` / `result_error` | 퍼널 완주·바이럴 공유·오류 세션은 샘플링 무관 전체 녹화 |
+
+- **수치는 GA4에서, 장면은 Clarity에서**: 절대 카운트는 GA4 기준으로 읽는다
+  (clarity.ms를 막는 광고 차단기 때문에 Clarity 캡처율 ≤ GA4 캡처율).
+- 사용자 업로드 사진(`<img data-clarity-mask>`)은 리코딩에서 마스킹된다.
+- 킬스위치: Remote Config `clarity_enabled`를 `false`로 — 신규 세션부터 적용.
