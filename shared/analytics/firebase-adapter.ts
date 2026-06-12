@@ -3,8 +3,8 @@
 // payload keys are converted to snake_case per GA4 parameter conventions.
 // This module imports firebase types only — the runtime Analytics instance and
 // logEvent function are injected by shared/firebase, which owns all SDK loading.
-// Deliberately NOT re-exported from the analytics barrel: only the Firebase
-// bootstrap should construct this adapter.
+// Deliberately NOT re-exported from the analytics barrel: only
+// analytics-bootstrap.tsx should construct this adapter.
 
 import type { Analytics } from 'firebase/analytics'
 import type { TypeCode } from '@/lib/mbti/types'

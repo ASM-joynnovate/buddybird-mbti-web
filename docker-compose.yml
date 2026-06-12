@@ -7,9 +7,10 @@ services:
     web:
         build:
             context: .
-            # Firebase web config, inlined at build time (ADR-0011). Compose reads
-            # the values from a .env file next to this compose file on the server.
-            # Missing values fall back to empty → Firebase disabled (console sink).
+            # Analytics web config, inlined at build time (Firebase ADR-0011,
+            # Clarity ADR-0015). Compose reads the values from a .env file next to
+            # this compose file on the server. Missing values fall back to empty →
+            # that backend stays disabled (console sink).
             args:
                 NEXT_PUBLIC_FIREBASE_API_KEY: ${NEXT_PUBLIC_FIREBASE_API_KEY:-}
                 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN:-}
@@ -18,6 +19,7 @@ services:
                 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID:-}
                 NEXT_PUBLIC_FIREBASE_APP_ID: ${NEXT_PUBLIC_FIREBASE_APP_ID:-}
                 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID:-}
+                NEXT_PUBLIC_CLARITY_PROJECT_ID: ${NEXT_PUBLIC_CLARITY_PROJECT_ID:-}
         image: buddybird-mbti-web:latest
         container_name: buddybird-mbti-web
         restart: unless-stopped

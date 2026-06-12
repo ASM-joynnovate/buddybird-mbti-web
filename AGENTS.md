@@ -17,7 +17,7 @@ MBTI를 도출하고, 결과 카드를 인스타로 공유하게 해 앱 유입�
 - **사진**: 결과 페이지에서 카메라 촬영 + 갤러리 업로드. 사진은 서버 전송 없이 100% 클라이언트 처리.
 - **공유**: 결과 카드를 Canvas로 합성 → Web Share API 네이티브 공유(미지원 시 다운로드 폴백). 인스타 직접 게시 API는 없음. 결과 히어로·공유 카드 모두 폴라로이드(사진 업로드 시 "내 앵무새 → 캐릭터" 두 장) 디자인 — ADR-0012.
 - **앱 유도**: 딥링크 서비스(OneLink/Branch) + 스토어 링크. 링크는 단일 설정 상수로 관리.
-- **데이터 백엔드 없음**: 사용자 데이터의 서버 저장·DB 없음(사진은 100% 클라이언트 처리). 분석은 클라이언트 이벤트 전송까지만 — 전송 백엔드는 지연 로딩 Firebase GA4(+Performance·Remote Config, ADR-0011). 배포는 Next standalone Node 컨테이너를 기존 Caddy 리버스 프록시 뒤에 두는 방식(ADR-0002).
+- **데이터 백엔드 없음**: 사용자 데이터의 서버 저장·DB 없음(사진은 100% 클라이언트 처리). 분석은 클라이언트 이벤트 전송까지만 — 전송 백엔드는 지연 로딩 Firebase GA4(+Performance·Remote Config, ADR-0011) + Microsoft Clarity 세션 리코딩 팬아웃(ADR-0015, 사진은 마스킹). 배포는 Next standalone Node 컨테이너를 기존 Caddy 리버스 프록시 뒤에 두는 방식(ADR-0002).
 - **모바일 우선**, reduced-motion·키보드·스크린리더 접근성 준수. 한국어 단일(MVP).
 
 상세는 `.scratch/parrot-mbti/PRD.md` 참조.
@@ -36,7 +36,9 @@ config change — the one exception is marked below.
 | A design-system primitive                 | `shared/ui/` — swappable unit together with the `@theme` tokens in `app/globals.css`.                                                                                                                                                                                                  |
 | Background-world pieces                   | `shared/forest/` — swappable unit; mounted once in `app/layout.tsx`.                                                                                                                                                                                                                   |
 | Motion vocabulary / analytics             | `shared/motion/` · `shared/analytics/`. `shared/*` must never import `features/` or `app/`.                                                                                                                                                                                            |
-| Firebase SDK lifecycle                    | `shared/firebase/` — config, lazy client, bootstrap, Remote Config (ADR-0011). All runtime `firebase/*` imports stay inside this module; elsewhere import types only.                                                                                                                  |
+| Firebase SDK lifecycle                    | `shared/firebase/` — config, lazy client, Remote Config (ADR-0011). All runtime `firebase/*` imports stay inside this module; elsewhere import types only.                                                                                                                             |
+| Clarity SDK lifecycle                     | `shared/clarity/` — config + lazy client (ADR-0015). All runtime `@microsoft/clarity` imports stay inside this module; elsewhere import types only.                                                                                                                                    |
+| Cross-backend analytics boot              | `shared/analytics/analytics-bootstrap.tsx` — boots Firebase + Clarity on one idle/interaction trigger, installs the fan-out adapter (ADR-0015). Mounted once in `app/layout.tsx`; not in the analytics barrel.                                                                         |
 | Pure domain logic                         | `lib/` — no React, no DOM, unit-testable in isolation.                                                                                                                                                                                                                                 |
 | Copy, type metadata, asset paths          | `content/`.                                                                                                                                                                                                                                                                            |
 

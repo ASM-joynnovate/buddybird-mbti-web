@@ -15,8 +15,11 @@ import { APP_CTA_LABEL } from '@/content/cta'
 
 // Every remotely configurable value with its build-time default. Add a key here
 // and create the matching parameter in the Firebase console to extend.
+// clarity_enabled is the Clarity kill switch (ADR-0015): set 'false' in the
+// console to stop new sessions from booting session recording without a deploy.
 export const REMOTE_DEFAULTS = {
     result_cta_label: APP_CTA_LABEL,
+    clarity_enabled: 'true',
 } as const
 
 export type RemoteConfigKey = keyof typeof REMOTE_DEFAULTS

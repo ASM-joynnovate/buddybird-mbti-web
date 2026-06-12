@@ -9,6 +9,11 @@ if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
         '[build] NEXT_PUBLIC_FIREBASE_* not set — Firebase analytics will be DISABLED in this build (see docs/adr/0011).',
     )
 }
+if (!process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID) {
+    console.warn(
+        '[build] NEXT_PUBLIC_CLARITY_PROJECT_ID not set — Clarity session analytics will be DISABLED in this build (see docs/adr/0015).',
+    )
+}
 
 const nextConfig: NextConfig = {
     // Deployed as a Next standalone Node server behind the existing Caddy proxy

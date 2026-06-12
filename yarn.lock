@@ -1236,6 +1236,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@microsoft/clarity@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@microsoft/clarity@npm:1.0.2"
+  checksum: 10c0/43986711a39115097348b38f8203f02e86ebc251d79a1673f05b0e1b562513e21045892e889551d271d6c2186cd6bd84f69a968fd46c3e563ebed5153c262a4e
+  languageName: node
+  linkType: hard
+
 "@msgpackr-extract/msgpackr-extract-darwin-arm64@npm:3.0.4":
   version: 3.0.4
   resolution: "@msgpackr-extract/msgpackr-extract-darwin-arm64@npm:3.0.4"
@@ -2982,6 +2989,7 @@ __metadata:
   resolution: "buddybird-mbti-web@workspace:."
   dependencies:
     "@ianvs/prettier-plugin-sort-imports": "npm:^4.7.1"
+    "@microsoft/clarity": "npm:^1.0.2"
     "@tailwindcss/postcss": "npm:^4"
     "@types/node": "npm:^20"
     "@types/react": "npm:^19"
