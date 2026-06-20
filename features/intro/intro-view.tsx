@@ -69,7 +69,7 @@ export function IntroView() {
         reset()
         setIndex(0)
         track({ name: 'test_start', payload: {} })
-        router.push('/test')
+        router.push('/species')
     }
 
     // Detail popup CTA: surface that type on the hero stack. Tracked inline
