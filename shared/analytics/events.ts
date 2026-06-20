@@ -17,6 +17,7 @@ import type { TypeCode } from '@/lib/mbti/types'
 
 // The union of every analytics event name the app can emit.
 export type AnalyticsEventName =
+    | 'species_selected'
     | 'test_start'
     | 'question_answered'
     | 'test_completed'
@@ -48,6 +49,8 @@ export type PayloadOf<N extends AnalyticsEventName> = Extract<
 
 // Discriminated union pairing each event name with its typed payload.
 export type AnalyticsEvent =
+    // Species selection confirmed (features/species/species-view.tsx).
+    | { name: 'species_selected'; payload: { species: string } }
     // Intro "테스트 시작하기" tap (features/intro/intro-view.tsx).
     | { name: 'test_start'; payload: Record<string, never> }
     // Each quiz choice tap (features/quiz/test-view.tsx).
