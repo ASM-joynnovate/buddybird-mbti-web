@@ -39,10 +39,20 @@ export function SpeciesView() {
                 </GameButton>
             </div>
 
-            <h1 className="mt-8 font-display text-2xl leading-snug break-keep text-ink">
-                우리 앵무새 종은 무엇인가요?
-            </h1>
-            <p className="mt-1 text-sm text-ink-muted">종에 따라 성격 성향이 조금씩 반영돼요.</p>
+            <div className="relative mt-8 -rotate-1">
+                <span
+                    aria-hidden="true"
+                    className="absolute -top-2.5 left-1/2 z-1 size-5 -translate-x-1/2 rounded-full border-2 border-primary-active bg-[radial-gradient(circle_at_35%_30%,#ffe2c8,var(--color-gold)_55%,var(--color-primary-hover))] shadow-[0_3px_4px_rgba(58,46,26,0.35)]"
+                />
+                <GamePanel dashedFrame className="px-6 py-7">
+                    <h1 className="m-0 font-display text-2xl leading-snug break-keep text-ink">
+                        우리 앵무새 종은 무엇인가요?
+                    </h1>
+                    <p className="mt-2 text-sm text-ink-muted">
+                        종에 따라 성격 성향이 조금씩 반영돼요.
+                    </p>
+                </GamePanel>
+            </div>
 
             <div className="mt-6 grid grid-cols-3 gap-2.5">
                 {namedSpecies.map((species) => (
