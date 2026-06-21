@@ -149,20 +149,20 @@ export const QUESTIONS: Question[] = [
     {
         id: 'q7',
         emoji: '😌',
-        text: '배부르고 등 따시고~ 기분이 최고조로 편안할 때 하는 행동은?',
+        text: '배도 부르고 집도 조용해진 평화로운 시간, 우리 앵이의 모습은?',
         choices: [
             {
                 id: 'q7a',
-                label: '깃털을 찐빵처럼 빵빵하게 부풀리고 한쪽 발을 몸통에 쏙 숨긴 채 정자세로 휴식 모드',
-                hook: '찐빵 모드 ON', // hook drafted by AI — copy review pending
-                body: '깃털을 빵빵하게 부풀리고 한쪽 발을 몸통에 쏙 숨긴 채 정자세로 휴식',
+                label: '깃털을 찐빵처럼 빵빵하게 부풀리고 한쪽 발을 몸통에 쏙 숨긴 채 휴식 모드',
+                hook: '찐빵 모드 ON',
+                body: '깃털을 찐빵처럼 빵빵하게 부풀리고 한쪽 발을 몸통에 쏙 숨긴 채 휴식 모드',
                 weights: { S: 1, J: 1 },
             },
             {
                 id: 'q7b',
-                label: "그날 기분 따라 '빠지직' 부리 가는 소리(ASMR)를 즉흥 연주하거나 집사 품으로 파고든다",
-                hook: "'빠지직' 즉흥 ASMR", // hook drafted by AI — copy review pending
-                body: '그날 기분 따라 부리 가는 소리를 즉흥 연주하거나 집사 품으로 파고든다',
+                label: '갑자기 새로운 장난감이나 구석을 탐색하러 가거나, 기분 따라 노래·춤·수다를 시작한다',
+                hook: '기분 따라 탐험 시작', // hook drafted by AI — copy review pending
+                body: '갑자기 새로운 장난감이나 구석을 탐색하러 가거나, 기분 따라 노래·춤·수다를 시작한다',
                 weights: { N: 1, P: 1 },
             },
         ],
