@@ -10,7 +10,7 @@ import { globalIgnores } from 'eslint/config'
 // other features. Every other folder under features/ is a capability feature
 // and gets a cross-feature ban zone generated automatically below, so adding
 // a new capability feature needs no config change.
-const COMPOSITION_FEATURES = new Set(['intro', 'result'])
+const COMPOSITION_FEATURES = new Set(['intro', 'result', 'species'])
 
 const capabilityZones = readdirSync('./features', { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && !COMPOSITION_FEATURES.has(entry.name))

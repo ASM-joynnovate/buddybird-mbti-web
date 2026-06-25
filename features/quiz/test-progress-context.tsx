@@ -9,6 +9,7 @@ import {
     useReducer,
     type ReactNode,
 } from 'react'
+import { type Species } from '@/lib/mbti/species-weight'
 import { type Choice, type ComputeResult } from '@/lib/mbti/types'
 import { installAnalyticsTestHook } from '@/shared/analytics'
 
@@ -17,6 +18,8 @@ interface TestProgressState {
     answers: Record<string, Choice> // questionId -> chosen Choice
     currentIndex: number // index into the surface's question list
     result: ComputeResult | null
+    species: Species | null
+    speciesName: string | null // custom name when species === '기타'
 }
 
 type TestProgressAction =
@@ -24,6 +27,7 @@ type TestProgressAction =
     | { type: 'setIndex'; index: number }
     | { type: 'goBack' }
     | { type: 'setResult'; result: ComputeResult }
+    | { type: 'setSpecies'; species: Species; speciesName: string | null }
     | { type: 'reset' }
 
 interface TestProgressValue extends TestProgressState {
@@ -31,6 +35,7 @@ interface TestProgressValue extends TestProgressState {
     setIndex: (index: number) => void
     goBack: () => void
     setResult: (result: ComputeResult) => void
+    setSpecies: (species: Species, speciesName: string | null) => void
     reset: () => void
 }
 
@@ -39,6 +44,8 @@ const initialState: TestProgressState = {
     answers: {},
     currentIndex: 0,
     result: null,
+    species: null,
+    speciesName: null,
 }
 
 // Immutable updates only: every branch returns a fresh state object.
@@ -55,6 +62,8 @@ function reducer(state: TestProgressState, action: TestProgressAction): TestProg
             return { ...state, currentIndex: Math.max(0, state.currentIndex - 1) }
         case 'setResult':
             return { ...state, result: action.result }
+        case 'setSpecies':
+            return { ...state, species: action.species, speciesName: action.speciesName }
         case 'reset':
             return initialState
         default:
@@ -88,13 +97,17 @@ export function TestProgressProvider({ children }: { children: ReactNode }) {
         dispatch({ type: 'setResult', result })
     }, [])
 
+    const setSpecies = useCallback((species: Species, speciesName: string | null) => {
+        dispatch({ type: 'setSpecies', species, speciesName })
+    }, [])
+
     const reset = useCallback(() => {
         dispatch({ type: 'reset' })
     }, [])
 
     const value = useMemo<TestProgressValue>(
-        () => ({ ...state, answer, setIndex, goBack, setResult, reset }),
-        [state, answer, setIndex, goBack, setResult, reset],
+        () => ({ ...state, answer, setIndex, goBack, setResult, setSpecies, reset }),
+        [state, answer, setIndex, goBack, setResult, setSpecies, reset],
     )
 
     return <TestProgressContext.Provider value={value}>{children}</TestProgressContext.Provider>

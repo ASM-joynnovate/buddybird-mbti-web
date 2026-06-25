@@ -23,12 +23,22 @@ export type GameButtonSize = 'md' | 'sm'
 const BASE_CLASS =
     'inline-flex cursor-pointer touch-manipulation items-center justify-center gap-2.5 rounded-full font-display leading-[1.2] whitespace-nowrap transition-[box-shadow,background-color,border-color,color,filter] duration-150 ease-leaf focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-faction-sentinel disabled:cursor-not-allowed disabled:opacity-60 disabled:saturate-[0.4] [-webkit-tap-highlight-color:transparent]'
 
+// The orange CTA overrides the base opacity dim with a dedicated disabled "off"
+// state: drop the gradient for a SOLID cream block (inset border ring + depth
+// bar, muted ink) so an unavailable primary reads as a real, legible locked
+// button — not the washed-out faded-orange the plain dim gives. Zero layout
+// shift (ring is a box-shadow, not a border). Quieter variants keep the base
+// dim, which suits their busy/loading uses.
+const DISABLED_PRIMARY =
+    'disabled:bg-none disabled:bg-surface-cream disabled:text-ink-muted disabled:opacity-100 disabled:saturate-100 disabled:shadow-[inset_0_0_0_2px_var(--color-border-action),0_3px_0_var(--color-depth-action)] disabled:hover:brightness-100'
+
 // Full class string per variant×size (prettier-plugin-tailwindcss compatible —
-// no conditional fragments). Disabled flattens via the base class above.
+// no conditional fragments). Disabled dim flattens via the base class; primary
+// swaps in DISABLED_PRIMARY.
 const VARIANT_CLASS: Record<GameButtonVariant, Record<GameButtonSize, string>> = {
     primary: {
-        md: 'min-h-14 bg-(image:--gradient-cta) px-10 py-4 text-2xl text-on-primary shadow-raise-primary hover:brightness-[1.04] hover:saturate-[1.06] active:shadow-raise-primary-down disabled:hover:brightness-100 disabled:hover:saturate-[0.4]',
-        sm: 'min-h-12 bg-(image:--gradient-cta) px-6 py-3 text-lg text-on-primary shadow-raise-primary hover:brightness-[1.04] hover:saturate-[1.06] active:shadow-raise-primary-down disabled:hover:brightness-100 disabled:hover:saturate-[0.4]',
+        md: `min-h-14 bg-(image:--gradient-cta) px-10 py-4 text-2xl text-on-primary shadow-raise-primary hover:brightness-[1.04] hover:saturate-[1.06] active:shadow-raise-primary-down ${DISABLED_PRIMARY}`,
+        sm: `min-h-12 bg-(image:--gradient-cta) px-6 py-3 text-lg text-on-primary shadow-raise-primary hover:brightness-[1.04] hover:saturate-[1.06] active:shadow-raise-primary-down ${DISABLED_PRIMARY}`,
     },
     secondary: {
         md: 'min-h-11 border-2 border-border-action bg-surface-cream px-5 py-3 text-base text-primary-active shadow-raise-cream hover:border-primary hover:bg-cream-hover active:shadow-raise-cream-down',

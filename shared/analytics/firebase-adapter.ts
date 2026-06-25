@@ -57,6 +57,7 @@ function toGaParams(event: AnalyticsEvent): GaParams {
         case 'test_back':
         case 'restart_click':
         case 'result_error':
+        case 'species_selected':
             return { ...event.payload }
     }
 }

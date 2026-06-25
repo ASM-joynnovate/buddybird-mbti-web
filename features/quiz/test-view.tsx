@@ -22,7 +22,7 @@ import { AnimatePresence, m, useReducedMotion, type Variants } from 'motion/reac
 import { QUESTION_COUNT, QUESTIONS } from '@/content'
 import { QuizChoice } from '@/features/quiz/quiz-choice'
 import { useTestProgress } from '@/features/quiz/test-progress-context'
-import { computeResult, type Choice } from '@/lib/mbti'
+import { computeResult, speciesOffsetChoice, type Choice } from '@/lib/mbti'
 import { encodeResult, RESULT_PARAM } from '@/lib/result-url'
 import { track, trackEvent } from '@/shared/analytics'
 import { easeLeaf, easeSpring, fadeOnly, popIn } from '@/shared/motion'
@@ -77,7 +77,8 @@ const cardVariantsReduced: Variants = {
 
 export function TestView() {
     const router = useRouter()
-    const { answers, currentIndex, answer, setIndex, goBack, setResult } = useTestProgress()
+    const { answers, currentIndex, answer, setIndex, goBack, setResult, species } =
+        useTestProgress()
     const reducedMotion = useReducedMotion()
 
     // Local select state for the design's pick → press → auto-advance feel.
@@ -145,7 +146,11 @@ export function TestView() {
             // computeResult throws IncompleteAnswersError on missing/invalid answers.
             // Guard the render boundary: never let it crash the page; restart instead.
             try {
-                const result = computeResult(orderedChoices)
+                const speciesChoice = species ? speciesOffsetChoice(species) : null
+                const allChoices = speciesChoice
+                    ? [...orderedChoices, speciesChoice]
+                    : orderedChoices
+                const result = computeResult(allChoices)
                 setResult(result)
                 track({ name: 'test_completed', payload: { type: result.type } })
                 router.push(
@@ -167,7 +172,7 @@ export function TestView() {
         }
         setPicked(null)
         if (currentIndex === 0) {
-            router.push('/')
+            router.push('/species')
             return
         }
         setDirection('l')
