@@ -12,8 +12,14 @@ export type ShareOutcome =
 export async function shareCard(blob: Blob, type: TypeCode): Promise<ShareOutcome> {
     const file = new File([blob], `buddybird-${type}.png`, { type: blob.type })
 
+    // Desktop → download straight away; phones/tablets keep the native share sheet.
+    // Desktop Chrome/Edge support canShare(files) too, so a pure feature-detect would
+    // wrongly open a share sheet on a computer. Decide by User Agent instead.
+    const isDesktop = !isMobileUserAgent()
+
     // Feature-detect at runtime: older browsers lack share/canShare entirely.
     const canShareFiles =
+        !isDesktop &&
         typeof navigator.share === 'function' &&
         typeof navigator.canShare === 'function' &&
         navigator.canShare({ files: [file] })
@@ -37,7 +43,21 @@ export async function shareCard(blob: Blob, type: TypeCode): Promise<ShareOutcom
     }
 
     downloadFile(file)
-    return { kind: 'fallback', reason: 'web-share-unsupported' }
+    return { kind: 'fallback', reason: isDesktop ? 'desktop-download' : 'web-share-unsupported' }
+}
+
+// Desktop vs. mobile by User Agent: UA Client Hints first (Chromium), then a UA-string
+// fallback for browsers without it (Safari/Firefox). ponytail: iPadOS Safari reports a
+// Mac UA, so it counts as desktop (download) — acceptable for "computer = download".
+function isMobileUserAgent(): boolean {
+    if (typeof navigator === 'undefined') {
+        return false
+    }
+    const uaData = (navigator as Navigator & { userAgentData?: { mobile?: boolean } }).userAgentData
+    if (typeof uaData?.mobile === 'boolean') {
+        return uaData.mobile
+    }
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 }
 
 function downloadFile(file: File): void {
