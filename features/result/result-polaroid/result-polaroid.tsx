@@ -5,8 +5,8 @@
 //
 // - No photo (photoUrl === null): a single character polaroid (gradient photo
 //   window + rays + bob).
-// - With photo: two shots (left "📷 내 앵무새" pet photo cover -> right
-//   "✨ {code} 캐릭터") showing before->after.
+// - With photo: two shots (left pet photo cover -> right character) showing
+//   before->after.
 //
 // Shared: white card (-2deg tilt), two washi tapes (orange/gold), caption
 // (code/name). ADR-0008 (tailwind-only/Motion-owned): bob is Motion (`m.div`).
@@ -39,10 +39,6 @@ const RAYS_CLASS =
 // Photo gloss/vignette overlay (top highlight + bottom shade) — radial-gradient.
 const VIGNETTE_CLASS =
     'pointer-events-none absolute inset-0 z-2 [background:radial-gradient(120%_80%_at_28%_8%,rgba(255,255,255,0.4),transparent_56%),radial-gradient(140%_90%_at_50%_122%,rgba(0,0,0,0.3),transparent_60%)]'
-
-// before->after tag (bottom-center of the photo window).
-const TAG_BASE =
-    'absolute bottom-2.5 left-1/2 z-4 inline-flex -translate-x-1/2 items-center gap-1 rounded-full px-3 py-1 font-display text-xs whitespace-nowrap shadow-[0_3px_8px_rgba(0,0,0,0.2)]'
 
 interface CharShotProps {
     type: TypeCode
@@ -119,12 +115,10 @@ export function ResultPolaroid({
                             alt="내 앵무새 사진"
                             data-clarity-mask="True"
                         />
-                        <span className={`${TAG_BASE} bg-white/90 text-ink`}>📷 내 앵무새</span>
                     </div>
                     {/* MBTI character */}
                     <div className="relative flex-1 overflow-hidden rounded-sm" style={charBg}>
                         <CharShot type={type} reducedMotion={reducedMotion} />
-                        <span className={`${TAG_BASE} bg-ink/45 text-white`}>✨ {type} 캐릭터</span>
                     </div>
                 </div>
             ) : (

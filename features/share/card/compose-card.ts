@@ -42,7 +42,6 @@ import {
     drawCharWindow,
     drawPetWindow,
     drawStamp,
-    drawTag,
     drawTape,
     paintPaper,
 } from './card-parts'
@@ -114,7 +113,6 @@ export async function composeCard(input: ComposeCardInput): Promise<Blob> {
         const shotW = (PHOTO_INNER - DUO_GAP) / 2
         // My parrot — cover.
         drawPetWindow(ctx, input.photo, photoX, photoY, shotW, DUO_PHOTO_H, DUO_PHOTO_R)
-        drawTag(ctx, '📷 내 앵무새', photoX + shotW / 2, photoY + DUO_PHOTO_H - 22, false)
         // MBTI character.
         const rx = photoX + shotW + DUO_GAP
         drawCharWindow(
@@ -127,7 +125,6 @@ export async function composeCard(input: ComposeCardInput): Promise<Blob> {
             DUO_PHOTO_H,
             DUO_PHOTO_R,
         )
-        drawTag(ctx, `✨ ${input.type} 캐릭터`, rx + shotW / 2, photoY + DUO_PHOTO_H - 22, true)
     } else {
         drawCharWindow(
             ctx,

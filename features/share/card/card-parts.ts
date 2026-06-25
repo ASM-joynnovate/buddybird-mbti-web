@@ -1,5 +1,5 @@
 // Card-specific drawing pieces for the share-card compositor: paper, photo
-// windows, rays, vignette, before/after tag, washi tape, brand stamp. Each is a
+// windows, rays, vignette, washi tape, brand stamp. Each is a
 // pure draw onto the passed context; compose-card orchestrates their order.
 
 import { drawContain, drawCover, roundRectPath } from './canvas-utils'
@@ -7,7 +7,6 @@ import {
     CARD_SIZE,
     CHAR_GRAD_FALLBACK,
     FONT_DISPLAY,
-    INK,
     PAPER_FALLBACK,
     PAPER_STOPS,
     PET_PLACEHOLDER_BG,
@@ -145,33 +144,6 @@ function drawVignette(
     lo.addColorStop(1, 'rgba(0,0,0,0)')
     ctx.fillStyle = lo
     ctx.fillRect(x, y, w, h)
-}
-
-// before/after tag (rounded pill + text). Bottom-center of the photo window.
-export function drawTag(
-    ctx: CanvasRenderingContext2D,
-    text: string,
-    cx: number,
-    cy: number,
-    onChar: boolean,
-): void {
-    const fontSize = 23
-    ctx.font = `${fontSize}px ${FONT_DISPLAY}`
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    const padX = 18
-    const w = ctx.measureText(text).width + padX * 2
-    const h = fontSize + 16
-    ctx.save()
-    ctx.shadowColor = 'rgba(0,0,0,0.2)'
-    ctx.shadowBlur = 8
-    ctx.shadowOffsetY = 3
-    ctx.fillStyle = onChar ? 'rgba(20,14,8,0.55)' : 'rgba(255,253,247,0.95)'
-    roundRectPath(ctx, cx - w / 2, cy - h / 2, w, h, h / 2)
-    ctx.fill()
-    ctx.restore()
-    ctx.fillStyle = onChar ? '#ffffff' : INK
-    ctx.fillText(text, cx, cy + 1)
 }
 
 // Washi tape — rotated rectangle + diagonal stripe pattern.
