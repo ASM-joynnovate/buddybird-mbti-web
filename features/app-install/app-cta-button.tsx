@@ -1,13 +1,16 @@
 'use client'
 
-// Shared BuddyBird app CTA, used on both the intro and result surfaces. Keeping the
-// `app_cta_click` emit in one place guarantees the funnel event fires with a correct
-// placement no matter where the CTA is rendered (issue #06/#07/#11). The link target
-// is a single placeholder constant swapped in issue #10.
+// Shared BuddyBird app CTA. Keeping the `app_cta_click` emit in one place
+// guarantees the funnel event fires with a correct placement no matter where the
+// CTA is rendered (issue #06/#07/#11). The link target is resolved per-device by
+// User-Agent (ADR-0016): iOS→App Store, Android/desktop→Play Store.
 // Direct content import (not via the feature's own public barrel) — these
 // constants live in content/ now (ADR-0011); a file importing its own feature
 // barrel is the consumer-facing surface, not the intra-feature path.
-import { APP_CTA_LABEL, APP_CTA_URL } from '@/content/cta'
+import { useSyncExternalStore } from 'react'
+
+import { APP_CTA_LABEL } from '@/content/cta'
+import { resolveStoreUrl } from '@/lib/store-link'
 import { track } from '@/shared/analytics'
 import { useRemoteConfigString } from '@/shared/firebase'
 import { GameButtonLink } from '@/shared/ui/game-button'
@@ -16,6 +19,14 @@ interface AppCtaButtonProps {
     placement: 'intro' | 'result'
 }
 
+// The device never changes mid-session, so the store URL is a read-only external
+// value with a no-op subscription — useSyncExternalStore reads it SSR-safely (Play
+// fallback on the server, real device on the client) without an effect.
+const noopSubscribe = () => () => {}
+const getStoreUrl = () =>
+    resolveStoreUrl(navigator.userAgent, navigator.maxTouchPoints)
+const getFallbackStoreUrl = () => resolveStoreUrl('')
+
 export function AppCtaButton({ placement }: AppCtaButtonProps) {
     // Result CTA copy is the first Remote Config experiment surface (ADR-0011).
     // The intro CTA stays on the static label: it renders immediately on load,
@@ -23,6 +34,12 @@ export function AppCtaButton({ placement }: AppCtaButtonProps) {
     const remoteResultLabel = useRemoteConfigString('result_cta_label')
     const isResult = placement === 'result'
     const label = isResult ? remoteResultLabel : APP_CTA_LABEL
+
+    const storeUrl = useSyncExternalStore(
+        noopSubscribe,
+        getStoreUrl,
+        getFallbackStoreUrl,
+    )
 
     const handleClick = () => {
         track({ name: 'app_cta_click', payload: { placement } })
@@ -37,7 +54,7 @@ export function AppCtaButton({ placement }: AppCtaButtonProps) {
             variant={isResult ? 'primary' : 'secondary'}
             size="sm"
             className={isResult ? 'w-full' : undefined}
-            href={APP_CTA_URL}
+            href={storeUrl}
             target="_blank"
             rel="noopener noreferrer"
             data-testid={`app-cta-${placement}`}
