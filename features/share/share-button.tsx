@@ -10,6 +10,7 @@ import { CHAR_GRAD_FALLBACK, composeCard, loadImage } from '@/features/share/car
 import type { TypeCode } from '@/lib/mbti'
 import { track } from '@/shared/analytics'
 import { GameButton } from '@/shared/ui/game-button'
+import { Toast } from '@/shared/ui/toast'
 
 interface ShareButtonProps {
     type: TypeCode
@@ -73,15 +74,7 @@ export function ShareButton({ type, photoUrl }: ShareButtonProps) {
             >
                 {busy ? '카드 만드는 중…' : '친구에게 공유하기'} <span aria-hidden="true">↗</span>
             </GameButton>
-            {hint !== null && (
-                <p
-                    className="m-0 text-center text-sm text-ink-muted"
-                    role="status"
-                    data-testid="share-hint"
-                >
-                    {hint}
-                </p>
-            )}
+            <Toast message={hint} onDismiss={() => setHint(null)} data-testid="share-hint" />
         </div>
     )
 }
