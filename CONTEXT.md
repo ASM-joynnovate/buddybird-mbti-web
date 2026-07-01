@@ -96,6 +96,7 @@ photo + Type + copy + BuddyBird branding/CTA.
 _Avoid_: Share image, OG image, Poster
 
 **App CTA**:
-The link that drives BuddyBird app installs (deep-link service + store links),
-present on both Intro and Result.
-_Avoid_: Install button, Download link
+The button that drives BuddyBird app installs, present on Result. There is no
+deep-link service — it routes to the matching store by device (client-side
+User-Agent branching), defaulting to Play Store on desktop/unknown. See ADR-0016.
+_Avoid_: Install button, Download link, deep link (implies a redirect service)
