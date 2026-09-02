@@ -6,18 +6,18 @@
 // under static export and when drawn onto a <canvas> for the share card. If an image
 // is missing, <img onError> falls back to a CSS placeholder so layout (and CLS
 // budget) holds.
+import type { TypeCode } from '@/lib/mbti';
 
-import type { TypeCode } from '@/lib/mbti'
-import { TYPES } from './types'
+import { TYPES } from './types';
 
-const PARROT_IMAGE_BASE = '/parrots-mbti-charactor'
-export const BRAND_LOGO_SRC = '/brand/buddybird-logo.png'
+const PARROT_IMAGE_BASE = '/parrots-mbti-charactor';
+export const BRAND_LOGO_SRC = '/brand/buddybird-logo.png';
 
 // Root-absolute path to a type's parrot character image, keyed by the uppercase type code.
 export function parrotImageSrc(type: TypeCode): string {
-    return `${PARROT_IMAGE_BASE}/${type}.png`
+	return `${PARROT_IMAGE_BASE}/${type}.png`;
 }
 
 // Carousel order derives from the engine's canonical 16-type map, so it can never
 // drift from content/types.ts.
-export const CAROUSEL_TYPES: readonly TypeCode[] = Object.keys(TYPES) as TypeCode[]
+export const CAROUSEL_TYPES: readonly TypeCode[] = Object.keys(TYPES) as TypeCode[];

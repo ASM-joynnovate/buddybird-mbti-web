@@ -4,14 +4,14 @@
 // dynamic key lookups are never inlined. A missing id keeps Clarity fully
 // disabled (zero SDK imports), mirroring shared/firebase/config.ts.
 
-const projectId = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID
+const projectId = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;
 
 // Returns the Clarity project id, or null when unset — null keeps the whole
 // Clarity module dormant so local/CI builds behave exactly like before.
 export function getClarityProjectId(): string | null {
-    return projectId || null
+	return projectId || null;
 }
 
 export function isClarityConfigured(): boolean {
-    return getClarityProjectId() !== null
+	return getClarityProjectId() !== null;
 }

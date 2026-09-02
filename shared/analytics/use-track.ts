@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 // Ergonomic tracking hooks layered over the track() facade. Both return stable
 // references (safe to pass to memoized children without invalidating them) and
@@ -10,25 +10,24 @@
 //
 //   const trackCta = useTrackEvent('app_cta_click')
 //   trackCta({ placement: 'result' })
-import { useCallback } from 'react'
-import type { AnalyticsEventName, PayloadOf } from '@/shared/analytics/events'
-import { trackEvent } from '@/shared/analytics/track'
+import { useCallback } from 'react';
+
+import type { AnalyticsEventName, PayloadOf } from '@/shared/analytics/events';
+import { trackEvent } from '@/shared/analytics/track';
 
 // Generic tracker: one stable function for any event name.
 export function useTrack(): <N extends AnalyticsEventName>(name: N, payload: PayloadOf<N>) => void {
-    return useCallback(<N extends AnalyticsEventName>(name: N, payload: PayloadOf<N>) => {
-        trackEvent(name, payload)
-    }, [])
+	return useCallback(<N extends AnalyticsEventName>(name: N, payload: PayloadOf<N>) => {
+		trackEvent(name, payload);
+	}, []);
 }
 
 // Name-curried tracker: fix the event name once, get payload autocompletion.
-export function useTrackEvent<N extends AnalyticsEventName>(
-    name: N,
-): (payload: PayloadOf<N>) => void {
-    return useCallback(
-        (payload: PayloadOf<N>) => {
-            trackEvent(name, payload)
-        },
-        [name],
-    )
+export function useTrackEvent<N extends AnalyticsEventName>(name: N): (payload: PayloadOf<N>) => void {
+	return useCallback(
+		(payload: PayloadOf<N>) => {
+			trackEvent(name, payload);
+		},
+		[name],
+	);
 }

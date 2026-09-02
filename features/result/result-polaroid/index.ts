@@ -1,1 +1,1 @@
-export { ResultPolaroid } from './result-polaroid'
+export { ResultPolaroid } from './result-polaroid';

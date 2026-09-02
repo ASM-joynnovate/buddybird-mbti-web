@@ -1,34 +1,14 @@
-# Build artifacts and deps (installed fresh in the deps stage)
 node_modules
 .next
-out
-
-# Yarn — keep .yarn/releases (pinned launcher); drop heavy/local-only bits
-.yarn/cache
-.yarn/install-state.gz
-.yarn/unplugged
-.pnp.*
-
-# VCS / CI / meta — not needed to build the app
 .git
-.github
 .husky
-
-# Repo docs, issues, and E2E harness — irrelevant to the runtime image
-.scratch
-docs
-e2e
-
-# Container/meta files
-Dockerfile
-.dockerignore
+.env
+.env*.local
 *.md
-
-# Local noise
-.DS_Store
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.idea
+Dockerfile*
+.dockerignore
 .vscode
+.idea
+coverage
+.DS_Store
+.claude

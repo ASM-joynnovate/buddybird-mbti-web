@@ -1,3 +1,3 @@
 // Public barrel for the store-link module.
 
-export * from './store-link'
+export * from './store-link';

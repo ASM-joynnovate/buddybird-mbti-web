@@ -3,25 +3,25 @@
 // Keep this free of logic and side effects.
 
 // The four canonical MBTI axes.
-export type Axis = 'EI' | 'SN' | 'TF' | 'JP'
+export type Axis = 'EI' | 'SN' | 'TF' | 'JP';
 
 // The eight letters that make up the axes.
-export type Letter = 'E' | 'I' | 'S' | 'N' | 'T' | 'F' | 'J' | 'P'
+export type Letter = 'E' | 'I' | 'S' | 'N' | 'T' | 'F' | 'J' | 'P';
 
 // A 4-letter result code, e.g. 'ENFP'. Validated against the known 16 types
 // by the content/engine layer rather than the type system.
-export type TypeCode = string
+export type TypeCode = string;
 
 // Fixed axis ordering used to assemble a TypeCode and to label scores.
 // `left`/`right` give a stable orientation per axis for axisScores.
-export const AXES: readonly Axis[] = ['EI', 'SN', 'TF', 'JP']
+export const AXES: readonly Axis[] = ['EI', 'SN', 'TF', 'JP'];
 
 export const AXIS_LETTERS: Record<Axis, { left: Letter; right: Letter }> = {
-    EI: { left: 'E', right: 'I' },
-    SN: { left: 'S', right: 'N' },
-    TF: { left: 'T', right: 'F' },
-    JP: { left: 'J', right: 'P' },
-}
+	EI: { left: 'E', right: 'I' },
+	SN: { left: 'S', right: 'N' },
+	TF: { left: 'T', right: 'F' },
+	JP: { left: 'J', right: 'P' },
+};
 
 // A single selectable answer. Each choice weights one or more axis letters by +1
 // (multi-axis weighted scoring, ADR-0003). The two choices of a Question are
@@ -35,21 +35,21 @@ export const AXIS_LETTERS: Record<Axis, { left: Letter; right: Letter }> = {
 // (2026-06-07 Choice Row prototype round). Optional so minimal Choice fixtures
 // stay valid; the view falls back to `label` when absent.
 export interface Choice {
-    id: string
-    label: string
-    hook?: string
-    body?: string
-    weights: Partial<Record<Letter, number>>
+	id: string;
+	label: string;
+	hook?: string;
+	body?: string;
+	weights: Partial<Record<Letter, number>>;
 }
 
 // One question with exactly two symmetric choices. A Question is no longer bound to a
 // single axis — its Choices may weight several axes (ADR-0003). `emoji` is the playful
 // glyph shown above the question on the Test card ("동화숲 월드" quiz design).
 export interface Question {
-    id: string
-    emoji: string
-    text: string
-    choices: [Choice, Choice]
+	id: string;
+	emoji: string;
+	text: string;
+	choices: [Choice, Choice];
 }
 
 // Presentation data for one of the 16 result types.
@@ -69,23 +69,23 @@ export interface Question {
 // resolving the image (assets.ts derives the path from the uppercase code) but kept
 // as a stable identifier.
 export interface TypeInfo {
-    code: TypeCode
-    name: string
-    report: string
-    description: string
-    colors: readonly [string, string]
-    match: readonly [TypeCode, TypeCode]
-    imageKey: string
+	code: TypeCode;
+	name: string;
+	report: string;
+	description: string;
+	colors: readonly [string, string];
+	match: readonly [TypeCode, TypeCode];
+	imageKey: string;
 }
 
 // Per-axis tally, oriented by AXIS_LETTERS.
 export interface AxisScore {
-    left: number
-    right: number
+	left: number;
+	right: number;
 }
 
 // Output of the pure compute function.
 export interface ComputeResult {
-    type: TypeCode
-    axisScores: Record<Axis, AxisScore>
+	type: TypeCode;
+	axisScores: Record<Axis, AxisScore>;
 }

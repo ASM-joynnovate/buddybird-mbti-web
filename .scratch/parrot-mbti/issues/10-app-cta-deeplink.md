@@ -15,8 +15,8 @@ Status: done
 - iOS → App Store, Android → Play Store, 데스크톱/미상 → Play Store(폴백).
   분기 로직은 `lib/store-link`의 순수 함수, 링크 상수는 `content/cta.ts` 한 곳.
 - 어트리뷰션은 스토어 URL 자체에 실어 최소한만 회수한다:
-  - Play: URL의 `referrer=utm_source…&utm_medium…` (앱의 Install Referrer API가 읽음).
-  - App Store: App Store Connect 캠페인 링크(`pt`/`ct`) — 발급 후 상수 교체(HITL).
+    - Play: URL의 `referrer=utm_source…&utm_medium…` (앱의 Install Referrer API가 읽음).
+    - App Store: App Store Connect 캠페인 링크(`pt`/`ct`) — 발급 후 상수 교체(HITL).
 - 클릭 측정은 기존 GA4 `app_cta_click`(placement=result)로 계속.
 
 ## Non-goals (ADR-0016에서 명시적으로 뺌)

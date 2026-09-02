@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 // App-wide Motion feature provider (ADR-0006). The bundle-size convention for
 // this codebase is LazyMotion + the lightweight `m` components instead of the
@@ -13,15 +13,16 @@
 //   import { motion } from 'motion/react'                // ❌ throws under strict
 //
 // Children stay server-renderable — this wrapper only provides client context.
-import type { ReactNode } from 'react'
-import { LazyMotion } from 'motion/react'
+import type { ReactNode } from 'react';
 
-const loadFeatures = () => import('./motion-features').then((mod) => mod.default)
+import { LazyMotion } from 'motion/react';
+
+const loadFeatures = () => import('./motion-features').then((mod) => mod.default);
 
 export function MotionProvider({ children }: { children: ReactNode }) {
-    return (
-        <LazyMotion features={loadFeatures} strict>
-            {children}
-        </LazyMotion>
-    )
+	return (
+		<LazyMotion features={loadFeatures} strict>
+			{children}
+		</LazyMotion>
+	);
 }

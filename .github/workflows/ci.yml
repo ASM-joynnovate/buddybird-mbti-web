@@ -1,0 +1,49 @@
+name: ci
+
+on:
+    pull_request:
+        branches: [main]
+
+jobs:
+    check:
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout
+              uses: actions/checkout@v7
+
+            - name: enable corepack
+              run: corepack enable
+
+            - name: set up node
+              uses: actions/setup-node@v7
+              with:
+                  node-version: 24
+                  cache: yarn
+
+            - name: install dependencies
+              run: yarn install --immutable
+
+            - name: generate types
+              run: npx next typegen
+
+            - name: lint
+              run: yarn lint
+
+            - name: type check
+              run: npx tsc --noEmit
+
+            - name: notify failure
+              if: failure()
+              uses: ./.github/actions/notify-slack
+              continue-on-error: true
+              with:
+                  webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+                  title: ❌ CI 실패 ${{ github.event.pull_request.title }}
+                  fields: |
+                      PR=#${{ github.event.pull_request.number }}
+                      소스 브랜치=${{ github.head_ref }}
+                      대상 브랜치=${{ github.base_ref }}
+                      작성자=${{ github.actor }}
+                  buttons: |
+                      PR 확인=${{ github.event.pull_request.html_url }}
+                      실행 로그=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

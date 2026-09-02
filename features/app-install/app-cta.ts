@@ -2,4 +2,4 @@
 // label as the Remote Config default (shared must not import features). This
 // re-export keeps existing '@/features/app-install' imports working.
 
-export { APP_CTA_LABEL, APP_STORE_URL, PLAY_STORE_URL } from '@/content/cta'
+export { APP_CTA_LABEL, APP_STORE_URL, PLAY_STORE_URL } from '@/content/cta';

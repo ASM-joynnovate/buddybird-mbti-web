@@ -6,45 +6,43 @@
 // gap/padding/typography come separately so `bare` consumers (hero stats, deck
 // title) can own their sizing without utility conflicts. Faction chips stay the
 // caller's business (inline background). Server-component friendly (no hooks).
-import type { ReactNode } from 'react'
+import type { ReactNode } from 'react';
 
-export type GamePillVariant = 'cream' | 'orange'
+export type GamePillVariant = 'cream' | 'orange';
 
 const CHROME_CLASS: Record<GamePillVariant, string> = {
-    cream: 'inline-flex items-center rounded-full border-2 border-border-action bg-surface-cream shadow-raise-bar-action',
-    orange: 'inline-flex items-center rounded-full bg-(image:--gradient-cta) shadow-raise-bar-primary',
-}
+	cream: 'inline-flex items-center rounded-full border-2 border-border-action bg-surface-cream shadow-raise-bar-action',
+	orange: 'inline-flex items-center rounded-full bg-(image:--gradient-cta) shadow-raise-bar-primary',
+};
 
 const SIZE_CLASS: Record<GamePillVariant, string> = {
-    cream: 'gap-2 px-4 py-1.5 text-sm font-bold text-primary-active',
-    orange: 'gap-1.5 px-3.5 py-1 font-display text-sm tracking-wider text-on-primary',
-}
+	cream: 'gap-2 px-4 py-1.5 text-sm font-bold text-primary-active',
+	orange: 'gap-1.5 px-3.5 py-1 font-display text-sm tracking-wider text-on-primary',
+};
 
 interface GamePillProps {
-    children: ReactNode
-    variant?: GamePillVariant
-    /** Skip the default gap/padding/typography — the caller supplies its own. */
-    bare?: boolean
-    as?: 'span' | 'div' | 'p'
-    className?: string
-    'data-testid'?: string
+	children: ReactNode;
+	variant?: GamePillVariant;
+	/** Skip the default gap/padding/typography — the caller supplies its own. */
+	bare?: boolean;
+	as?: 'span' | 'div' | 'p';
+	className?: string;
+	'data-testid'?: string;
 }
 
 export function GamePill({
-    children,
-    variant = 'cream',
-    bare = false,
-    as: Tag = 'span',
-    className,
-    ...rest
+	children,
+	variant = 'cream',
+	bare = false,
+	as: Tag = 'span',
+	className,
+	...rest
 }: GamePillProps) {
-    const classes = [CHROME_CLASS[variant], bare ? null : SIZE_CLASS[variant], className]
-        .filter(Boolean)
-        .join(' ')
+	const classes = [CHROME_CLASS[variant], bare ? null : SIZE_CLASS[variant], className].filter(Boolean).join(' ');
 
-    return (
-        <Tag className={classes} {...rest}>
-            {children}
-        </Tag>
-    )
+	return (
+		<Tag className={classes} {...rest}>
+			{children}
+		</Tag>
+	);
 }

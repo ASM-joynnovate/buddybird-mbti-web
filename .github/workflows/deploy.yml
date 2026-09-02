@@ -1,0 +1,143 @@
+name: deploy
+
+on:
+    workflow_call:
+
+permissions:
+    contents: read
+    id-token: write
+
+concurrency: deploy-${{ github.ref_name }}
+
+jobs:
+    deploy:
+        environment: prod
+        runs-on: ubuntu-24.04-arm
+        env:
+            ECR_REPOSITORY: jn-buddybird-mbti
+            ECS_CLUSTER: jn-cluster
+            ENVIRONMENT: prod
+            ECS_SERVICE: jn-buddybird-mbti-prod
+            RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        steps:
+            - name: checkout
+              uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+
+            - name: read version
+              id: version
+              run: |
+                  version=$(jq -r .version package.json)
+                  echo "version=$version" >> "$GITHUB_OUTPUT"
+                  echo "image_tag=$version" >> "$GITHUB_OUTPUT"
+                  echo "started=$(date +%s)" >> "$GITHUB_OUTPUT"
+
+            - name: notify deploy start
+              uses: ./.github/actions/notify-slack
+              continue-on-error: true
+              with:
+                  webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+                  title: 🚀 ${{ env.ECS_SERVICE }} 배포 시작
+                  fields: |
+                      환경=${{ env.ENVIRONMENT }}
+                      버전=${{ steps.version.outputs.image_tag }}
+                      실행자=${{ github.actor }}
+                      트리거=${{ github.event_name }} to ${{ github.ref_name }}
+                  buttons: |
+                      실행 로그=${{ env.RUN_URL }}
+                      변경 내역=${{ github.event.compare }}
+                  commit-range: ${{ github.event.before }}..${{ github.sha }}
+
+            - name: configure aws credentials
+              uses: aws-actions/configure-aws-credentials@v6
+              with:
+                  role-to-assume: arn:aws:iam::198252712951:role/jn-buddybird-mbti-deploy
+                  aws-region: ap-northeast-2
+
+            - name: login to ecr
+              id: ecr
+              uses: aws-actions/amazon-ecr-login@v2
+
+            - name: resolve image uri
+              id: image
+              run: echo "uri=${{ steps.ecr.outputs.registry }}/$ECR_REPOSITORY:${{ steps.version.outputs.image_tag }}" >> "$GITHUB_OUTPUT"
+
+            - name: check if prod image exists
+              id: check-prod-image
+              run: |
+                  if aws ecr describe-images --repository-name "$ECR_REPOSITORY" --image-ids imageTag=${{ steps.version.outputs.image_tag }} 2>/dev/null; then
+                    echo "exists=true" >> "$GITHUB_OUTPUT"
+                  else
+                    echo "exists=false" >> "$GITHUB_OUTPUT"
+                  fi
+
+            - name: set up buildx
+              if: steps.check-prod-image.outputs.exists == 'false'
+              uses: docker/setup-buildx-action@v4
+
+            - name: build and push image
+              if: steps.check-prod-image.outputs.exists == 'false'
+              uses: docker/build-push-action@v7
+              with:
+                  context: .
+                  platforms: linux/arm64
+                  push: true
+                  tags: ${{ steps.image.outputs.uri }}
+                  build-args: |
+                      NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
+                      NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+                      NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
+                      NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}
+                      NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
+                      NEXT_PUBLIC_FIREBASE_APP_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID }}
+                      NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}
+                      NEXT_PUBLIC_CLARITY_PROJECT_ID=${{ secrets.NEXT_PUBLIC_CLARITY_PROJECT_ID }}
+                  provenance: false
+                  cache-from: type=gha
+                  cache-to: type=gha,mode=max
+
+            - name: render task definition
+              env:
+                  IMAGE: ${{ steps.image.outputs.uri }}
+              run: |
+                  aws ecs describe-task-definition --task-definition "$ECS_SERVICE" --query taskDefinition \
+                    | jq --arg image "$IMAGE" '.containerDefinitions[0].image = $image' > task-definition.json
+
+            - name: deploy service
+              uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+              with:
+                  task-definition: task-definition.json
+                  cluster: ${{ env.ECS_CLUSTER }}
+                  service: ${{ env.ECS_SERVICE }}
+                  wait-for-service-stability: true
+
+            - name: collect result
+              id: result
+              if: always()
+              env:
+                  STEPS: ${{ toJSON(steps) }}
+                  STARTED: ${{ steps.version.outputs.started }}
+              run: |
+                  echo "failed_step=$(jq -r '[to_entries[] | select(.value.conclusion == \"failure\") | .key][0] // \"\"' <<< "$STEPS")" >> "$GITHUB_OUTPUT"
+                  elapsed=$(( $(date +%s) - STARTED ))
+                  echo "duration=$(( elapsed / 60 ))m $(( elapsed % 60 ))s" >> "$GITHUB_OUTPUT"
+
+            - name: notify deploy result
+              if: always()
+              uses: ./.github/actions/notify-slack
+              continue-on-error: true
+              with:
+                  webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+                  title: "${{ job.status == 'success' && '✅' || job.status == 'failure' && '❌' || '⚠️' }} ${{ env.ECS_SERVICE }} 배포 ${{ job.status == 'success' && '성공' || job.status == 'failure' && '실패' || '취소' }}"
+                  fields: |
+                      환경=${{ env.ENVIRONMENT }}
+                      버전=${{ steps.version.outputs.image_tag }}
+                      실행자=${{ github.actor }}
+                      트리거=${{ github.event_name }} to ${{ github.ref_name }}
+                      소요 시간=${{ steps.result.outputs.duration }}
+                      실패 step=${{ steps.result.outputs.failed_step }}
+                  buttons: |
+                      실행 로그=${{ env.RUN_URL }}
+                      변경 내역=${{ github.event.compare }}
+                  commit-range: ${{ github.event.before }}..${{ github.sha }}

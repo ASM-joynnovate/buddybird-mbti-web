@@ -1,53 +1,56 @@
 {
-    "name": "buddybird-mbti-web",
-    "version": "0.1.0",
-    "private": true,
-    "scripts": {
-        "dev": "next dev",
-        "build": "next build",
-        "start": "next start",
-        "lint": "eslint",
-        "lint:fix": "eslint --fix",
-        "format": "prettier --write .",
-        "format:check": "prettier --check .",
-        "type-check": "tsc --noEmit",
-        "prepare": "husky",
-        "e2e": "yarn build && node e2e/run.mjs",
-        "e2e:run": "node e2e/run.mjs",
-        "doctor": "react-doctor"
-    },
-    "dependencies": {
-        "@microsoft/clarity": "^1.0.2",
-        "firebase": "^12.14.0",
-        "motion": "^12.40.0",
-        "next": "16.2.6",
-        "react": "19.2.4",
-        "react-dom": "19.2.4"
-    },
-    "devDependencies": {
-        "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
-        "@tailwindcss/postcss": "^4",
-        "@types/node": "^20",
-        "@types/react": "^19",
-        "@types/react-dom": "^19",
-        "eslint": "^9",
-        "eslint-config-next": "16.2.6",
-        "eslint-config-prettier": "^10.1.8",
-        "eslint-plugin-react-hooks": "^7.1.1",
-        "eslint-plugin-unused-imports": "^4.4.1",
-        "husky": "^9.1.7",
-        "lint-staged": "^17.0.7",
-        "prettier": "^3.8.3",
-        "prettier-plugin-tailwindcss": "^0.8.0",
-        "react-doctor": "^0.4.0",
-        "tailwindcss": "^4",
-        "typescript": "^5"
-    },
-    "packageManager": "yarn@4.17.0",
-    "browserslist": [
-        "chrome >= 100",
-        "edge >= 100",
-        "firefox >= 100",
-        "safari >= 15.4"
-    ]
+	"name": "buddybird-mbti-web",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"lint": "eslint .",
+		"format": "prettier --write .",
+		"postinstall": "husky"
+	},
+	"lint-staged": {
+		"*.{js,jsx,mjs,cjs,ts,tsx}": [
+			"eslint --fix --no-warn-ignored",
+			"prettier --write"
+		],
+		"*.{css,md,json}": "prettier --write"
+	},
+	"dependencies": {
+		"@microsoft/clarity": "^1.0.2",
+		"firebase": "^12.14.0",
+		"motion": "^12.43.0",
+		"next": "16.3.4",
+		"react": "19.2.8",
+		"react-dom": "19.2.8"
+	},
+	"devDependencies": {
+		"@tailwindcss/postcss": "^4",
+		"@trivago/prettier-plugin-sort-imports": "^6.0.2",
+		"@types/node": "^20",
+		"@types/react": "^19",
+		"@types/react-dom": "^19",
+		"eslint": "^9",
+		"eslint-config-next": "16.3.4",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-no-relative-import-paths": "^1.6.1",
+		"eslint-plugin-unused-imports": "^4.4.1",
+		"husky": "^9.1.7",
+		"lint-staged": "^17.3.0",
+		"prettier": "^3.9.6",
+		"prettier-plugin-classnames": "^0.10.4",
+		"prettier-plugin-merge": "^0.10.1",
+		"prettier-plugin-tailwindcss": "^0.8.1",
+		"sharp": "^0.35.3",
+		"tailwindcss": "^4.3.3",
+		"typescript": "^5"
+	},
+	"packageManager": "yarn@4.18.0",
+	"browserslist": [
+		"chrome >= 100",
+		"edge >= 100",
+		"firefox >= 100",
+		"safari >= 15.4"
+	]
 }
