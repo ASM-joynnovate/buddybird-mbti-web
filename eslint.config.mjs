@@ -5,6 +5,17 @@ import noRelativeImportPaths from 'eslint-plugin-no-relative-import-paths';
 import unusedImports from 'eslint-plugin-unused-imports';
 import { defineConfig, globalIgnores } from 'eslint/config';
 
+const routeZones = [
+	['(forest)', './(forest)/_components'],
+	['(forest)/test', './(forest)/test'],
+	['(forest)/species', './(forest)/species'],
+	['result', './result'],
+].map(([route, except]) => ({
+	target: `./src/app/${route}/_components`,
+	from: './src/app',
+	except: [except],
+}));
+
 export default defineConfig([
 	...nextVitals,
 	...nextTs,
@@ -15,6 +26,11 @@ export default defineConfig([
 				'error',
 				{ allowSameFolder: true, rootDir: '.', prefix: '@' },
 			],
+		},
+	},
+	{
+		rules: {
+			'import/no-restricted-paths': ['error', { zones: routeZones }],
 		},
 	},
 	{

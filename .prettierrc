@@ -14,7 +14,7 @@
 		"prettier-plugin-classnames",
 		"prettier-plugin-merge"
 	],
-	"tailwindStylesheet": "./app/globals.css",
+	"tailwindStylesheet": "./src/app/globals.css",
 	"tailwindFunctions": ["clsx", "cn", "cva", "twMerge"],
 	"customFunctions": ["clsx", "cn", "cva", "twMerge"],
 	"importOrder": [
