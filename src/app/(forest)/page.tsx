@@ -1,15 +1,17 @@
 import type { Metadata } from 'next';
 
 import { QUESTION_COUNT } from '@/lib/content/questions';
+import { pageMetadata } from '@/lib/content/seo';
 
 import { IntroView } from '@/app/(forest)/_components/intro-view';
 
 import { GamePill } from '@/components/ui/badge';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
 	title: '앵BTI · 버디버드',
 	description: '우리 앵무새의 성격은? 12문항으로 알아보는 앵BTI 테스트.',
-};
+	path: '/',
+});
 
 export default function HomePage() {
 	return (
