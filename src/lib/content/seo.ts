@@ -33,11 +33,12 @@ export function absoluteUrl(path: string): string {
 }
 
 // Indexable routes for the sitemap. Paths mirror the served URLs (no trailing slash).
+// /result is intentionally excluded: without its `t` query param it client-redirects
+// to home, so a bare /result is not a content page worth submitting for indexing.
 export const SEO_ROUTES = [
 	{ path: '/', priority: 1, changeFrequency: 'weekly' },
 	{ path: '/test', priority: 0.8, changeFrequency: 'monthly' },
 	{ path: '/species', priority: 0.5, changeFrequency: 'monthly' },
-	{ path: '/result', priority: 0.5, changeFrequency: 'monthly' },
 ] as const;
 
 export type PageSeo = {
@@ -46,19 +47,23 @@ export type PageSeo = {
 	description?: string;
 	// Route path, e.g. '/test'. '/' for the home route.
 	path: string;
+	// Set false to emit robots noindex for this route (still follow + still shareable:
+	// OG/Twitter scrapers ignore robots). Use for personalized/redirecting surfaces.
+	index?: boolean;
 };
 
 // Build a route's Metadata: title/description + canonical + a COMPLETE Open Graph
 // and Twitter object. Completeness matters — Next merges metadata shallowly, so a
 // page that sets `openGraph` fully replaces the layout's (no deep merge). robots and
-// metadataBase stay layout-only and inherit down.
-export function pageMetadata({ title, description, path }: PageSeo): Metadata {
+// metadataBase stay layout-only and inherit down, unless a page opts out via `index`.
+export function pageMetadata({ title, description, path, index = true }: PageSeo): Metadata {
 	const desc = description ?? DEFAULT_DESCRIPTION;
 	const canonical = absoluteUrl(path);
 	return {
 		title,
 		description: desc,
 		alternates: { canonical },
+		...(index ? {} : { robots: { index: false, follow: true } }),
 		openGraph: {
 			title,
 			description: desc,
