@@ -14,10 +14,31 @@ import type { Metadata } from 'next';
 
 const DEFAULT_SITE_URL = 'https://mbti.buddybird.xyz';
 
-const envSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+// Resolve the origin from the env override, falling back to the default when it is
+// blank OR malformed. A bad override (missing scheme, unparseable) must NOT reach the
+// `new URL(SITE_URL)` in the root layout: that throws at module load and takes down
+// EVERY route (build failure / 500), not just SEO. So validate here and degrade to the
+// known-good default instead of crashing.
+function resolveSiteUrl(): string {
+	const candidate = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+	const raw = candidate && candidate.length > 0 ? candidate : DEFAULT_SITE_URL;
+	try {
+		const { protocol } = new URL(raw);
+		if (protocol !== 'https:' && protocol !== 'http:') {
+			throw new Error(`unsupported protocol: ${protocol}`);
+		}
+		return raw.replace(/\/+$/, '');
+	} catch {
+		// Surface the misconfiguration loudly (matches next.config's env warnings).
+		console.warn(
+			`[seo] NEXT_PUBLIC_SITE_URL="${candidate}" is not a valid http(s) URL — falling back to ${DEFAULT_SITE_URL}. It must include the scheme, e.g. https://example.com`,
+		);
+		return DEFAULT_SITE_URL;
+	}
+}
 
 // Normalized production origin, no trailing slash.
-export const SITE_URL = (envSiteUrl && envSiteUrl.length > 0 ? envSiteUrl : DEFAULT_SITE_URL).replace(/\/+$/, '');
+export const SITE_URL = resolveSiteUrl();
 
 export const SITE_NAME = '버디버드 앵BTI';
 export const SITE_LOCALE = 'ko_KR';
