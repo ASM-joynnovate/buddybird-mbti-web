@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.1](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.0.0...v2.0.1) (2026-09-08)
+
+
+### Bug Fixes
+
+* **deploy:** NEXT_PUBLIC build-args를 prod environment variables에서 읽도록 변경 ([e4de84c](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/e4de84cfe1c649151b2580d9179277649c32d1f6))
+* **deploy:** NEXT_PUBLIC build-args를 prod environment variables에서 읽도록 변경 ([c4bf06e](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/c4bf06e2b2b4e5dfbfd1dda97b64fbfd2ba30671))
+
 ## [2.0.0](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v1.0.0...v2.0.0) (2026-09-03)
 
 
