@@ -1,13 +1,17 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { pageMetadata } from '@/lib/content/seo';
+
 import { SpeciesView } from '@/app/(forest)/species/_components/species-view';
 
 import { QuestSheet } from '@/components/quest-sheet';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
 	title: '앵무새 종 선택 · 앵BTI',
-};
+	description: '우리 앵무새의 종을 골라 앵BTI 테스트를 시작해 보세요.',
+	path: '/species',
+});
 
 export default function SpeciesPage() {
 	return (
