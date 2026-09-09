@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.0.1...v2.1.0) (2026-09-09)
+
+
+### Features
+
+* **seo:** add metadata, canonical, sitemap and robots [BB-405] ([1463c28](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/1463c28927c6e1a33a83b57fe3a120e48ddc089e))
+
 ## [2.0.1](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.0.0...v2.0.1) (2026-09-08)
 
 
