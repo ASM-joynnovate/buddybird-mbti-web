@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Jua } from 'next/font/google';
 
-import { DEFAULT_DESCRIPTION, DEFAULT_TITLE, SITE_LOCALE, SITE_NAME, SITE_URL } from '@/lib/content/seo';
+import { DEFAULT_DESCRIPTION, DEFAULT_TITLE, SITE_LOCALE, SITE_NAME, SITE_URL, SOCIAL_IMAGES } from '@/lib/content/seo';
 
 import { AnalyticsBootstrap } from '@/providers/analytics-bootstrap';
 import { MotionProvider } from '@/providers/motion-provider';
@@ -18,16 +18,11 @@ const jua = Jua({
 	variable: '--font-jua',
 });
 
-// Site-wide metadata defaults. metadataBase + robots live ONLY here and inherit into
-// every route (Next merges shallowly; nested objects are replaced, not deep-merged —
-// so robots is never redefined per page). Per-route canonical + Open Graph come from
-// pageMetadata() in each page's own metadata export.
 export const metadata: Metadata = {
 	metadataBase: new URL(SITE_URL),
 	title: DEFAULT_TITLE,
 	description: DEFAULT_DESCRIPTION,
 	applicationName: SITE_NAME,
-	alternates: { canonical: SITE_URL },
 	openGraph: {
 		title: DEFAULT_TITLE,
 		description: DEFAULT_DESCRIPTION,
@@ -35,11 +30,13 @@ export const metadata: Metadata = {
 		siteName: SITE_NAME,
 		locale: SITE_LOCALE,
 		type: 'website',
+		images: SOCIAL_IMAGES,
 	},
 	twitter: {
 		card: 'summary_large_image',
 		title: DEFAULT_TITLE,
 		description: DEFAULT_DESCRIPTION,
+		images: SOCIAL_IMAGES,
 	},
 	robots: {
 		index: true,
