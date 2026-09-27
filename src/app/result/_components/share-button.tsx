@@ -34,9 +34,10 @@ export function ShareButton({ type, photoUrl }: ShareButtonProps) {
 					import('@/app/result/_lib/share-card'),
 				]);
 				const info = getTypeInfo(type);
+				const characterSrc = parrotImageSrc(type);
 				const [photo, character] = await Promise.all([
 					photoUrl !== null ? loadImage(photoUrl).catch(() => null) : Promise.resolve(null),
-					loadImage(parrotImageSrc(type)).catch(() => null),
+					characterSrc !== undefined ? loadImage(characterSrc).catch(() => null) : Promise.resolve(null),
 				]);
 
 				const blob = await composeCard({

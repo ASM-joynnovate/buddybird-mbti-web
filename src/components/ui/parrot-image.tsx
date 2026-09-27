@@ -7,7 +7,7 @@ import Image from 'next/image';
 import type { TypeCode } from '@/types/mbti';
 
 import { trackEvent } from '@/lib/analytics/track';
-import { parrotImageSrc } from '@/lib/content/assets';
+import { parrotImage } from '@/lib/content/assets';
 import { getTypeInfo } from '@/lib/content/type-infos';
 
 const reportedTypes = new Set<TypeCode>();
@@ -40,6 +40,7 @@ export function ParrotImage({
 	sizes,
 }: ParrotImageProps) {
 	const [failed, setFailed] = useState(false);
+	const image = parrotImage(type);
 	const info = getTypeInfo(type);
 	const alt = info ? `${info.name} (${type}) 앵무새` : `${type} 앵무새`;
 
@@ -53,7 +54,7 @@ export function ParrotImage({
 		[type],
 	);
 
-	if (failed) {
+	if (failed || image === undefined) {
 		return (
 			<span
 				className={`flex h-full w-full flex-col items-center justify-center gap-2
@@ -72,7 +73,7 @@ export function ParrotImage({
 	return (
 		<Image
 			ref={checkBroken}
-			src={parrotImageSrc(type)}
+			src={image}
 			alt={alt}
 			width={width}
 			height={height}
