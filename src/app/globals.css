@@ -148,6 +148,22 @@
 	--shadow-raise-bar-action: 0 3px 0 var(--color-depth-action);
 	--shadow-raise-bar-action-sm: 0 1px 0 var(--color-depth-action);
 	--shadow-inset-highlight: inset 0 2px 0 rgba(255, 255, 255, 0.4);
+
+	/* JS 없이 CSS만으로 재생되는 첫 화면 등장 애니메이션 (motion의 fadeUp·fadeOnly와 같은 값) */
+	--animate-enter-up: enter-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+	--animate-enter-fade: enter-fade 0.26s ease-out both;
+
+	@keyframes enter-up {
+		from {
+			opacity: 0;
+			transform: translateY(12px);
+		}
+	}
+	@keyframes enter-fade {
+		from {
+			opacity: 0;
+		}
+	}
 }
 
 @layer base {

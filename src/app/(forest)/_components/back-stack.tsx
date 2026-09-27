@@ -117,7 +117,8 @@ export function BackStack({
 					<m.div
 						key={active}
 						className="relative z-3"
-						initial={reduced ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.94 }}
+						// 첫 카드는 SSR HTML에서 바로 보이게 한다 (부모의 CSS 등장 애니메이션이 대신한다).
+						initial={pos === 0 ? false : reduced ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.94 }}
 						animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
 						transition={reduced ? { duration: 0.12 } : { duration: 0.46, ease: easeSpring }}
 					>
