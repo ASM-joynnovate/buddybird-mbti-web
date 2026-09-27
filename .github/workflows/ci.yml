@@ -32,6 +32,9 @@ jobs:
             - name: type check
               run: npx tsc --noEmit
 
+            - name: display font subset check
+              run: yarn fonts:check
+
             - name: notify failure
               if: failure()
               uses: ./.github/actions/notify-slack
