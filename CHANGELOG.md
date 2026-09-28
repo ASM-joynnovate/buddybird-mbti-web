@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.1.0](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.0.1...v2.1.0) (2026-09-28)
+
+
+### Features
+
+* **seo:** add metadata, canonical, sitemap and robots [BB-405] ([1463c28](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/1463c28927c6e1a33a83b57fe3a120e48ddc089e))
+* **seo:** add Open Graph images [BB-423] ([0a0d468](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/0a0d46891c3a412814f86afddf6f74c39eec54c0))
+* **seo:** 앵BTI OpenGraph 이미지 적용 [BB-423] ([ab9cd41](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/ab9cd411caa0eaece863b55bc74b83e348352b4e))
+
+
+### Performance Improvements
+
+* **font:** Jua를 사용 글자만 담은 서브셋 1개로 교체 [BB-537] ([6bc53e3](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/6bc53e3b187c96bb679ad1c36c9fae1dca991f5d))
+* **image:** 앵무새 캐릭터 이미지를 static import로 전환 [BB-537] ([17b121c](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/17b121c46a8f34a881ec7de9835a9ef52c82f36d))
+* **intro:** 첫 방문 시 내용 표시 6.0초 → 1.6초로 단축 [BB-537] ([08a4dbc](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/08a4dbc9bb58607fa45e5ea90390febc631b4379))
+* **intro:** 첫 화면 등장 애니메이션을 CSS로 전환 [BB-537] ([14150f3](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/14150f3e8b6223aca6b0d439b52938ff9a402315))
+
 ## [2.0.1](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.0.0...v2.0.1) (2026-09-08)
 
 
