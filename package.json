@@ -8,6 +8,8 @@
 		"start": "next start",
 		"lint": "eslint .",
 		"format": "prettier --write .",
+		"fonts:subset": "node scripts/subset-display-font.mjs",
+		"fonts:check": "node scripts/subset-display-font.mjs --check",
 		"postinstall": "husky"
 	},
 	"lint-staged": {
@@ -49,6 +51,7 @@
 		"prettier-plugin-merge": "^0.10.1",
 		"prettier-plugin-tailwindcss": "^0.8.1",
 		"sharp": "^0.35.3",
+		"subset-font": "^2",
 		"tailwindcss": "^4.3.3",
 		"typescript": "^5"
 	},

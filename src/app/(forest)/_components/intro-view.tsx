@@ -11,7 +11,6 @@ import { useDeckController } from '@/hooks/use-deck-controller';
 import { track, trackEvent } from '@/lib/analytics/track';
 import { withTrack } from '@/lib/analytics/with-track';
 import { CAROUSEL_TYPES } from '@/lib/content/assets';
-import { fadeOnly, fadeUp, staggerContainer } from '@/lib/motion/variants';
 
 import { BackStack, type BackStackControls } from '@/app/(forest)/_components/back-stack';
 import { useTestProgress } from '@/providers/test-progress-provider';
@@ -20,6 +19,8 @@ import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 import { DeckOverlay } from '@/components/deck-overlay/deck-overlay-lazy';
 import { DetailDialog } from '@/components/detail-dialog-lazy';
 import { GameButton } from '@/components/ui/button';
+
+const ENTRANCE_CLASS = 'animate-enter-up motion-reduce:animate-enter-fade';
 
 const STACK_LEAD: readonly TypeCode[] = ['ENFP', 'INTJ', 'ESFP', 'ISFP', 'ENTP', 'INFJ', 'ENTJ', 'ISFJ'];
 const STACK_POOL: readonly TypeCode[] = [...STACK_LEAD, ...CAROUSEL_TYPES.filter((code) => !STACK_LEAD.includes(code))];
@@ -37,8 +38,6 @@ export function IntroView({ heading, stats }: IntroViewProps) {
 	const deck = useDeckController('intro');
 	const stackControls = useRef<BackStackControls | null>(null);
 	const [detail, setDetail] = useState<TypeCode | null>(null);
-
-	const entrance = reducedMotion ? fadeOnly : fadeUp;
 
 	const handleStart = () => {
 		reset();
@@ -61,13 +60,9 @@ export function IntroView({ heading, stats }: IntroViewProps) {
 			className="relative flex min-h-dvh flex-col items-center overflow-x-clip px-gutter
 				pt-[clamp(5.25rem,12dvh,7rem)] pb-[clamp(2.5rem,9dvh,5.5rem)] text-center"
 		>
-			<m.div
-				className="flex min-h-0 w-full flex-1 flex-col items-center"
-				variants={staggerContainer}
-				initial="hidden"
-				animate="visible"
-			>
-				<m.div className="flex w-full flex-col items-center gap-4" variants={entrance}>
+			{/* 등장 애니메이션은 CSS로 재생해 JS 로드 전에도 내용이 보이게 한다. */}
+			<div className="flex min-h-0 w-full flex-1 flex-col items-center">
+				<div className={`flex w-full flex-col items-center gap-4 ${ENTRANCE_CLASS} [animation-delay:40ms]`}>
 					{heading}
 
 					<BackStack
@@ -82,9 +77,12 @@ export function IntroView({ heading, stats }: IntroViewProps) {
 						paused={detail !== null}
 						controlsRef={stackControls}
 					/>
-				</m.div>
+				</div>
 
-				<m.div className="mt-auto flex w-full flex-col items-center gap-4 pt-4" variants={entrance}>
+				<div
+					className={`mt-auto flex w-full flex-col items-center gap-4 pt-4 ${ENTRANCE_CLASS}
+						[animation-delay:120ms]`}
+				>
 					<GameButton variant="secondary" onClick={deck.openAnimated}>
 						🗂 16유형 모두 보기
 					</GameButton>
@@ -106,8 +104,8 @@ export function IntroView({ heading, stats }: IntroViewProps) {
 							테스트 시작하기 <span aria-hidden="true">→</span>
 						</GameButton>
 					</div>
-				</m.div>
-			</m.div>
+				</div>
+			</div>
 
 			<DeckOverlay
 				controller={deck}

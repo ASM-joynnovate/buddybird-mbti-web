@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Jua } from 'next/font/google';
+import localFont from 'next/font/local';
 
 import { DEFAULT_DESCRIPTION, DEFAULT_TITLE, SITE_LOCALE, SITE_NAME, SITE_URL, SOCIAL_IMAGES } from '@/lib/content/seo';
 
@@ -11,9 +11,11 @@ import { Toaster } from '@/components/ui/sonner';
 
 import './globals.css';
 
-const jua = Jua({
+// 소스에서 쓰는 글자만 담은 서브셋. 문구를 추가하면 `node scripts/subset-display-font.mjs`로 다시 생성한다.
+const jua = localFont({
+	src: './fonts/jua-subset.woff2',
 	weight: '400',
-	subsets: ['latin'],
+	display: 'swap',
 	preload: false,
 	variable: '--font-jua',
 });
