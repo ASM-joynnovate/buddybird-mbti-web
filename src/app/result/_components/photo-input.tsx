@@ -8,6 +8,7 @@ import { track } from '@/lib/analytics/track';
 import { photoError } from '@/lib/image-generation/input';
 import { buttonTap } from '@/lib/motion/variants';
 
+import { PhotoCropDialog } from '@/app/result/_components/photo-crop-dialog';
 import { CameraIcon, ImageIcon } from 'lucide-react';
 import { m, useReducedMotion } from 'motion/react';
 
@@ -51,6 +52,12 @@ export function PhotoInput({ type, onPick }: PhotoInputProps) {
 	const headingId = useId();
 	const cameraRef = useRef<HTMLInputElement>(null);
 	const galleryRef = useRef<HTMLInputElement>(null);
+	const [pending, setPending] = useState<{ src: string; source: 'camera' | 'gallery' } | null>(null);
+
+	const closeCrop = () => {
+		if (pending) URL.revokeObjectURL(pending.src);
+		setPending(null);
+	};
 
 	const handleChange = (source: 'camera' | 'gallery') => (event: ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
@@ -59,7 +66,13 @@ export function PhotoInput({ type, onPick }: PhotoInputProps) {
 		const invalid = photoError(file);
 		setError(invalid);
 		if (invalid) return;
-		track({ name: 'photo_attached', payload: { source } });
+		setPending({ src: URL.createObjectURL(file), source });
+	};
+
+	const handleCropped = (file: File) => {
+		if (!pending) return;
+		track({ name: 'photo_attached', payload: { source: pending.source } });
+		closeCrop();
 		onPick(file);
 	};
 
@@ -104,6 +117,7 @@ export function PhotoInput({ type, onPick }: PhotoInputProps) {
 					onClick={() => galleryRef.current?.click()}
 				/>
 			</div>
+			<PhotoCropDialog src={pending?.src ?? null} onCancel={closeCrop} onConfirm={handleCropped} />
 			{error && (
 				<p role="alert" className="mt-3 mb-0 text-sm text-primary-active">
 					{error}
