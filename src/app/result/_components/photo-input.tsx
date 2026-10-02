@@ -117,7 +117,17 @@ export function PhotoInput({ type, onPick }: PhotoInputProps) {
 					onClick={() => galleryRef.current?.click()}
 				/>
 			</div>
-			<PhotoCropDialog src={pending?.src ?? null} onCancel={closeCrop} onConfirm={handleCropped} />
+			<PhotoCropDialog
+				src={pending?.src ?? null}
+				type={type}
+				onCancel={closeCrop}
+				onReselect={() => {
+					const source = pending?.source;
+					closeCrop();
+					(source === 'camera' ? cameraRef : galleryRef).current?.click();
+				}}
+				onConfirm={handleCropped}
+			/>
 			{error && (
 				<p role="alert" className="mt-3 mb-0 text-sm text-primary-active">
 					{error}
