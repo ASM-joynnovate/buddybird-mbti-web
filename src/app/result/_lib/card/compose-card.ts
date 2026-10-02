@@ -1,6 +1,6 @@
 import type { TypeCode } from '@/types/mbti';
 
-import { loadFonts, roundRectPath, wrapLines } from './canvas-utils';
+import { drawCover, loadFonts, roundRectPath, wrapLines } from './canvas-utils';
 import {
 	CAP_BOTTOM_PAD,
 	CAP_CODE_SIZE,
@@ -36,6 +36,7 @@ interface ComposeCardInput {
 	typeName: string;
 	copy: string;
 	photo: HTMLImageElement | null;
+	isGenerated: boolean;
 	character: HTMLImageElement | null;
 	colors: readonly [string, string];
 }
@@ -54,7 +55,8 @@ export async function composeCard(input: ComposeCardInput): Promise<Blob> {
 	paintPaper(ctx);
 
 	const hasPhoto = input.photo !== null;
-	const photoH = hasPhoto ? DUO_PHOTO_H : SOLO_PHOTO_H;
+	const duo = hasPhoto && !input.isGenerated;
+	const photoH = duo ? DUO_PHOTO_H : SOLO_PHOTO_H;
 	ctx.font = `${CAP_TAG_SIZE}px ${FONT_BODY}`;
 	const taglineLines = wrapLines(ctx, input.copy, CARD_W - CARD_PAD * 2 - 24, 2);
 	const captionH =
@@ -81,11 +83,27 @@ export async function composeCard(input: ComposeCardInput): Promise<Blob> {
 	const photoX = CARD_X + CARD_PAD;
 	const photoY = cardY + CARD_PAD;
 
-	if (hasPhoto && input.photo !== null) {
+	if (duo && input.photo !== null) {
 		const shotW = (PHOTO_INNER - DUO_GAP) / 2;
 		drawPetWindow(ctx, input.photo, photoX, photoY, shotW, DUO_PHOTO_H, DUO_PHOTO_R);
-		const rx = photoX + shotW + DUO_GAP;
-		drawCharWindow(ctx, input.character, input.colors, rx, photoY, shotW, DUO_PHOTO_H, DUO_PHOTO_R);
+		drawCharWindow(
+			ctx,
+			input.character,
+			input.colors,
+			photoX + shotW + DUO_GAP,
+			photoY,
+			shotW,
+			DUO_PHOTO_H,
+			DUO_PHOTO_R,
+		);
+	} else if (hasPhoto && input.photo !== null) {
+		ctx.save();
+		roundRectPath(ctx, photoX, photoY, PHOTO_INNER, SOLO_PHOTO_H, SOLO_PHOTO_R);
+		ctx.clip();
+		ctx.fillStyle = CARD_BG;
+		ctx.fillRect(photoX, photoY, PHOTO_INNER, SOLO_PHOTO_H);
+		drawCover(ctx, input.photo, photoX, photoY, PHOTO_INNER, SOLO_PHOTO_H);
+		ctx.restore();
 	} else {
 		drawCharWindow(ctx, input.character, input.colors, photoX, photoY, PHOTO_INNER, SOLO_PHOTO_H, SOLO_PHOTO_R);
 	}

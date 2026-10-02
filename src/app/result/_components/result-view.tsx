@@ -24,7 +24,7 @@ import { PhotoInput } from '@/app/result/_components/photo-input';
 import { ResultPolaroid } from '@/app/result/_components/result-polaroid';
 import { ShareButton } from '@/app/result/_components/share-button';
 import { Marker, emphasize } from '@/app/result/_components/ui/emphasize';
-import { usePhotoSource } from '@/app/result/_hooks/use-photo-source';
+import { useGeneratedPhoto } from '@/app/result/_hooks/use-generated-photo';
 import { useTestProgress } from '@/providers/test-progress-provider';
 import { AnimatePresence, type Variants, m, useReducedMotion } from 'motion/react';
 
@@ -56,7 +56,7 @@ export function ResultView() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const { result, reset } = useTestProgress();
-	const photo = usePhotoSource();
+	const [photoFile, setPhotoFile] = useState<File | null>(null);
 	const reducedMotion = useReducedMotion();
 
 	const deck = useDeckController('result');
@@ -74,6 +74,7 @@ export function ResultView() {
 	const resultParam = searchParams.get(RESULT_PARAM);
 	const decoded = decodeResult(resultParam);
 	const type = ownType ?? decoded?.type ?? null;
+	const generated = useGeneratedPhoto(photoFile, type);
 
 	const entryHandled = useRef(false);
 	useEffect(() => {
@@ -115,7 +116,7 @@ export function ResultView() {
 							type={type}
 							name={getTypeName(type)}
 							gradient={gradient}
-							photoUrl={photo.objectUrl}
+							photoUrl={generated.url}
 							reducedMotion={reducedMotion === true}
 						/>
 					</m.div>
@@ -133,10 +134,45 @@ export function ResultView() {
 
 				<m.div className="flex flex-col gap-4 px-gutter pt-5 pb-9" variants={staggerContainer}>
 					<m.div className="flex flex-col gap-3" variants={rise}>
-						<GamePanel className="px-4 py-4">
-							<PhotoInput objectUrl={photo.objectUrl} onPick={photo.setFile} onClear={photo.clear} />
-						</GamePanel>
-						<ShareButton type={type} photoUrl={photo.objectUrl} />
+						{!generated.url && photoFile === null && (
+							<PhotoInput
+								type={type}
+								onPick={(file) => {
+									setPhotoFile(file);
+									void generated.generate(file);
+								}}
+							/>
+						)}
+						<div
+							className={
+								!generated.url && photoFile !== null
+									? 'grid grid-cols-2 items-start gap-3'
+									: 'grid grid-cols-1'
+							}
+						>
+							{!generated.url && photoFile !== null && (
+								<GameButton
+									variant="secondary"
+									size="sm"
+									className="min-h-12 w-full min-w-0"
+									onClick={() => void generated.generate()}
+									disabled={generated.busy}
+								>
+									{generated.busy ? '합성하는 중…' : '다시 시도'}
+								</GameButton>
+							)}
+							<ShareButton
+								type={type}
+								photoUrl={generated.url}
+								isGenerated={generated.url !== null}
+								disabled={generated.busy}
+							/>
+						</div>
+						{(generated.busy || generated.error) && (
+							<div role="status" aria-live="polite" className="text-center text-sm text-ink-muted">
+								{generated.busy ? '우리 새에게 어울리는 의상을 입히고 있어요.' : generated.error}
+							</div>
+						)}
 						<AppCtaButton placement="result" />
 					</m.div>
 
