@@ -1,5 +1,5 @@
 import { TYPES } from '@/lib/content/type-infos';
-import { MAX_PHOTO_BYTES, photoError } from '@/lib/image-generation/input';
+import { MAX_PHOTO_BYTES, PHOTO_HEIGHT, PHOTO_WIDTH, photoError } from '@/lib/image-generation/input';
 import { COSTUME_PROMPT } from '@/lib/image-generation/prompt';
 
 import { readFile } from 'node:fs/promises';
@@ -62,8 +62,12 @@ export async function POST(request: Request) {
 			const metadata = await sharp(bytes, { limitInputPixels: 40_000_000 }).metadata();
 			const actualType = { jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp' }[metadata.format as string];
 			if (actualType !== file.type || (metadata.pages ?? 1) > 1) throw new Error('Invalid image');
-			// Decode fully, apply EXIF orientation and strip metadata without cropping.
-			photo = await sharp(bytes, { limitInputPixels: 40_000_000 }).rotate().png().toBuffer();
+			// Decode fully, apply EXIF orientation, strip metadata and match the agreed 5:4 output size.
+			photo = await sharp(bytes, { limitInputPixels: 40_000_000 })
+				.rotate()
+				.resize(PHOTO_WIDTH, PHOTO_HEIGHT, { fit: 'cover' })
+				.png()
+				.toBuffer();
 		} catch {
 			return failure('사진을 읽을 수 없어요. 다른 JPEG, PNG, WebP 사진을 선택해 주세요.', 400);
 		}
@@ -93,11 +97,17 @@ export async function POST(request: Request) {
 		if (typeof encoded !== 'string' || !encoded || encoded.length > 40 * 1024 * 1024) {
 			return failure('합성 이미지가 도착하지 않았어요. 다시 시도해 주세요.', 502);
 		}
-		const output = Buffer.from(encoded, 'base64');
-		const metadata = await sharp(output, { limitInputPixels: 40_000_000 }).metadata();
-		const mediaType = { png: 'image/png', jpeg: 'image/jpeg', webp: 'image/webp' }[metadata.format as string];
-		if (!mediaType) return failure('합성 이미지를 읽을 수 없어요. 다시 시도해 주세요.', 502);
-		return new Response(new Uint8Array(output), { headers: { ...headers, 'Content-Type': mediaType } });
+		let output: Buffer;
+		try {
+			// The model may return a different size; always deliver PHOTO_WIDTH×PHOTO_HEIGHT.
+			output = await sharp(Buffer.from(encoded, 'base64'), { limitInputPixels: 40_000_000 })
+				.resize(PHOTO_WIDTH, PHOTO_HEIGHT, { fit: 'cover' })
+				.jpeg({ quality: 90 })
+				.toBuffer();
+		} catch {
+			return failure('합성 이미지를 읽을 수 없어요. 다시 시도해 주세요.', 502);
+		}
+		return new Response(new Uint8Array(output), { headers: { ...headers, 'Content-Type': 'image/jpeg' } });
 	} catch {
 		return failure(
 			timeout.aborted
