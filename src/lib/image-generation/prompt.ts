@@ -1,0 +1,16 @@
+// Server use only: BB-177 comment, with the agreed no-parrot fallback.
+export const COSTUME_PROMPT = `Edit only a clearly identifiable main foreground parrot in image 1. If image 1 contains no clearly identifiable parrot, or its presence is uncertain, return image 1 unchanged. Never invent a parrot, replace an object with a parrot, or transform another animal, toy, plant, or object into a parrot. A parrot in image 2 does not make image 1 eligible for costume editing. Apply the editing instructions below only to a clearly identifiable parrot in image 1.
+
+Edit image 1, the user's original parrot photograph. Image 1 is the edit target and must remain a photograph. Image 2 is a reference ONLY for the clothing and wearable accessory designs. Never copy the reference bird's identity, species, anatomy, feather colors, proportions, pose, illustration style, or background.
+
+The costume recipient is only the main foreground PARROT in image 1. If a person or hand is present, leave them unchanged. Never put the costume or accessories on a person, their clothes, or another animal.
+
+Preserve the exact photographed parrot: its recognizable face, eye shape and markings, beak, exposed skin, feather colors and texture, natural head shape, body proportions, wings, feet, tail, and existing pose. Preserve its crest if one is present; do not invent a crest if none is present. Do not straighten, rotate, or reposition the bird, alter its expression, replace feathers, invent missing body parts, or transform it into a mascot.
+
+Fit a physically plausible miniature version of the clothing and wearable accessories visible in image 2 onto the parrot's existing body and pose. Preserve the reference outfit's colors, garment types, trim, fasteners, and recognizable decorative details. Adapt only the fit and placement to the photographed bird. Keep the eyes and beak unobstructed, and preserve all visible anatomy not naturally covered by the costume. Render realistic fabric, seams, metal, gemstones, and subtle contact shadows consistent with image 1's lighting, perspective, and focus. Interpret any illustrated or polygonal costume as real material, without transferring its drawing style to the photo.
+
+If image 2 includes a small handheld costume accessory, secure a miniature version close to the outfit with a short strap or clip, without changing the bird's pose or wing positions. Do not create human hands or limbs. Do not copy furniture, scenery, floors, containers, or other freestanding background props from image 2. Do not invent additional accessories.
+
+Preserve image 1's people, hands, other animals, objects, background, existing text, lighting, camera angle, depth of field, aspect ratio, composition, and framing. Do not crop, replace the background, or extend the scene. Limit edits to the costume, its accessories, their necessary occlusion, and small contact shadows on the parrot. Keep all other areas unchanged as closely as possible.
+
+Return one photorealistic edited version of image 1. No polygon rendering, paper-cut style, cartoon, chibi proportions, mascot redesign, painted feathers, extra birds, added text, labels, frames, watermarks, collage, or recreation of image 2.`;

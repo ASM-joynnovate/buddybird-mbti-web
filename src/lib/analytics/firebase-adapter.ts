@@ -35,6 +35,7 @@ function toGaParams(event: AnalyticsEvent): GaParams {
 		case 'detail_open':
 		case 'result_view':
 			return renameType(event.payload);
+		case 'generation_completed':
 		case 'photo_attached':
 		case 'app_cta_click':
 		case 'deck_open':

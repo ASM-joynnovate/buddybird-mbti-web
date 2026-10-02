@@ -1,6 +1,7 @@
 import type { TypeCode } from '@/types/mbti';
 
 export type AnalyticsEventName =
+	| 'generation_completed'
 	| 'species_selected'
 	| 'test_start'
 	| 'question_answered'
@@ -26,6 +27,7 @@ export type AnalyticsEventName =
 export type PayloadOf<N extends AnalyticsEventName> = Extract<AnalyticsEvent, { name: N }>['payload'];
 
 export type AnalyticsEvent =
+	| { name: 'generation_completed'; payload: { outcome: 'success' | 'error'; duration_ms: number } }
 	| { name: 'species_selected'; payload: { species: string } }
 	| { name: 'test_start'; payload: Record<string, never> }
 	| {
