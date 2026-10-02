@@ -43,7 +43,7 @@ OpenRouter의 `google/gemini-3.1-flash-lite-image`에 사용자 사진과 결과
 합성 중에는 기존 MBTI 캐릭터를 표시하고 완료되면 합성 이미지로 교체합니다. 완료 화면에는 사진 변경·재촬영·제거 메뉴 없이 카드 공유를 제공합니다.
 생성 이미지는 화면과 공유 카드에 사용하며 서버 저장소에 보관하지 않습니다. 새로고침하면 사라집니다.
 
-운영 ECS task에는 Secrets Manager 또는 SSM secret 참조로 `OPENROUTER_API_KEY`를 런타임 주입해야 합니다.
+운영 키는 GitHub `prod` environment secret `OPENROUTER_API_KEY`에 둡니다. 배포 워크플로가 ECS task definition 환경변수로 주입합니다.
 키를 Docker build args나 NEXT_PUBLIC 변수에 넣지 않습니다. upstream 요청 제한 시간은 120초이므로
 운영 프록시의 응답 대기 시간도 확인해야 합니다. 키가 없으면 합성 API는 503을 반환합니다.
 별도 앵무새 판별이나 자동 재시도는 없으며, 모델이 이미지를 반환하지 않으면 재시도를 안내합니다.
