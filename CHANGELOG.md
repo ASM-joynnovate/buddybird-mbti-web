@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.2.0](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.1.0...v2.2.0) (2026-10-03)
+
+
+### Features
+
+* **cta:** 앱 버튼에 버디버드 이미지를 넣고 문구를 '앱 다운로드'로 변경 ([08c5cf1](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/08c5cf1c80e075cc242d795d93fcb23e39d1d1ea))
+* **image-generation:** 사진 합성 API 추가 [BB-177] ([42d9332](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/42d9332a618a50241dc8e0bb6fc06d6757400f6c))
+* **image-generation:** 의상 합성 프롬프트를 테스트 결과에 맞게 보강 [BB-565] ([1f2fb4b](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/1f2fb4bb64429556982f2540fcf5f93dc6523513))
+* **image-generation:** 합성 입출력 이미지를 1400x1120으로 고정 [BB-565] ([ca3f2fc](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/ca3f2fc02c838fd111ff032f1caa3cdea3b6daf4))
+* **result:** add photo compositing with a 5:4 crop step [BB-177][BB-565] ([1c32fcd](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/1c32fcda323ab5f34046a5486c3c340127069a8c))
+* **result:** 결과 화면 제목을 '우리 앵무새 성격은'으로 변경 [BB-565] ([ed4475b](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/ed4475b2b7d90133955ce78d2601886e129c9b86))
+* **result:** 결과 화면에 사진 합성 흐름과 사진 트레이 추가 [BB-177] ([45ec430](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/45ec43048869c251ad304f6d3173389e76bd9675))
+* **result:** 사진 선택 후 5:4 크롭 팝업 추가 [BB-565] ([e3511db](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/e3511db8625b624a1bdc2f6ccf07f83f1a10ef88))
+* **result:** 크롭 팝업을 폴라로이드 미리보기 형태로 변경 [BB-565] ([e7fed34](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/e7fed342a2cb7d5373327da7779754eefc69245d))
+* **result:** 합성 중 진행 카드 추가, 실패 시 사진 트레이 다시 표시 [BB-565] ([0243218](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/024321812591e8b085232e2c311cfd885cac4f73))
+
 ## [2.1.0](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.0.1...v2.1.0) (2026-09-28)
 
 
