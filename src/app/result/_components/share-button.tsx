@@ -17,9 +17,11 @@ import { GameButton } from '@/components/ui/button';
 interface ShareButtonProps {
 	type: TypeCode;
 	photoUrl: string | null;
+	disabled?: boolean;
+	isGenerated: boolean;
 }
 
-export function ShareButton({ type, photoUrl }: ShareButtonProps) {
+export function ShareButton({ type, photoUrl, isGenerated, disabled = false }: ShareButtonProps) {
 	const [busy, startTransition] = useTransition();
 
 	const handleShare = () => {
@@ -36,7 +38,7 @@ export function ShareButton({ type, photoUrl }: ShareButtonProps) {
 				const info = getTypeInfo(type);
 				const characterSrc = parrotImageSrc(type);
 				const [photo, character] = await Promise.all([
-					photoUrl !== null ? loadImage(photoUrl).catch(() => null) : Promise.resolve(null),
+					photoUrl !== null ? loadImage(photoUrl) : Promise.resolve(null),
 					characterSrc !== undefined ? loadImage(characterSrc).catch(() => null) : Promise.resolve(null),
 				]);
 
@@ -45,6 +47,7 @@ export function ShareButton({ type, photoUrl }: ShareButtonProps) {
 					typeName: getTypeName(type),
 					copy: info?.report ?? '',
 					photo,
+					isGenerated,
 					character,
 					colors: typeColors(type),
 				});
@@ -66,8 +69,14 @@ export function ShareButton({ type, photoUrl }: ShareButtonProps) {
 	};
 
 	return (
-		<GameButton variant="secondary" size="sm" className="w-full" onClick={handleShare} disabled={busy}>
-			{busy ? '카드 만드는 중…' : '친구에게 공유하기'} <span aria-hidden="true">↗</span>
+		<GameButton
+			variant="secondary"
+			size="sm"
+			className="min-h-12 w-full"
+			onClick={handleShare}
+			disabled={busy || disabled}
+		>
+			{busy ? '카드 만드는 중…' : '카드 공유하기'}
 		</GameButton>
 	);
 }

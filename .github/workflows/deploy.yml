@@ -100,9 +100,18 @@ jobs:
             - name: render task definition
               env:
                   IMAGE: ${{ steps.image.outputs.uri }}
+                  OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
               run: |
+                  # 키가 비어 있으면 기존 revision의 값을 그대로 둔다.
                   aws ecs describe-task-definition --task-definition "$ECS_SERVICE" --query taskDefinition \
-                    | jq --arg image "$IMAGE" '.containerDefinitions[0].image = $image' > task-definition.json
+                    | jq --arg image "$IMAGE" --arg key "$OPENROUTER_API_KEY" '
+                        .containerDefinitions[0].image = $image
+                        | if $key == "" then . else
+                            .containerDefinitions[0].environment =
+                              ((.containerDefinitions[0].environment // []) | map(select(.name != "OPENROUTER_API_KEY")))
+                              + [{name: "OPENROUTER_API_KEY", value: $key}]
+                          end
+                      ' > task-definition.json
 
             - name: deploy service
               uses: aws-actions/amazon-ecs-deploy-task-definition@v2

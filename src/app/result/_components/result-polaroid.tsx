@@ -79,29 +79,26 @@ export function ResultPolaroid({ type, name, gradient, photoUrl, reducedMotion }
 				aria-hidden="true"
 			/>
 
-			{photoUrl !== null ? (
-				<div className="flex h-60 gap-2.5">
-					<div
-						className="relative flex-1 overflow-hidden rounded-sm bg-surface-cream
-							shadow-[inset_0_0_0_2px_rgba(0,0,0,0.05)]"
-					>
-						{/* eslint-disable-next-line @next/next/no-img-element */}
-						<img
-							className="absolute inset-0 h-full w-full object-cover"
-							src={photoUrl}
-							alt="내 앵무새 사진"
-							data-clarity-mask="True"
-						/>
-					</div>
-					<div className="relative flex-1 overflow-hidden rounded-sm" style={charBg}>
-						<CharShot type={type} reducedMotion={reducedMotion} />
-					</div>
-				</div>
-			) : (
-				<div className="relative h-72 overflow-hidden rounded-sm" style={charBg}>
+			<div
+				className={
+					photoUrl !== null
+						? 'relative aspect-[5/4] overflow-hidden rounded-sm bg-surface-cream'
+						: 'relative h-72 overflow-hidden rounded-sm'
+				}
+				style={photoUrl !== null ? undefined : charBg}
+			>
+				{photoUrl !== null ? (
+					// eslint-disable-next-line @next/next/no-img-element
+					<img
+						className="h-full w-full object-cover"
+						src={photoUrl}
+						alt="MBTI 의상을 입은 우리 새 합성 사진"
+						data-clarity-mask="True"
+					/>
+				) : (
 					<CharShot type={type} reducedMotion={reducedMotion} />
-				</div>
-			)}
+				)}
+			</div>
 
 			<div className="flex flex-col items-center gap-0.5 px-1 pt-3 pb-4 text-center">
 				<span className="font-display text-4xl leading-none tracking-wide text-primary-active">{type}</span>

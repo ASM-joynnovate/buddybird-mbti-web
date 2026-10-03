@@ -2,6 +2,8 @@
 
 import { useSyncExternalStore } from 'react';
 
+import Image from 'next/image';
+
 import { useRemoteConfigString } from '@/hooks/use-remote-config-string';
 
 import { track } from '@/lib/analytics/track';
@@ -10,6 +12,8 @@ import { APP_CTA_LABEL } from '@/lib/content/cta';
 import { resolveStoreUrl } from '@/app/result/_lib/store-link';
 
 import { GameButtonLink } from '@/components/ui/button';
+
+import buddybirdIcon from '@/public/assets/buddybird-headphones.webp';
 
 interface AppCtaButtonProps {
 	placement: 'intro' | 'result';
@@ -40,7 +44,7 @@ export function AppCtaButton({ placement }: AppCtaButtonProps) {
 			rel="noopener noreferrer"
 			onClick={handleClick}
 		>
-			<span aria-hidden="true">🐦</span>
+			<Image src={buddybirdIcon} alt="" width={32} height={32} className="-my-1 size-8 shrink-0" />
 			{label}
 		</GameButtonLink>
 	);

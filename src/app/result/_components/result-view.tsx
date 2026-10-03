@@ -19,12 +19,13 @@ import { RESULT_PARAM, decodeResult, fallbackScores } from '@/lib/result-url';
 import { AppCtaButton } from '@/app/result/_components/app-cta-button';
 import { AxisBars } from '@/app/result/_components/axis-bars';
 import { Confetti } from '@/app/result/_components/confetti';
+import { GenerationProgress } from '@/app/result/_components/generation-progress';
 import { MatchCard } from '@/app/result/_components/match-card';
 import { PhotoInput } from '@/app/result/_components/photo-input';
 import { ResultPolaroid } from '@/app/result/_components/result-polaroid';
 import { ShareButton } from '@/app/result/_components/share-button';
 import { Marker, emphasize } from '@/app/result/_components/ui/emphasize';
-import { usePhotoSource } from '@/app/result/_hooks/use-photo-source';
+import { useGeneratedPhoto } from '@/app/result/_hooks/use-generated-photo';
 import { useTestProgress } from '@/providers/test-progress-provider';
 import { AnimatePresence, type Variants, m, useReducedMotion } from 'motion/react';
 
@@ -56,7 +57,7 @@ export function ResultView() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const { result, reset } = useTestProgress();
-	const photo = usePhotoSource();
+	const [photoFile, setPhotoFile] = useState<File | null>(null);
 	const reducedMotion = useReducedMotion();
 
 	const deck = useDeckController('result');
@@ -74,6 +75,7 @@ export function ResultView() {
 	const resultParam = searchParams.get(RESULT_PARAM);
 	const decoded = decodeResult(resultParam);
 	const type = ownType ?? decoded?.type ?? null;
+	const generated = useGeneratedPhoto(photoFile, type);
 
 	const entryHandled = useRef(false);
 	useEffect(() => {
@@ -107,7 +109,7 @@ export function ResultView() {
 					variants={staggerContainer}
 				>
 					<m.p className="relative z-1 m-0 font-display text-lg text-primary-active" variants={rise}>
-						🎉 나의 앵무새 성격은
+						🎉 우리 앵무새 성격은
 					</m.p>
 
 					<m.div className="relative z-1 my-4 w-full" variants={art}>
@@ -115,7 +117,7 @@ export function ResultView() {
 							type={type}
 							name={getTypeName(type)}
 							gradient={gradient}
-							photoUrl={photo.objectUrl}
+							photoUrl={generated.url}
 							reducedMotion={reducedMotion === true}
 						/>
 					</m.div>
@@ -133,10 +135,27 @@ export function ResultView() {
 
 				<m.div className="flex flex-col gap-4 px-gutter pt-5 pb-9" variants={staggerContainer}>
 					<m.div className="flex flex-col gap-3" variants={rise}>
-						<GamePanel className="px-4 py-4">
-							<PhotoInput objectUrl={photo.objectUrl} onPick={photo.setFile} onClear={photo.clear} />
-						</GamePanel>
-						<ShareButton type={type} photoUrl={photo.objectUrl} />
+						{!generated.url && !generated.busy && (
+							<PhotoInput
+								type={type}
+								onPick={(file) => {
+									setPhotoFile(file);
+									void generated.generate(file);
+								}}
+							/>
+						)}
+						{generated.busy && <GenerationProgress />}
+						<ShareButton
+							type={type}
+							photoUrl={generated.url}
+							isGenerated={generated.url !== null}
+							disabled={generated.busy}
+						/>
+						{generated.error && (
+							<div role="status" aria-live="polite" className="text-center text-sm text-ink-muted">
+								{generated.error}
+							</div>
+						)}
 						<AppCtaButton placement="result" />
 					</m.div>
 

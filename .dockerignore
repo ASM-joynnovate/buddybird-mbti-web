@@ -3,6 +3,7 @@ node_modules
 .git
 .husky
 .env
+.env.test
 .env*.local
 *.md
 Dockerfile*
