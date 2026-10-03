@@ -19,6 +19,7 @@ import { RESULT_PARAM, decodeResult, fallbackScores } from '@/lib/result-url';
 import { AppCtaButton } from '@/app/result/_components/app-cta-button';
 import { AxisBars } from '@/app/result/_components/axis-bars';
 import { Confetti } from '@/app/result/_components/confetti';
+import { GenerationProgress } from '@/app/result/_components/generation-progress';
 import { MatchCard } from '@/app/result/_components/match-card';
 import { PhotoInput } from '@/app/result/_components/photo-input';
 import { ResultPolaroid } from '@/app/result/_components/result-polaroid';
@@ -134,7 +135,7 @@ export function ResultView() {
 
 				<m.div className="flex flex-col gap-4 px-gutter pt-5 pb-9" variants={staggerContainer}>
 					<m.div className="flex flex-col gap-3" variants={rise}>
-						{!generated.url && photoFile === null && (
+						{!generated.url && !generated.busy && (
 							<PhotoInput
 								type={type}
 								onPick={(file) => {
@@ -143,34 +144,16 @@ export function ResultView() {
 								}}
 							/>
 						)}
-						<div
-							className={
-								!generated.url && photoFile !== null
-									? 'grid grid-cols-2 items-start gap-3'
-									: 'grid grid-cols-1'
-							}
-						>
-							{!generated.url && photoFile !== null && (
-								<GameButton
-									variant="secondary"
-									size="sm"
-									className="min-h-12 w-full min-w-0"
-									onClick={() => void generated.generate()}
-									disabled={generated.busy}
-								>
-									{generated.busy ? '합성하는 중…' : '다시 시도'}
-								</GameButton>
-							)}
-							<ShareButton
-								type={type}
-								photoUrl={generated.url}
-								isGenerated={generated.url !== null}
-								disabled={generated.busy}
-							/>
-						</div>
-						{(generated.busy || generated.error) && (
+						{generated.busy && <GenerationProgress />}
+						<ShareButton
+							type={type}
+							photoUrl={generated.url}
+							isGenerated={generated.url !== null}
+							disabled={generated.busy}
+						/>
+						{generated.error && (
 							<div role="status" aria-live="polite" className="text-center text-sm text-ink-muted">
-								{generated.busy ? '우리 새에게 어울리는 의상을 입히고 있어요.' : generated.error}
+								{generated.error}
 							</div>
 						)}
 						<AppCtaButton placement="result" />

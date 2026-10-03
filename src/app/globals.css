@@ -153,6 +153,11 @@
 	--animate-enter-up: enter-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 	--animate-enter-fade: enter-fade 0.26s ease-out both;
 
+	/* 합성 중 진행 카드: 막대는 11.5초 동안 차오르고, 문구는 1초·4.5초·8초에 한 줄씩 바뀐다 */
+	--animate-gen-bar: gen-bar 11.5s cubic-bezier(0.25, 0.6, 0.35, 1) both;
+	--animate-gen-line: gen-line 3.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+	--animate-gen-line-last: gen-line-last 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+
 	@keyframes enter-up {
 		from {
 			opacity: 0;
@@ -160,6 +165,57 @@
 		}
 	}
 	@keyframes enter-fade {
+		from {
+			opacity: 0;
+		}
+	}
+	@keyframes gen-bar {
+		0%,
+		8% {
+			transform: scaleX(0.02);
+		}
+		37% {
+			transform: scaleX(0.33);
+		}
+		66% {
+			transform: scaleX(0.66);
+		}
+		100% {
+			transform: scaleX(0.96);
+		}
+	}
+	@keyframes gen-line {
+		0% {
+			opacity: 0;
+			transform: translateY(100%);
+		}
+		8%,
+		92% {
+			opacity: 1;
+			transform: none;
+		}
+		100% {
+			opacity: 0;
+			transform: translateY(-100%);
+		}
+	}
+	@keyframes gen-line-last {
+		from {
+			opacity: 0;
+			transform: translateY(100%);
+		}
+	}
+	@keyframes gen-line-fade {
+		0%,
+		100% {
+			opacity: 0;
+		}
+		8%,
+		92% {
+			opacity: 1;
+		}
+	}
+	@keyframes gen-line-last-fade {
 		from {
 			opacity: 0;
 		}
