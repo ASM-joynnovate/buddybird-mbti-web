@@ -108,7 +108,7 @@ export function ResultView() {
 					variants={staggerContainer}
 				>
 					<m.p className="relative z-1 m-0 font-display text-lg text-primary-active" variants={rise}>
-						🎉 나의 앵무새 성격은
+						🎉 우리 앵무새 성격은
 					</m.p>
 
 					<m.div className="relative z-1 my-4 w-full" variants={art}>
