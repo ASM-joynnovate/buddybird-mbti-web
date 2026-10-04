@@ -35,7 +35,7 @@ export type AnalyticsEvent =
 			payload: { questionId: string; choiceId: string; index: number };
 	  }
 	| { name: 'test_completed'; payload: { type: TypeCode } }
-	| { name: 'photo_attached'; payload: { source: 'camera' | 'gallery' } }
+	| { name: 'photo_attached'; payload: { source: 'picker' } }
 	| { name: 'share_success'; payload: { type: TypeCode } }
 	| { name: 'share_fallback'; payload: { type: TypeCode; reason: string } }
 	| { name: 'app_cta_click'; payload: { placement: 'intro' | 'result' } }
