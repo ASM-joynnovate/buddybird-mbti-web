@@ -93,6 +93,8 @@ jobs:
                       NEXT_PUBLIC_FIREBASE_APP_ID=${{ vars.NEXT_PUBLIC_FIREBASE_APP_ID }}
                       NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=${{ vars.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}
                       NEXT_PUBLIC_CLARITY_PROJECT_ID=${{ vars.NEXT_PUBLIC_CLARITY_PROJECT_ID }}
+                  secrets: |
+                      sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
                   provenance: false
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
@@ -101,16 +103,20 @@ jobs:
               env:
                   IMAGE: ${{ steps.image.outputs.uri }}
                   OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+                  OPENROUTER_MANAGEMENT_KEY: ${{ secrets.OPENROUTER_MANAGEMENT_KEY }}
               run: |
                   # 키가 비어 있으면 기존 revision의 값을 그대로 둔다.
                   aws ecs describe-task-definition --task-definition "$ECS_SERVICE" --query taskDefinition \
-                    | jq --arg image "$IMAGE" --arg key "$OPENROUTER_API_KEY" '
-                        .containerDefinitions[0].image = $image
-                        | if $key == "" then . else
+                    | jq --arg image "$IMAGE" --arg key "$OPENROUTER_API_KEY" --arg mkey "$OPENROUTER_MANAGEMENT_KEY" '
+                        def setenv($name; $value):
+                          if $value == "" then . else
                             .containerDefinitions[0].environment =
-                              ((.containerDefinitions[0].environment // []) | map(select(.name != "OPENROUTER_API_KEY")))
-                              + [{name: "OPENROUTER_API_KEY", value: $key}]
-                          end
+                              ((.containerDefinitions[0].environment // []) | map(select(.name != $name)))
+                              + [{name: $name, value: $value}]
+                          end;
+                        .containerDefinitions[0].image = $image
+                        | setenv("OPENROUTER_API_KEY"; $key)
+                        | setenv("OPENROUTER_MANAGEMENT_KEY"; $mkey)
                       ' > task-definition.json
 
             - name: deploy service
