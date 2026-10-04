@@ -1,6 +1,6 @@
 'use client';
 
-import { type CSSProperties, useState } from 'react';
+import { type CSSProperties, useState, useSyncExternalStore } from 'react';
 
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 
@@ -18,13 +18,21 @@ const PIECE_COUNT = 24;
 const FADE_DELAY = 1.5;
 const FADE_DURATION = 0.3;
 
+const noopSubscribe = () => () => {};
+
+// useReducedMotion은 서버에서 null이라 첫 렌더를 서버와 맞추려면 하이드레이션 이후에만 그린다.
 export function Confetti() {
 	const reduced = useReducedMotion();
 	const [done, setDone] = useState(false);
+	const hydrated = useSyncExternalStore(
+		noopSubscribe,
+		() => true,
+		() => false,
+	);
 
 	return (
 		<AnimatePresence>
-			{!reduced && !done && (
+			{hydrated && !reduced && !done && (
 				<m.div
 					className="pointer-events-none fixed inset-0 z-50 overflow-hidden"
 					aria-hidden="true"
