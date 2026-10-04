@@ -10,6 +10,8 @@ export async function register() {
 		// 서버 요청은 사진 합성 API 하나뿐이라 토큰 사용량 span을 전부 남긴다.
 		tracesSampleRate: 1,
 	});
+	const { watchOpenRouterCredits } = await import('@/lib/image-generation/credits');
+	watchOpenRouterCredits();
 }
 
 export const onRequestError = Sentry.captureRequestError;

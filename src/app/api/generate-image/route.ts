@@ -2,12 +2,14 @@ import { TYPES } from '@/lib/content/type-infos';
 import { MAX_PHOTO_BYTES, PHOTO_HEIGHT, PHOTO_WIDTH, photoError } from '@/lib/image-generation/input';
 import { COSTUME_PROMPT } from '@/lib/image-generation/prompt';
 
+import * as Sentry from '@sentry/nextjs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
 
 export const runtime = 'nodejs';
 export const maxDuration = 120;
+const MODEL = 'google/gemini-3.1-flash-lite-image';
 const MAX_BODY_BYTES = MAX_PHOTO_BYTES + 64 * 1024;
 const headers = { 'Cache-Control': 'no-store' };
 
@@ -74,25 +76,54 @@ export async function POST(request: Request) {
 		const apiKey = process.env.OPENROUTER_API_KEY;
 		if (!apiKey) return failure('지금은 사진 합성을 사용할 수 없어요. 잠시 후 다시 시도해 주세요.', 503);
 		const reference = await readFile(path.join(process.cwd(), 'public', 'parrots-mbti-charactor', `${type}.png`));
-		const upstream = await fetch('https://openrouter.ai/api/v1/images', {
-			method: 'POST',
-			headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-			signal,
-			body: JSON.stringify({
-				model: 'google/gemini-3.1-flash-lite-image',
-				prompt: COSTUME_PROMPT,
-				input_references: [photo, reference].map((image) => ({
-					type: 'image_url',
-					image_url: { url: `data:image/png;base64,${image.toString('base64')}` },
-				})),
-			}),
-		});
-		if (!upstream.ok)
+		const { upstream, result } = await Sentry.startSpan(
+			{
+				name: `generate_content ${MODEL}`,
+				op: 'gen_ai.generate_content',
+				attributes: { 'gen_ai.operation.name': 'generate_content', 'gen_ai.request.model': MODEL },
+			},
+			async (span) => {
+				const upstream = await fetch('https://openrouter.ai/api/v1/images', {
+					method: 'POST',
+					headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+					signal,
+					body: JSON.stringify({
+						model: MODEL,
+						prompt: COSTUME_PROMPT,
+						input_references: [photo, reference].map((image) => ({
+							type: 'image_url',
+							image_url: { url: `data:image/png;base64,${image.toString('base64')}` },
+						})),
+					}),
+				});
+				if (!upstream.ok) return { upstream, result: null };
+				const result = await upstream.json();
+				const usage = result?.usage ?? {};
+				span.setAttributes({
+					'gen_ai.usage.input_tokens': usage.prompt_tokens,
+					'gen_ai.usage.output_tokens': usage.completion_tokens,
+					'gen_ai.usage.total_tokens': usage.total_tokens,
+					'gen_ai.cost.total_tokens': usage.cost,
+				});
+				const attributes = { model: MODEL };
+				Sentry.metrics.count('openrouter.tokens.input', usage.prompt_tokens ?? 0, { attributes });
+				Sentry.metrics.count('openrouter.tokens.output', usage.completion_tokens ?? 0, { attributes });
+				Sentry.metrics.distribution('openrouter.cost_usd', usage.cost ?? 0, { attributes });
+				Sentry.logger.info('OpenRouter image generated', { model: MODEL, ...usage });
+				return { upstream, result };
+			},
+		);
+		if (!upstream.ok) {
+			Sentry.logger.error('OpenRouter image generation failed', {
+				model: MODEL,
+				status: upstream.status,
+				body: (await upstream.text()).slice(0, 500),
+			});
 			return failure(
 				'사진을 합성하지 못했어요. 잠시 후 다시 시도해 주세요.',
 				upstream.status === 429 ? 429 : 502,
 			);
-		const result = await upstream.json();
+		}
 		const encoded = result?.data?.[0]?.b64_json;
 		if (typeof encoded !== 'string' || !encoded || encoded.length > 40 * 1024 * 1024) {
 			return failure('합성 이미지가 도착하지 않았어요. 다시 시도해 주세요.', 502);
@@ -108,7 +139,9 @@ export async function POST(request: Request) {
 			return failure('합성 이미지를 읽을 수 없어요. 다시 시도해 주세요.', 502);
 		}
 		return new Response(new Uint8Array(output), { headers: { ...headers, 'Content-Type': 'image/jpeg' } });
-	} catch {
+	} catch (error) {
+		// 사용자가 요청을 취소한 경우는 오류로 보내지 않는다.
+		if (!request.signal.aborted) Sentry.captureException(error);
 		return failure(
 			timeout.aborted
 				? '합성 시간이 길어지고 있어요. 다시 시도해 주세요.'
