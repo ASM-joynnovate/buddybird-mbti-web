@@ -7,12 +7,14 @@ import type { TypeCode } from '@/types/mbti';
 import { track } from '@/lib/analytics/track';
 import { parrotImageSrc } from '@/lib/content/assets';
 import { typeColors } from '@/lib/content/gradient';
-import { getTypeInfo, getTypeName } from '@/lib/content/type-infos';
+import { getTypeName } from '@/lib/content/type-infos';
 
 import { loadImage } from '@/app/result/_lib/card/load-image';
 import { toast } from 'sonner';
 
 import { GameButton } from '@/components/ui/button';
+
+import appIcon from '@/public/assets/buddybird-app-icon.png';
 
 interface ShareButtonProps {
 	type: TypeCode;
@@ -35,21 +37,21 @@ export function ShareButton({ type, photoUrl, isGenerated, disabled = false }: S
 					import('@/app/result/_lib/card/compose-card'),
 					import('@/app/result/_lib/share-card'),
 				]);
-				const info = getTypeInfo(type);
 				const characterSrc = parrotImageSrc(type);
-				const [photo, character] = await Promise.all([
+				const [photo, character, icon] = await Promise.all([
 					photoUrl !== null ? loadImage(photoUrl) : Promise.resolve(null),
 					characterSrc !== undefined ? loadImage(characterSrc).catch(() => null) : Promise.resolve(null),
+					loadImage(appIcon.src).catch(() => null),
 				]);
 
 				const blob = await composeCard({
 					type,
 					typeName: getTypeName(type),
-					copy: info?.report ?? '',
 					photo,
 					isGenerated,
 					character,
 					colors: typeColors(type),
+					appIcon: icon,
 				});
 
 				const outcome = await shareCard(blob, type);

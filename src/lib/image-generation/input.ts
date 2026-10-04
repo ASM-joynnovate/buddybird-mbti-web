@@ -7,7 +7,6 @@ export function photoError(file: File): string | null {
 	return null;
 }
 
-// 폴라로이드(5:4)와 공유 카드 사진 칸(700×560)의 2배 크기
 export const PHOTO_WIDTH = 1400;
 export const PHOTO_HEIGHT = 1120;
 export const PHOTO_ASPECT = PHOTO_WIDTH / PHOTO_HEIGHT;
