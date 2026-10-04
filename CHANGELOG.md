@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.3.0](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.2.0...v2.3.0) (2026-10-04)
+
+
+### Features
+
+* **image-generation:** OpenRouter 토큰 사용량과 잔액을 Sentry로 전송 ([1fdaf0a](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/1fdaf0a10d0d0306ab2fd78e1c08889b808051bb))
+* **observability:** Sentry 연동과 OpenRouter 토큰 사용량, 잔액 알림 추가 [BB-568] ([36e82a3](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/36e82a35c5efb584da4fe6c77c4f45b54d02405b))
+* **observability:** Sentry로 오류, trace, 로그 수집 추가 ([07da51c](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/07da51c9f6f7f7936c7c39eb3d7e29d28f724e6d))
+* **result:** change share card to a 1080x1920 story card [BB-580] ([45acf37](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/45acf37bcb32d19e734cb68eb1b331855893a4d5))
+* **result:** merge photo picker into one card and add link copy button [BB-575] ([ef3dcc3](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/ef3dcc312f6ac04d41ff48622cc8e0a7af5cb4a1))
+* **result:** 공유 카드를 인스타 스토리용 1080x1920 세로 카드로 변경 [BB-580] ([a8863d9](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/a8863d94c357e6f4541f04442231875b236dedd4))
+* **result:** 사진 촬영과 갤러리 버튼을 사진 선택 카드 하나로 합침 [BB-575] ([a3a7939](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/a3a7939aca6e8130ef9784bca4b825c569f28fff))
+* **result:** 카드 공유하기 옆에 링크 복사 버튼 추가 [BB-575] ([01f76d6](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/01f76d694c84ef417c52f047e41e4877c4159b06))
+
+
+### Bug Fixes
+
+* **image-generation:** 합성 결과에서 새 머리가 늘어나거나 방향이 뒤집히지 않게 프롬프트 보강 [BB-565] ([210bbf5](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/210bbf5228495da2ba877cb53bf665fc879ee2ce))
+* **result:** 동작 줄이기 설정에서 Confetti 하이드레이션 불일치 수정 [BB-575] ([800fe96](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/800fe96f51ed8f82788a69f77a23e33f0412d5e4))
+* **seo:** 네이버 사이트 소유확인 파일 추가 ([#21](https://github.com/ASM-joynnovate/buddybird-mbti-web/issues/21)) ([5e9a3c5](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/5e9a3c545367b4af6e877d8ab7aa248f14d2dd6e))
+
 ## [2.2.0](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.1.0...v2.2.0) (2026-10-03)
 
 
