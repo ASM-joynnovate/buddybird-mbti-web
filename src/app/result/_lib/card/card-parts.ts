@@ -1,22 +1,15 @@
 import { drawContain, drawCover, roundRectPath } from './canvas-utils';
-import {
-	CARD_SIZE,
-	FONT_DISPLAY,
-	PAPER_FALLBACK,
-	PAPER_STOPS,
-	PET_PLACEHOLDER_BG,
-	PRIMARY_ACTIVE,
-} from './card-layout';
+import { CANVAS_H, CANVAS_W, FONT_DISPLAY, PAPER_FALLBACK, PAPER_STOPS, PET_PLACEHOLDER_BG } from './card-layout';
 
 export function paintPaper(ctx: CanvasRenderingContext2D): void {
 	try {
 		const grad = ctx.createRadialGradient(
-			CARD_SIZE / 2,
-			-CARD_SIZE * 0.06,
+			CANVAS_W / 2,
+			-CANVAS_H * 0.04,
 			0,
-			CARD_SIZE / 2,
-			-CARD_SIZE * 0.06,
-			CARD_SIZE * 1.15,
+			CANVAS_W / 2,
+			-CANVAS_H * 0.04,
+			CANVAS_H,
 		);
 		for (const [stop, color] of PAPER_STOPS) {
 			grad.addColorStop(stop, color);
@@ -25,7 +18,7 @@ export function paintPaper(ctx: CanvasRenderingContext2D): void {
 	} catch {
 		ctx.fillStyle = PAPER_FALLBACK;
 	}
-	ctx.fillRect(0, 0, CARD_SIZE, CARD_SIZE);
+	ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
 }
 
 export function drawCharWindow(
@@ -112,6 +105,12 @@ function drawVignette(ctx: CanvasRenderingContext2D, x: number, y: number, w: nu
 	ctx.fillRect(x, y, w, h);
 }
 
+export interface TapeLabel {
+	text: string;
+	color: string;
+	size: number;
+}
+
 export function drawTape(
 	ctx: CanvasRenderingContext2D,
 	x: number,
@@ -120,6 +119,7 @@ export function drawTape(
 	h: number,
 	rotate: number,
 	color: string,
+	label?: TapeLabel,
 ): void {
 	ctx.save();
 	ctx.translate(x + w / 2, y + h / 2);
@@ -142,31 +142,13 @@ export function drawTape(
 		ctx.lineTo(-w / 2 + i + h + 4, h / 2 + 2);
 		ctx.stroke();
 	}
-	ctx.restore();
-}
-
-export function drawStamp(ctx: CanvasRenderingContext2D, cx: number, cy: number, radius: number): void {
-	ctx.save();
-	ctx.translate(cx, cy);
-	ctx.rotate((9 * Math.PI) / 180);
-	ctx.fillStyle = 'rgba(255,253,247,0.78)';
-	ctx.beginPath();
-	ctx.arc(0, 0, radius, 0, Math.PI * 2);
-	ctx.fill();
-	ctx.setLineDash([10, 8]);
-	ctx.lineWidth = 3;
-	ctx.strokeStyle = 'rgba(168,78,22,0.55)';
-	ctx.beginPath();
-	ctx.arc(0, 0, radius - 4, 0, Math.PI * 2);
-	ctx.stroke();
-	ctx.setLineDash([]);
-	ctx.fillStyle = PRIMARY_ACTIVE;
-	ctx.textAlign = 'center';
-	ctx.textBaseline = 'middle';
-	ctx.font = `28px ${FONT_DISPLAY}`;
-	ctx.fillText('버디버드', 0, -8);
-	ctx.font = `16px ${FONT_DISPLAY}`;
-	ctx.globalAlpha = 0.85;
-	ctx.fillText('MBTI', 0, 18);
+	if (label !== undefined) {
+		ctx.globalAlpha = 1;
+		ctx.fillStyle = label.color;
+		ctx.font = `${label.size}px ${FONT_DISPLAY}`;
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'middle';
+		ctx.fillText(label.text, 0, 3);
+	}
 	ctx.restore();
 }

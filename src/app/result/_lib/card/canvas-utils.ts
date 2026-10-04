@@ -1,4 +1,4 @@
-import { CAP_CODE_SIZE, CAP_TAG_SIZE } from './card-layout';
+import { CAP_CODE_SIZE } from './card-layout';
 
 export async function loadFonts(): Promise<void> {
 	if (typeof document === 'undefined' || !document.fonts) {
@@ -6,10 +6,7 @@ export async function loadFonts(): Promise<void> {
 	}
 	await document.fonts.ready;
 	try {
-		await Promise.all([
-			document.fonts.load(`${CAP_CODE_SIZE}px "Jua"`),
-			document.fonts.load(`${CAP_TAG_SIZE}px "Noto Sans KR"`),
-		]);
+		await document.fonts.load(`${CAP_CODE_SIZE}px "Jua"`);
 	} catch {}
 }
 
@@ -84,28 +81,4 @@ export function drawContain(
 	ctx.shadowOffsetY = 12;
 	ctx.drawImage(img, dx + (dw - w) / 2, dy + (dh - h) / 2, w, h);
 	ctx.restore();
-}
-
-export function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number, maxLines: number): string[] {
-	const lines: string[] = [];
-	let line = '';
-	for (const char of [...text]) {
-		const candidate = line + char;
-		if (line !== '' && ctx.measureText(candidate).width > maxWidth) {
-			lines.push(line);
-			line = char;
-		} else {
-			line = candidate;
-		}
-	}
-	if (line !== '') {
-		lines.push(line);
-	}
-	const clipped = lines.slice(0, maxLines);
-	if (lines.length > maxLines && clipped.length > 0) {
-		const last = clipped[clipped.length - 1];
-		const base = last.length > 1 ? last.slice(0, -1) : last;
-		clipped[clipped.length - 1] = `${base}…`;
-	}
-	return clipped;
 }
