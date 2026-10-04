@@ -20,6 +20,7 @@ import { AppCtaButton } from '@/app/result/_components/app-cta-button';
 import { AxisBars } from '@/app/result/_components/axis-bars';
 import { Confetti } from '@/app/result/_components/confetti';
 import { GenerationProgress } from '@/app/result/_components/generation-progress';
+import { LinkCopyButton } from '@/app/result/_components/link-copy-button';
 import { MatchCard } from '@/app/result/_components/match-card';
 import { PhotoInput } from '@/app/result/_components/photo-input';
 import { ResultPolaroid } from '@/app/result/_components/result-polaroid';
@@ -145,12 +146,15 @@ export function ResultView() {
 							/>
 						)}
 						{generated.busy && <GenerationProgress />}
-						<ShareButton
-							type={type}
-							photoUrl={generated.url}
-							isGenerated={generated.url !== null}
-							disabled={generated.busy}
-						/>
+						<div className="grid grid-cols-2 gap-2.5">
+							<ShareButton
+								type={type}
+								photoUrl={generated.url}
+								isGenerated={generated.url !== null}
+								disabled={generated.busy}
+							/>
+							<LinkCopyButton type={type} axisScores={axisScores} />
+						</div>
 						{generated.error && (
 							<div role="status" aria-live="polite" className="text-center text-sm text-ink-muted">
 								{generated.error}

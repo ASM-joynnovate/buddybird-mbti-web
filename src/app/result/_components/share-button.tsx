@@ -10,6 +10,7 @@ import { typeColors } from '@/lib/content/gradient';
 import { getTypeInfo, getTypeName } from '@/lib/content/type-infos';
 
 import { loadImage } from '@/app/result/_lib/card/load-image';
+import { ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { GameButton } from '@/components/ui/button';
@@ -72,10 +73,11 @@ export function ShareButton({ type, photoUrl, isGenerated, disabled = false }: S
 		<GameButton
 			variant="secondary"
 			size="sm"
-			className="min-h-12 w-full"
+			className="min-h-12 w-full gap-2 px-2.5"
 			onClick={handleShare}
 			disabled={busy || disabled}
 		>
+			<ImageIcon className="size-5" strokeWidth={2} aria-hidden="true" />
 			{busy ? '카드 만드는 중…' : '카드 공유하기'}
 		</GameButton>
 	);

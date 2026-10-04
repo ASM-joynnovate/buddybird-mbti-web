@@ -26,6 +26,7 @@ function toGaParams(event: AnalyticsEvent): GaParams {
 			};
 		case 'test_completed':
 		case 'share_success':
+		case 'link_copied':
 		case 'share_cancel':
 		case 'share_error':
 		case 'detail_cta_click':
