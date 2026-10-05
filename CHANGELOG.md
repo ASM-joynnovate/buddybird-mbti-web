@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.0](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.3.0...v2.4.0) (2026-10-05)
+
+
+### Features
+
+* **i18n:** 접속 국가별 영어 표시와 /en 공개 URL, hreflang 추가 [BB-421] ([f77cc2f](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/f77cc2fc1e86f53cf93c21dafa7f5b1593d74fa1))
+* **i18n:** 접속 국가별 영어 표시와 /en 공개 URL, hreflang 추가 [BB-421] ([b28be3c](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/b28be3ce0ab63aa447910031ea9df38c5d91db8d))
+
 ## [2.3.0](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.2.0...v2.3.0) (2026-10-04)
 
 
