@@ -1,6 +1,10 @@
+'use client';
+
 import type { TypeCode } from '@/types/mbti';
 
 import { getTypeInfo, getTypeName } from '@/lib/content/type-infos';
+
+import { useTranslation } from '@/providers/locale-provider';
 
 import { PortraitWindow } from './portrait-window';
 import { Separator } from './separator';
@@ -12,6 +16,7 @@ interface TradingCardProps {
 }
 
 export function TradingCard({ code, compact = false, loading = 'eager' }: TradingCardProps) {
+	const t = useTranslation();
 	const info = getTypeInfo(code);
 
 	return (
@@ -45,7 +50,7 @@ export function TradingCard({ code, compact = false, loading = 'eager' }: Tradin
 						</span>
 						<Separator aria-hidden="true" variant="dashed" className="my-2 w-full" />
 						<span className="font-display text-sm leading-tight break-keep text-ink">
-							{getTypeName(code)}
+							{t(getTypeName(code))}
 						</span>
 					</div>
 				) : (
@@ -61,11 +66,11 @@ export function TradingCard({ code, compact = false, loading = 'eager' }: Tradin
 								className="min-w-0 text-right font-display text-lg leading-[1.15] text-balance
 									break-keep text-ink"
 							>
-								{getTypeName(code)}
+								{t(getTypeName(code))}
 							</span>
 						</div>
 						<Separator aria-hidden="true" variant="dashed" className="my-2.5" />
-						<p className="m-0 text-sm leading-normal text-ink-muted">{info?.report ?? ''}</p>
+						<p className="m-0 text-sm leading-normal text-ink-muted">{t(info?.report ?? '')}</p>
 					</div>
 				)}
 			</div>

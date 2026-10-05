@@ -5,15 +5,17 @@ import noRelativeImportPaths from 'eslint-plugin-no-relative-import-paths';
 import unusedImports from 'eslint-plugin-unused-imports';
 import { defineConfig, globalIgnores } from 'eslint/config';
 
+// `[locale]` would parse as a glob character class, so the bracket is escaped as `[[]` and every path is a glob.
+const LOCALE_DIR = './src/app/[[]locale]';
 const routeZones = [
-	['(forest)', './(forest)/_components'],
-	['(forest)/test', './(forest)/test'],
-	['(forest)/species', './(forest)/species'],
-	['result', './result'],
+	['(forest)', '(forest)/_components'],
+	['(forest)/test', '(forest)/test'],
+	['(forest)/species', '(forest)/species'],
+	['result', 'result'],
 ].map(([route, except]) => ({
-	target: `./src/app/${route}/_components`,
-	from: './src/app',
-	except: [except],
+	target: `${LOCALE_DIR}/${route}/_components/**`,
+	from: `${LOCALE_DIR}/**`,
+	except: [`**/src/app/[[]locale]/${except}/**`],
 }));
 
 export default defineConfig([

@@ -9,6 +9,7 @@ import { type DeckController, clamp } from '@/hooks/use-deck-controller';
 
 import { CAROUSEL_TYPES } from '@/lib/content/assets';
 
+import { useTranslation } from '@/providers/locale-provider';
 import { m, useTransform } from 'motion/react';
 
 import { GamePill } from '@/components/ui/badge';
@@ -22,6 +23,7 @@ export interface DeckOverlayProps {
 }
 
 export function DeckOverlay({ controller, onSelect }: DeckOverlayProps) {
+	const t = useTranslation();
 	const { progress, isOpen, isEngaged, close } = controller;
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const touchY = useRef<number | null>(null);
@@ -88,9 +90,9 @@ export function DeckOverlay({ controller, onSelect }: DeckOverlayProps) {
 				style={{ opacity: headOpacity }}
 			>
 				<GamePill bare className="px-4 py-2 font-display text-xl text-ink">
-					전체 유형&nbsp;<b className="font-normal text-primary">16</b>
+					{t('전체 유형')}&nbsp;<b className="font-normal text-primary">16</b>
 				</GamePill>
-				<GameButton variant="icon" size="sm" onClick={() => close('button')} aria-label="닫기">
+				<GameButton variant="icon" size="sm" onClick={() => close('button')} aria-label={t('닫기')}>
 					✕
 				</GameButton>
 			</m.div>
