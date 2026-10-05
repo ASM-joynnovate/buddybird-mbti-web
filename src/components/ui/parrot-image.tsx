@@ -10,6 +10,8 @@ import { trackEvent } from '@/lib/analytics/track';
 import { parrotImage } from '@/lib/content/assets';
 import { getTypeInfo } from '@/lib/content/type-infos';
 
+import { useTranslation } from '@/providers/locale-provider';
+
 const reportedTypes = new Set<TypeCode>();
 
 function reportImageError(type: TypeCode): void {
@@ -39,10 +41,11 @@ export function ParrotImage({
 	fetchPriority,
 	sizes,
 }: ParrotImageProps) {
+	const t = useTranslation();
 	const [failed, setFailed] = useState(false);
 	const image = parrotImage(type);
 	const info = getTypeInfo(type);
-	const alt = info ? `${info.name} (${type}) 앵무새` : `${type} 앵무새`;
+	const alt = info ? `${t(info.name)} (${type}) ${t('앵무새')}` : `${type} ${t('앵무새')}`;
 
 	const checkBroken = useCallback(
 		(node: HTMLImageElement | null) => {

@@ -1,5 +1,9 @@
 import type { Metadata } from 'next';
 
+import type { Locale } from '@/lib/i18n/locale';
+import { localizedPath } from '@/lib/i18n/path';
+import { translator } from '@/lib/i18n/translate';
+
 const DEFAULT_SITE_URL = 'https://mbti.buddybird.xyz';
 
 function resolveSiteUrl(): string {
@@ -48,6 +52,11 @@ export function absoluteUrl(path: string): string {
 	return path === '/' ? SITE_URL : `${SITE_URL}${path}`;
 }
 
+export function languageAlternates(path: string) {
+	const ko = absoluteUrl(localizedPath(path, 'ko'));
+	return { ko, en: absoluteUrl(localizedPath(path, 'en')), 'x-default': ko };
+}
+
 export const SEO_ROUTES = [
 	{ path: '/', priority: 1, changeFrequency: 'weekly' },
 	{ path: '/test', priority: 0.8, changeFrequency: 'monthly' },
@@ -61,28 +70,31 @@ export type PageSeo = {
 	index?: boolean;
 };
 
-export function pageMetadata({ title, description, path, index = true }: PageSeo): Metadata {
-	const desc = description ?? DEFAULT_DESCRIPTION;
-	const canonical = absoluteUrl(path);
+export function pageMetadata({ title, description, path, index = true }: PageSeo, locale: Locale = 'ko'): Metadata {
+	const t = translator(locale);
+	title = t(title);
+	const desc = t(description ?? DEFAULT_DESCRIPTION);
+	const images = locale === 'en' ? [SOCIAL_IMAGES[1]] : SOCIAL_IMAGES;
+	const canonical = absoluteUrl(localizedPath(path, locale));
 	return {
 		title,
 		description: desc,
-		alternates: { canonical },
+		alternates: { canonical, ...(index ? { languages: languageAlternates(path) } : {}) },
 		...(index ? {} : { robots: { index: false, follow: true } }),
 		openGraph: {
 			title,
 			description: desc,
 			url: canonical,
-			siteName: SITE_NAME,
-			locale: SITE_LOCALE,
+			siteName: t(SITE_NAME),
+			locale: locale === 'en' ? 'en_US' : SITE_LOCALE,
 			type: 'website',
-			images: SOCIAL_IMAGES,
+			images,
 		},
 		twitter: {
 			card: 'summary_large_image',
 			title,
 			description: desc,
-			images: SOCIAL_IMAGES,
+			images,
 		},
 	};
 }

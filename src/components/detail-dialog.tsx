@@ -6,6 +6,7 @@ import { trackEvent } from '@/lib/analytics/track';
 import { getTypeInfo } from '@/lib/content/type-infos';
 import { buttonTap, durationFast, easeSpring } from '@/lib/motion/variants';
 
+import { useTranslation } from '@/providers/locale-provider';
 import { type Variants, m, useReducedMotion } from 'motion/react';
 
 import { Badge } from '@/components/ui/badge';
@@ -33,6 +34,7 @@ interface DetailDialogProps {
 }
 
 export function DetailDialog({ code, onClose, onSelectType, cta }: DetailDialogProps) {
+	const t = useTranslation();
 	const reducedMotion = useReducedMotion();
 	const info = getTypeInfo(code);
 
@@ -66,7 +68,7 @@ export function DetailDialog({ code, onClose, onSelectType, cta }: DetailDialogP
 						exit="exit"
 					/>
 				}
-				aria-label={`${code} ${info.name}`}
+				aria-label={`${code} ${t(info.name)}`}
 				className="flex max-h-[calc(100dvh-2.75rem)] w-[calc(100%-2.75rem)] max-w-md flex-col rounded-card
 					bg-(image:--gradient-card-frame) p-1.5
 					shadow-[0_8px_0_var(--color-primary-active),0_26px_50px_-16px_rgba(20,12,6,0.7),inset_0_2px_0_rgba(255,255,255,0.5)]"
@@ -78,7 +80,7 @@ export function DetailDialog({ code, onClose, onSelectType, cta }: DetailDialogP
 						size: 'sm',
 						className: 'absolute top-3.5 right-3.5 z-4',
 					})}
-					aria-label="닫기"
+					aria-label={t('닫기')}
 				>
 					✕
 				</DialogClose>
@@ -97,9 +99,9 @@ export function DetailDialog({ code, onClose, onSelectType, cta }: DetailDialogP
 					className="min-h-0 flex-1 overflow-y-auto rounded-b-lg border-[length:var(--border-hair)] border-t-0
 						border-white bg-surface-cream px-4 pt-4 pb-4 [-webkit-overflow-scrolling:touch]"
 				>
-					<DialogTitle className="m-0 font-display text-xl text-primary-active">{info.name}</DialogTitle>
+					<DialogTitle className="m-0 font-display text-xl text-primary-active">{t(info.name)}</DialogTitle>
 					<Separator aria-hidden="true" variant="dashed" className="my-3" />
-					<p className="m-0 mb-4 text-sm leading-relaxed break-keep text-ink">{info.description}</p>
+					<p className="m-0 mb-4 text-sm leading-relaxed break-keep text-ink">{t(info.description)}</p>
 
 					{info.match.length > 0 && (
 						<div
@@ -108,7 +110,7 @@ export function DetailDialog({ code, onClose, onSelectType, cta }: DetailDialogP
 								shadow-[0_3px_0_var(--color-depth-action),inset_0_2px_0_rgba(255,255,255,0.9)]"
 						>
 							<span className="flex-none font-display text-sm whitespace-nowrap text-primary-active">
-								찰떡궁합
+								{t('찰떡궁합')}
 							</span>
 							<div className="ml-auto flex gap-2">
 								{info.match.map((matchCode) =>

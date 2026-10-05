@@ -1,4 +1,6 @@
 import { TYPES } from '@/lib/content/type-infos';
+import { localeFromCountry } from '@/lib/i18n/locale';
+import { translator } from '@/lib/i18n/translate';
 import { MAX_PHOTO_BYTES, PHOTO_HEIGHT, PHOTO_WIDTH, photoError } from '@/lib/image-generation/input';
 import { COSTUME_PROMPT } from '@/lib/image-generation/prompt';
 
@@ -13,11 +15,9 @@ const MODEL = 'google/gemini-3.1-flash-lite-image';
 const MAX_BODY_BYTES = MAX_PHOTO_BYTES + 64 * 1024;
 const headers = { 'Cache-Control': 'no-store' };
 
-function failure(message: string, status: number) {
-	return Response.json({ message }, { status, headers });
-}
-
 export async function POST(request: Request) {
+	const t = translator(localeFromCountry(request.headers.get('cloudfront-viewer-country')));
+	const failure = (message: string, status: number) => Response.json({ message: t(message) }, { status, headers });
 	const timeout = AbortSignal.timeout(120_000);
 	const signal = AbortSignal.any([request.signal, timeout]);
 	try {
