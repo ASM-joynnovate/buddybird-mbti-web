@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.5.0](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.4.0...v2.5.0) (2026-10-08)
+
+
+### Features
+
+* Figma SNS 카드 합성과 입체 성향 막대 적용 [BB-635] ([#24](https://github.com/ASM-joynnovate/buddybird-mbti-web/issues/24)) ([b7d5d0b](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/b7d5d0ba8db56f8db7d9f950eb5df6e2a415964b))
+* SNS 공유 카드 영문화 [BB-635] ([#26](https://github.com/ASM-joynnovate/buddybird-mbti-web/issues/26)) ([cf8e4ef](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/cf8e4ef7b778132548b073d83e354b1c9353c43b))
+
 ## [2.4.0](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.3.0...v2.4.0) (2026-10-05)
 
 
