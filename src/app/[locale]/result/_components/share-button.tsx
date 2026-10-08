@@ -2,12 +2,9 @@
 
 import { useTransition } from 'react';
 
-import type { TypeCode } from '@/types/mbti';
+import type { Axis, AxisScore, TypeCode } from '@/types/mbti';
 
 import { track } from '@/lib/analytics/track';
-import { parrotImageSrc } from '@/lib/content/assets';
-import { typeColors } from '@/lib/content/gradient';
-import { getTypeName } from '@/lib/content/type-infos';
 
 import { loadImage } from '@/app/[locale]/result/_lib/card/load-image';
 import { useLocale, useTranslation } from '@/providers/locale-provider';
@@ -16,22 +13,20 @@ import { toast } from 'sonner';
 
 import { GameButton } from '@/components/ui/button';
 
-import appIcon from '@/public/assets/buddybird-app-icon.png';
-
 interface ShareButtonProps {
 	type: TypeCode;
 	photoUrl: string | null;
+	axisScores: Record<Axis, AxisScore>;
 	disabled?: boolean;
-	isGenerated: boolean;
 }
 
-export function ShareButton({ type, photoUrl, isGenerated, disabled = false }: ShareButtonProps) {
+export function ShareButton({ type, photoUrl, axisScores, disabled = false }: ShareButtonProps) {
 	const t = useTranslation();
 	const locale = useLocale();
 	const [busy, startTransition] = useTransition();
 
 	const handleShare = () => {
-		if (busy) {
+		if (busy || photoUrl === null) {
 			return;
 		}
 
@@ -41,22 +36,12 @@ export function ShareButton({ type, photoUrl, isGenerated, disabled = false }: S
 					import('@/app/[locale]/result/_lib/card/compose-card'),
 					import('@/app/[locale]/result/_lib/share-card'),
 				]);
-				const characterSrc = parrotImageSrc(type);
-				const [photo, character, icon] = await Promise.all([
-					photoUrl !== null ? loadImage(photoUrl) : Promise.resolve(null),
-					characterSrc !== undefined ? loadImage(characterSrc).catch(() => null) : Promise.resolve(null),
-					loadImage(appIcon.src).catch(() => null),
-				]);
+				const photo = await loadImage(photoUrl);
 
 				const blob = await composeCard({
-					locale,
 					type,
-					typeName: t(getTypeName(type)),
 					photo,
-					isGenerated,
-					character,
-					colors: typeColors(type),
-					appIcon: icon,
+					axisScores,
 				});
 
 				const outcome = await shareCard(blob, type, locale);
@@ -81,7 +66,7 @@ export function ShareButton({ type, photoUrl, isGenerated, disabled = false }: S
 			size="sm"
 			className="min-h-12 w-full gap-2 px-2.5"
 			onClick={handleShare}
-			disabled={busy || disabled}
+			disabled={busy || disabled || photoUrl === null}
 		>
 			<ImageIcon className="size-5" strokeWidth={2} aria-hidden="true" />
 			{busy ? t('카드 만드는 중…') : t('카드 공유하기')}

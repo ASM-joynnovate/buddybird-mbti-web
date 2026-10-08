@@ -153,7 +153,7 @@ export function ResultView() {
 							<ShareButton
 								type={type}
 								photoUrl={generated.url}
-								isGenerated={generated.url !== null}
+								axisScores={axisScores}
 								disabled={generated.busy}
 							/>
 							<LinkCopyButton type={type} axisScores={axisScores} />
