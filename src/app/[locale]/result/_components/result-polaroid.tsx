@@ -94,7 +94,7 @@ export function ResultPolaroid({ type, name, gradient, photoUrl, reducedMotion }
 					<img
 						className="h-full w-full object-cover"
 						src={photoUrl}
-						alt={t('MBTI 의상을 입은 우리 새 합성 사진')}
+						alt={t('앵이 사진으로 앵BTI 카드 만들기')}
 						data-clarity-mask="True"
 					/>
 				) : (

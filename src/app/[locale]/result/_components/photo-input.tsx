@@ -57,7 +57,7 @@ export function PhotoInput({ type, onPick }: PhotoInputProps) {
 				type="file"
 				accept={ACCEPT}
 				hidden
-				aria-label={t('우리 새 사진 선택')}
+				aria-label={t('앵이 사진으로 앵BTI 카드 만들기')}
 				onChange={handleChange}
 			/>
 			<m.button
@@ -85,9 +85,12 @@ export function PhotoInput({ type, onPick }: PhotoInputProps) {
 					</span>
 				</span>
 				<span className="min-w-0">
-					<span className="block font-display text-base text-ink">{t('우리 새로 카드 만들기')}</span>
+					<span className="block font-display text-base text-ink">
+						{t('앵이 사진으로 앵BTI 카드 만들기')}
+					</span>
 					<span id={hintId} className="mt-0.75 block text-xs text-ink-muted">
-						{type} {t('의상을 입혀 드려요')}
+						{type}
+						{t('의 특징을 담아 옷을 입혀줄게요!')}
 					</span>
 				</span>
 			</m.button>
