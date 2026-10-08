@@ -7,7 +7,7 @@ export async function loadFonts(): Promise<void> {
 	await document.fonts.ready;
 	await document.fonts.load(
 		`38px ${displayFont()}`,
-		'인싸앵 집콕앵 현실앵 구름앵 팩폭앵 말랑앵 칼각앵 즉흥앵 EISNTFJP 100%',
+		'인싸앵 집콕앵 현실앵 구름앵 팩폭앵 말랑앵 칼각앵 즉흥앵 Outgoing Reserved Practical Dreamy Logical Tender Orderly Spontaneous EISNTFJP 100%',
 	);
 }
 

@@ -1,11 +1,12 @@
 import { AXES, AXIS_LETTERS, type Axis, type AxisScore, type TypeCode } from '@/types/mbti';
 
 import { AXIS_META } from '@/lib/content/axes';
+import type { Locale } from '@/lib/i18n/locale';
+import { translator } from '@/lib/i18n/translate';
 
 import { drawCover, loadFonts, roundRectPath } from './canvas-utils';
 import { CANVAS_H, CANVAS_W, displayFont } from './card-layout';
 
-const BASE_SRC = '/assets/share-card/base.png';
 // Figma 13:12 exports had an opaque #f5f5f5 frame background; these PNGs restore the intended transparency.
 const OVERLAY_TYPES = [
 	'ESTJ',
@@ -36,16 +37,18 @@ interface ComposeCardInput {
 	type: TypeCode;
 	photo: HTMLImageElement;
 	axisScores: Record<Axis, AxisScore>;
+	locale: Locale;
 }
 
-export async function composeCard({ type, photo, axisScores }: ComposeCardInput): Promise<Blob> {
+export async function composeCard({ type, photo, axisScores, locale }: ComposeCardInput): Promise<Blob> {
 	if (!OVERLAY_TYPES.some((overlayType) => overlayType === type)) {
 		throw new Error(`Unsupported MBTI type: ${type}`);
 	}
 
+	const assetDirectory = locale === 'en' ? '/assets/share-card/en' : '/assets/share-card';
 	const [base, overlay] = await Promise.all([
-		loadCardAsset(BASE_SRC),
-		loadCardAsset(`/assets/share-card/${type}.png`),
+		loadCardAsset(`${assetDirectory}/base.png`),
+		loadCardAsset(`${assetDirectory}/${type}.png`),
 		loadFonts(),
 	]);
 
@@ -55,10 +58,15 @@ export async function composeCard({ type, photo, axisScores }: ComposeCardInput)
 	const ctx = canvas.getContext('2d');
 	if (ctx === null) throw new Error('Canvas 2D context unavailable');
 
-	ctx.drawImage(base, BASE_CROP.x, BASE_CROP.y, BASE_CROP.width, BASE_CROP.height, 0, 0, CANVAS_W, CANVAS_H);
+	if (locale === 'en') {
+		// The English Figma frame already exports at the final 1080×1920 size.
+		ctx.drawImage(base, 0, 0, CANVAS_W, CANVAS_H);
+	} else {
+		ctx.drawImage(base, BASE_CROP.x, BASE_CROP.y, BASE_CROP.width, BASE_CROP.height, 0, 0, CANVAS_W, CANVAS_H);
+	}
 	drawCover(ctx, photo, PHOTO.x, PHOTO.y, PHOTO.width, PHOTO.height);
 	ctx.drawImage(overlay, 0, 0, CANVAS_W, CANVAS_H);
-	drawAxisBars(ctx, type, axisScores);
+	drawAxisBars(ctx, type, axisScores, locale);
 
 	const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
 	if (blob === null) throw new Error('Canvas toBlob returned null');
@@ -72,10 +80,16 @@ function loadCardAsset(src: string): Promise<HTMLImageElement> {
 	return image.decode().then(() => image);
 }
 
-function drawAxisBars(ctx: CanvasRenderingContext2D, type: TypeCode, axisScores: Record<Axis, AxisScore>): void {
+function drawAxisBars(
+	ctx: CanvasRenderingContext2D,
+	type: TypeCode,
+	axisScores: Record<Axis, AxisScore>,
+	locale: Locale,
+): void {
 	ctx.save();
 	ctx.textBaseline = 'middle';
 	const font = displayFont();
+	const t = translator(locale);
 
 	AXES.forEach((axis, index) => {
 		const score = axisScores[axis];
@@ -91,7 +105,11 @@ function drawAxisBars(ctx: CanvasRenderingContext2D, type: TypeCode, axisScores:
 		ctx.textAlign = 'left';
 		ctx.fillStyle = '#3e3023';
 		ctx.font = `38px ${font}`;
-		ctx.fillText(`${meta.label} ${meta.letter}`, 120, centerY + 1);
+		const label = `${t(meta.label)} ${meta.letter}`;
+		const labelWidth = BAR.x - 120 - 24;
+		const fontSize = Math.min(38, (38 * labelWidth) / ctx.measureText(label).width);
+		ctx.font = `${fontSize}px ${font}`;
+		ctx.fillText(label, 120, centerY + 1);
 
 		ctx.fillStyle = '#e7d9b8';
 		roundRectPath(ctx, BAR.x, barY, BAR.width, BAR.height, BAR.height / 2);
