@@ -1,13 +1,14 @@
-import { CAP_CODE_SIZE, displayFont } from './card-layout';
+import { displayFont } from './card-layout';
 
 export async function loadFonts(): Promise<void> {
 	if (typeof document === 'undefined' || !document.fonts) {
 		return;
 	}
 	await document.fonts.ready;
-	try {
-		await document.fonts.load(`${CAP_CODE_SIZE}px ${displayFont()}`);
-	} catch {}
+	await document.fonts.load(
+		`38px ${displayFont()}`,
+		'인싸앵 집콕앵 현실앵 구름앵 팩폭앵 말랑앵 칼각앵 즉흥앵 EISNTFJP 100%',
+	);
 }
 
 export function roundRectPath(
@@ -56,29 +57,4 @@ export function drawCover(
 	}
 
 	ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
-}
-
-export function drawContain(
-	ctx: CanvasRenderingContext2D,
-	img: HTMLImageElement,
-	dx: number,
-	dy: number,
-	dw: number,
-	dh: number,
-): void {
-	const imageRatio = img.naturalWidth / img.naturalHeight;
-	const destRatio = dw / dh;
-	let w = dw;
-	let h = dh;
-	if (imageRatio > destRatio) {
-		h = dw / imageRatio;
-	} else {
-		w = dh * imageRatio;
-	}
-	ctx.save();
-	ctx.shadowColor = 'rgba(0,0,0,0.4)';
-	ctx.shadowBlur = 14;
-	ctx.shadowOffsetY = 12;
-	ctx.drawImage(img, dx + (dw - w) / 2, dy + (dh - h) / 2, w, h);
-	ctx.restore();
 }

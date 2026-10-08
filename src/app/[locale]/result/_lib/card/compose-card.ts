@@ -1,216 +1,133 @@
-import type { TypeCode } from '@/types/mbti';
+import { AXES, AXIS_LETTERS, type Axis, type AxisScore, type TypeCode } from '@/types/mbti';
 
-import type { Locale } from '@/lib/i18n/locale';
-import { translator } from '@/lib/i18n/translate';
+import { AXIS_META } from '@/lib/content/axes';
 
 import { drawCover, loadFonts, roundRectPath } from './canvas-utils';
-import {
-	BRAND_RED,
-	BRAND_TAPE,
-	CANVAS_H,
-	CANVAS_W,
-	CAP_BOTTOM_PAD,
-	CAP_CODE_SIZE,
-	CAP_NAME_GAP,
-	CAP_NAME_SIZE,
-	CAP_TOP_PAD,
-	CARD_BG,
-	CARD_DEPTH,
-	CARD_DEPTH_COLOR,
-	CARD_PAD,
-	CARD_RADIUS,
-	CARD_ROTATE,
-	CARD_W,
-	CARD_X,
-	CARD_Y,
-	CREDIT_BRAND,
-	CREDIT_CY,
-	CREDIT_GAP,
-	CREDIT_ICON,
-	CREDIT_ICON_R,
-	CREDIT_PREFIX,
-	CREDIT_SIZE,
-	CREDIT_SUFFIX,
-	DUO_GAP,
-	GOLD,
-	INK,
-	INK_MUTED,
-	INVITE_LABEL,
-	INVITE_LABEL_SIZE,
-	INVITE_LABEL_Y,
-	INVITE_URL,
-	INVITE_URL_SIZE,
-	INVITE_URL_Y,
-	PHOTO_H,
-	PHOTO_INNER,
-	PHOTO_R,
-	PRIMARY,
-	PRIMARY_ACTIVE,
-	SERVICE_TAPE,
-	TAPE_FONT_SIZE,
-	TAPE_H,
-	displayFont,
-} from './card-layout';
-import { drawCharWindow, drawPetWindow, drawTape, paintPaper } from './card-parts';
+import { CANVAS_H, CANVAS_W, displayFont } from './card-layout';
+
+const BASE_SRC = '/assets/share-card/base.png';
+// Figma 13:12 exports had an opaque #f5f5f5 frame background; these PNGs restore the intended transparency.
+const OVERLAY_TYPES = [
+	'ESTJ',
+	'ESTP',
+	'ESFJ',
+	'ESFP',
+	'ENTJ',
+	'ENTP',
+	'ENFJ',
+	'ENFP',
+	'ISTJ',
+	'ISTP',
+	'ISFJ',
+	'ISFP',
+	'INTJ',
+	'INTP',
+	'INFJ',
+	'INFP',
+] as const;
+
+// The Figma section export includes its shadow and artboard margins.
+const BASE_CROP = { x: 140, y: 140, width: CANVAS_W, height: CANVAS_H } as const;
+const PHOTO = { x: 116, y: 429, width: 848, height: 681 } as const;
+// Approved 1080×1920 preview: 30px capsule, 6px lower face, 70px row spacing.
+const BAR = { x: 392, width: 426, height: 30, depth: 6, firstCenterY: 1187, rowGap: 70 } as const;
 
 interface ComposeCardInput {
-	locale: Locale;
 	type: TypeCode;
-	typeName: string;
-	photo: HTMLImageElement | null;
-	isGenerated: boolean;
-	character: HTMLImageElement | null;
-	colors: readonly [string, string];
-	appIcon: HTMLImageElement | null;
+	photo: HTMLImageElement;
+	axisScores: Record<Axis, AxisScore>;
 }
 
-export async function composeCard(input: ComposeCardInput): Promise<Blob> {
-	await loadFonts();
+export async function composeCard({ type, photo, axisScores }: ComposeCardInput): Promise<Blob> {
+	if (!OVERLAY_TYPES.some((overlayType) => overlayType === type)) {
+		throw new Error(`Unsupported MBTI type: ${type}`);
+	}
+
+	const [base, overlay] = await Promise.all([
+		loadCardAsset(BASE_SRC),
+		loadCardAsset(`/assets/share-card/${type}.png`),
+		loadFonts(),
+	]);
 
 	const canvas = document.createElement('canvas');
 	canvas.width = CANVAS_W;
 	canvas.height = CANVAS_H;
 	const ctx = canvas.getContext('2d');
-	if (ctx === null) {
-		throw new Error('Canvas 2D context unavailable');
-	}
+	if (ctx === null) throw new Error('Canvas 2D context unavailable');
 
-	paintPaper(ctx);
-	drawPolaroid(ctx, input);
-	drawInvite(ctx, input.locale);
-	drawCredit(ctx, input.appIcon, input.locale);
+	ctx.drawImage(base, BASE_CROP.x, BASE_CROP.y, BASE_CROP.width, BASE_CROP.height, 0, 0, CANVAS_W, CANVAS_H);
+	drawCover(ctx, photo, PHOTO.x, PHOTO.y, PHOTO.width, PHOTO.height);
+	ctx.drawImage(overlay, 0, 0, CANVAS_W, CANVAS_H);
+	drawAxisBars(ctx, type, axisScores);
 
 	const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
-	if (blob === null) {
-		throw new Error('Canvas toBlob returned null');
-	}
+	if (blob === null) throw new Error('Canvas toBlob returned null');
 	return blob;
 }
 
-function drawPolaroid(ctx: CanvasRenderingContext2D, input: ComposeCardInput): void {
-	const t = translator(input.locale);
-	const captionH = CAP_TOP_PAD + CAP_CODE_SIZE + CAP_NAME_GAP + CAP_NAME_SIZE + CAP_BOTTOM_PAD;
-	const cardH = CARD_PAD + PHOTO_H + captionH;
-	const cardCx = CARD_X + CARD_W / 2;
-	const cardCy = CARD_Y + cardH / 2;
-
-	ctx.save();
-	ctx.translate(cardCx, cardCy);
-	ctx.rotate(CARD_ROTATE);
-	ctx.translate(-cardCx, -cardCy);
-
-	ctx.save();
-	ctx.shadowColor = 'rgba(40,20,8,0.45)';
-	ctx.shadowBlur = 90;
-	ctx.shadowOffsetY = 50;
-	ctx.fillStyle = CARD_DEPTH_COLOR;
-	roundRectPath(ctx, CARD_X, CARD_Y + CARD_DEPTH, CARD_W, cardH, CARD_RADIUS);
-	ctx.fill();
-	ctx.restore();
-
-	ctx.fillStyle = CARD_BG;
-	roundRectPath(ctx, CARD_X, CARD_Y, CARD_W, cardH, CARD_RADIUS);
-	ctx.fill();
-
-	const photoX = CARD_X + CARD_PAD;
-	const photoY = CARD_Y + CARD_PAD;
-	const hasPhoto = input.photo !== null;
-	const duo = hasPhoto && !input.isGenerated;
-
-	if (duo && input.photo !== null) {
-		const shotW = (PHOTO_INNER - DUO_GAP) / 2;
-		drawPetWindow(ctx, input.photo, photoX, photoY, shotW, PHOTO_H, PHOTO_R);
-		drawCharWindow(ctx, input.character, input.colors, photoX + shotW + DUO_GAP, photoY, shotW, PHOTO_H, PHOTO_R);
-	} else if (hasPhoto && input.photo !== null) {
-		ctx.save();
-		roundRectPath(ctx, photoX, photoY, PHOTO_INNER, PHOTO_H, PHOTO_R);
-		ctx.clip();
-		ctx.fillStyle = CARD_BG;
-		ctx.fillRect(photoX, photoY, PHOTO_INNER, PHOTO_H);
-		drawCover(ctx, input.photo, photoX, photoY, PHOTO_INNER, PHOTO_H);
-		ctx.restore();
-	} else {
-		drawCharWindow(ctx, input.character, input.colors, photoX, photoY, PHOTO_INNER, PHOTO_H, PHOTO_R);
-	}
-
-	const tapeY = CARD_Y - TAPE_H / 2 + 8;
-	drawTape(ctx, BRAND_TAPE.x, tapeY, BRAND_TAPE.w, TAPE_H, (BRAND_TAPE.rotate * Math.PI) / 180, PRIMARY, {
-		text: BRAND_TAPE.label,
-		color: '#ffffff',
-		size: TAPE_FONT_SIZE,
-	});
-	drawTape(ctx, SERVICE_TAPE.x, tapeY, SERVICE_TAPE.w, TAPE_H, (SERVICE_TAPE.rotate * Math.PI) / 180, GOLD, {
-		text: t(SERVICE_TAPE.label),
-		color: PRIMARY_ACTIVE,
-		size: input.locale === 'en' ? 38 : TAPE_FONT_SIZE,
-	});
-
-	ctx.textAlign = 'center';
-	ctx.textBaseline = 'alphabetic';
-	let baseline = photoY + PHOTO_H + CAP_TOP_PAD + CAP_CODE_SIZE * 0.85;
-	ctx.fillStyle = PRIMARY_ACTIVE;
-	ctx.font = `${CAP_CODE_SIZE}px ${displayFont()}`;
-	ctx.fillText(input.type, cardCx, baseline);
-
-	baseline += CAP_NAME_GAP + CAP_NAME_SIZE;
-	ctx.fillStyle = INK;
-	ctx.font = `${CAP_NAME_SIZE}px ${displayFont()}`;
-	ctx.fillText(input.typeName, cardCx, baseline, PHOTO_INNER);
-
-	ctx.restore();
+function loadCardAsset(src: string): Promise<HTMLImageElement> {
+	const image = new Image();
+	image.decoding = 'async';
+	image.src = src;
+	return image.decode().then(() => image);
 }
 
-function drawInvite(ctx: CanvasRenderingContext2D, locale: Locale): void {
-	const t = translator(locale);
-	ctx.textAlign = 'center';
-	ctx.textBaseline = 'alphabetic';
-	ctx.fillStyle = INK;
-	ctx.font = `${INVITE_LABEL_SIZE}px ${displayFont()}`;
-	ctx.fillText(t(INVITE_LABEL), CANVAS_W / 2, INVITE_LABEL_Y);
-	ctx.fillStyle = PRIMARY_ACTIVE;
-	ctx.font = `${INVITE_URL_SIZE}px ${displayFont()}`;
-	ctx.fillText(INVITE_URL, CANVAS_W / 2, INVITE_URL_Y);
-}
-
-function drawCredit(ctx: CanvasRenderingContext2D, appIcon: HTMLImageElement | null, locale: Locale): void {
-	const t = translator(locale);
-	ctx.font = `${CREDIT_SIZE}px ${displayFont()}`;
-	const prefixW = ctx.measureText(CREDIT_PREFIX).width;
-	const brandW = ctx.measureText(CREDIT_BRAND).width;
-	const suffixW = ctx.measureText(t(CREDIT_SUFFIX)).width;
-	const iconW = appIcon !== null ? CREDIT_ICON + CREDIT_GAP : 0;
-	const totalW = prefixW + CREDIT_GAP + iconW + brandW + CREDIT_GAP + suffixW;
-
-	let x = (CANVAS_W - totalW) / 2;
-	ctx.textAlign = 'left';
+function drawAxisBars(ctx: CanvasRenderingContext2D, type: TypeCode, axisScores: Record<Axis, AxisScore>): void {
+	ctx.save();
 	ctx.textBaseline = 'middle';
+	const font = displayFont();
 
-	ctx.fillStyle = INK_MUTED;
-	ctx.fillText(CREDIT_PREFIX, x, CREDIT_CY);
-	x += prefixW + CREDIT_GAP;
+	AXES.forEach((axis, index) => {
+		const score = axisScores[axis];
+		const total = score.left + score.right;
+		const leftWins =
+			score.left === score.right ? type[index] === AXIS_LETTERS[axis].left : score.left > score.right;
+		const side = leftWins ? 'left' : 'right';
+		const meta = AXIS_META[axis][side];
+		const percent = total > 0 ? Math.round((Math.max(score.left, score.right) / total) * 100) : 100;
+		const centerY = BAR.firstCenterY + BAR.rowGap * index;
+		const barY = centerY - BAR.height / 2;
 
-	if (appIcon !== null) {
-		const iconY = CREDIT_CY - CREDIT_ICON / 2;
-		ctx.save();
-		ctx.shadowColor = 'rgba(0,0,0,0.18)';
-		ctx.shadowBlur = 8;
-		ctx.shadowOffsetY = 4;
-		roundRectPath(ctx, x, iconY, CREDIT_ICON, CREDIT_ICON, CREDIT_ICON_R);
-		ctx.fillStyle = BRAND_RED;
+		ctx.textAlign = 'left';
+		ctx.fillStyle = '#3e3023';
+		ctx.font = `38px ${font}`;
+		ctx.fillText(`${meta.label} ${meta.letter}`, 120, centerY + 1);
+
+		ctx.fillStyle = '#e7d9b8';
+		roundRectPath(ctx, BAR.x, barY, BAR.width, BAR.height, BAR.height / 2);
 		ctx.fill();
-		ctx.restore();
-		ctx.save();
-		roundRectPath(ctx, x, iconY, CREDIT_ICON, CREDIT_ICON, CREDIT_ICON_R);
-		ctx.clip();
-		ctx.drawImage(appIcon, x, iconY, CREDIT_ICON, CREDIT_ICON);
-		ctx.restore();
-		x += iconW;
-	}
+		drawRaisedBar(ctx, barY, (BAR.width * percent) / 100, meta.color);
 
-	ctx.fillStyle = BRAND_RED;
-	ctx.fillText(CREDIT_BRAND, x, CREDIT_CY);
-	x += brandW + CREDIT_GAP;
+		ctx.textAlign = 'right';
+		ctx.fillStyle = '#883f20';
+		ctx.font = `50px ${font}`;
+		ctx.fillText(`${percent}%`, 960, centerY + 2);
+	});
+	ctx.restore();
+}
 
-	ctx.fillStyle = INK_MUTED;
-	ctx.fillText(t(CREDIT_SUFFIX), x, CREDIT_CY);
+function drawRaisedBar(ctx: CanvasRenderingContext2D, y: number, width: number, color: string): void {
+	if (width <= 0) return;
+
+	ctx.fillStyle = tint(color, -0.2);
+	roundRectPath(ctx, BAR.x, y, width, BAR.height, Math.min(BAR.height / 2, width / 2));
+	ctx.fill();
+
+	const faceHeight = BAR.height - BAR.depth;
+	const face = ctx.createLinearGradient(0, y, 0, y + faceHeight);
+	face.addColorStop(0, tint(color, 0.13));
+	face.addColorStop(0.2, color);
+	face.addColorStop(1, color);
+	ctx.fillStyle = face;
+	roundRectPath(ctx, BAR.x, y, width, faceHeight, Math.min(faceHeight / 2, width / 2));
+	ctx.fill();
+}
+
+function tint(hex: string, amount: number): string {
+	const target = amount < 0 ? 0 : 255;
+	const channels = [1, 3, 5].map((offset) => {
+		const channel = parseInt(hex.slice(offset, offset + 2), 16);
+		return Math.round(channel + (target - channel) * Math.abs(amount));
+	});
+	return `rgb(${channels.join(',')})`;
 }
