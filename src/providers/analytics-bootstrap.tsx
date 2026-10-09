@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import {
 	type AnalyticsAdapter,
@@ -14,6 +14,7 @@ import { createFanoutAdapter } from '@/lib/analytics/fanout-adapter';
 import { createFirebaseAdapter } from '@/lib/analytics/firebase-adapter';
 import { initClarity } from '@/lib/clarity/client';
 import { isClarityConfigured } from '@/lib/clarity/config';
+import { isResultCopyReferral } from '@/lib/content/invite-link';
 import { initFirebase } from '@/lib/firebase/client';
 import { isFirebaseConfigured } from '@/lib/firebase/config';
 import { getRemoteConfigString } from '@/lib/firebase/remote-config';
@@ -21,8 +22,22 @@ import { getRemoteConfigString } from '@/lib/firebase/remote-config';
 const BUFFER_CAP = 50;
 
 export function AnalyticsBootstrap() {
+	const unconfiguredLandingTracked = useRef(false);
+
 	useEffect(() => {
-		if (!isFirebaseConfigured() && !isClarityConfigured()) return;
+		const pathname = window.location.pathname;
+		const resultCopyLanding =
+			(pathname === '/' || pathname === '/en' || pathname === '/en/') &&
+			isResultCopyReferral(window.location.search);
+		const landingEvent: AnalyticsEvent = { name: 'result_copy_landing', payload: {} };
+
+		if (!isFirebaseConfigured() && !isClarityConfigured()) {
+			if (resultCopyLanding && !unconfiguredLandingTracked.current) {
+				unconfiguredLandingTracked.current = true;
+				consoleAdapter.track(landingEvent);
+			}
+			return;
+		}
 
 		const buffered: AnalyticsEvent[] = [];
 		const bufferingAdapter: AnalyticsAdapter = {
@@ -32,6 +47,7 @@ export function AnalyticsBootstrap() {
 			},
 		};
 		setAnalyticsAdapter(bufferingAdapter);
+		if (resultCopyLanding) bufferingAdapter.track(landingEvent);
 
 		let started = false;
 		let idleHandle: number | undefined;

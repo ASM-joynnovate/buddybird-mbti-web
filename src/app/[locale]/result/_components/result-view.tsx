@@ -13,7 +13,6 @@ import { withTrack } from '@/lib/analytics/with-track';
 import { typeGradient } from '@/lib/content/gradient';
 import { getTypeInfo, getTypeName } from '@/lib/content/type-infos';
 import { currentLocalePath } from '@/lib/i18n/path';
-import { GROUP_CSS_VAR, type TemperamentGroup, temperamentGroup } from '@/lib/mbti/temperament';
 import { fadeOnly, fadeUp, staggerContainer } from '@/lib/motion/variants';
 import { RESULT_PARAM, decodeResult, fallbackScores } from '@/lib/result-url';
 
@@ -41,13 +40,6 @@ import { GameButton } from '@/components/ui/button';
 import { GamePanel } from '@/components/ui/card';
 
 const PAPER_CLASS = 'relative min-h-dvh bg-[radial-gradient(130%_80%_at_50%_0%,#fff6e0_0%,#f4e7cb_70%,#efdfbf_100%)]';
-
-const GROUP_LABEL: Record<TemperamentGroup, string> = {
-	Analysts: '분석가형',
-	Diplomats: '외교관형',
-	Sentinels: '관리자형',
-	Explorers: '탐험가형',
-};
 
 const SAMPLE_SCORES: Record<Axis, AxisScore> = {
 	EI: { left: 5, right: 2 },
@@ -93,6 +85,16 @@ export function ResultView() {
 	const previewPhotoUrl = usePreviewPhoto(sample);
 	const photoUrl = previewPhotoUrl ?? generated.url;
 	const composedCard = useComposedCard(photoUrl, type, axisScores);
+	const cardPreviewRef = useRef<HTMLDivElement>(null);
+	const lastScrolledCardUrl = useRef<string | null>(null);
+	useEffect(() => {
+		if (composedCard.url === null || lastScrolledCardUrl.current === composedCard.url) return;
+		lastScrolledCardUrl.current = composedCard.url;
+		cardPreviewRef.current?.scrollIntoView({
+			behavior: reducedMotion ? 'auto' : 'smooth',
+			block: 'start',
+		});
+	}, [composedCard.url, reducedMotion]);
 	const entryHandled = useRef(false);
 	useEffect(() => {
 		if (entryHandled.current) return;
@@ -110,7 +112,6 @@ export function ResultView() {
 	}
 
 	const info = getTypeInfo(type);
-	const group = temperamentGroup(type);
 
 	return (
 		<main className={PAPER_CLASS}>
@@ -120,33 +121,21 @@ export function ResultView() {
 					className="relative flex flex-col items-center px-gutter pt-14 pb-2 text-center"
 					variants={staggerContainer}
 				>
-					{(sample || composedCard.url === null) && (
-						<>
-							<m.p className="relative z-1 m-0 font-display text-lg text-primary-active" variants={rise}>
-								{t('🎉 우리 앵이의 앵BTI는?!')}
-							</m.p>
-							<m.div className="relative z-1 my-4 w-full" variants={rise}>
-								<ResultPolaroid
-									type={type}
-									name={t(getTypeName(type))}
-									gradient={typeGradient(type)}
-									photoUrl={null}
-									reducedMotion={reducedMotion === true}
-								/>
-							</m.div>
-							<m.span
-								className="relative z-1 rounded-full border-[length:var(--border-hair)] border-white/70
-									px-4 py-1.5 font-display text-sm whitespace-nowrap text-white
-									shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_4px_10px_-4px_rgba(0,0,0,0.4)]"
-								style={{ background: GROUP_CSS_VAR[group] }}
-							>
-								{t(GROUP_LABEL[group])}
-							</m.span>
-						</>
-					)}
+					<m.p className="relative z-1 m-0 font-display text-lg text-primary-active" variants={rise}>
+						{t('🎉 우리 앵이의 앵BTI는?!')}
+					</m.p>
+					<m.div className="relative z-1 my-4 w-full" variants={rise}>
+						<ResultPolaroid
+							type={type}
+							name={t(getTypeName(type))}
+							gradient={typeGradient(type)}
+							photoUrl={null}
+							reducedMotion={reducedMotion === true}
+						/>
+					</m.div>
 					{composedCard.url !== null && (
-						<m.div className={`relative z-1 w-full ${sample ? 'mt-8' : ''}`} variants={rise}>
-							<ResultCardPreview type={type} cardUrl={composedCard.url} sample={sample} />
+						<m.div ref={cardPreviewRef} className="relative z-1 mt-8 w-full scroll-mt-5" variants={rise}>
+							<ResultCardPreview cardUrl={composedCard.url} />
 						</m.div>
 					)}
 				</m.header>
@@ -170,7 +159,7 @@ export function ResultView() {
 								axisScores={axisScores}
 								disabled={generated.busy}
 							/>
-							<LinkCopyButton type={type} axisScores={axisScores} />
+							<LinkCopyButton type={type} />
 						</div>
 						{generated.error && (
 							<div role="status" aria-live="polite" className="text-center text-sm text-ink-muted">
@@ -211,7 +200,7 @@ export function ResultView() {
 								<h2 className="m-0 mb-4 font-display text-lg font-normal text-ink">
 									🤝 <Marker variant="head">{t('환상의 궁합')}</Marker>
 								</h2>
-								<div className="flex gap-3">
+								<div className="flex flex-col gap-3">
 									{info.match.map((matchCode) => (
 										<MatchCard
 											key={matchCode}

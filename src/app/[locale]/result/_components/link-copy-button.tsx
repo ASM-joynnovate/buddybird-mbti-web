@@ -2,13 +2,12 @@
 
 import { useEffect, useState } from 'react';
 
-import type { Axis, AxisScore, TypeCode } from '@/types/mbti';
+import type { TypeCode } from '@/types/mbti';
 
 import { track } from '@/lib/analytics/track';
-import { localizedPath } from '@/lib/i18n/path';
-import { RESULT_PARAM, encodeResult } from '@/lib/result-url';
+import { RESULT_COPY_URL } from '@/lib/content/invite-link';
 
-import { useLocale, useTranslation } from '@/providers/locale-provider';
+import { useTranslation } from '@/providers/locale-provider';
 import { CheckIcon, LinkIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -16,14 +15,16 @@ import { GameButton } from '@/components/ui/button';
 
 interface LinkCopyButtonProps {
 	type: TypeCode;
-	axisScores: Record<Axis, AxisScore>;
 }
 
 const COPIED_MS = 1800;
+const SHARE_TEXT = `우리 앵무새 앵BTI는?! 🦜
 
-export function LinkCopyButton({ type, axisScores }: LinkCopyButtonProps) {
+앵이의 진짜 성격을 확인하고, 사진을 넣어 귀여운 카드도 만들어보세요!
+${RESULT_COPY_URL}`;
+
+export function LinkCopyButton({ type }: LinkCopyButtonProps) {
 	const t = useTranslation();
-	const locale = useLocale();
 	const [copied, setCopied] = useState(false);
 
 	useEffect(() => {
@@ -33,16 +34,13 @@ export function LinkCopyButton({ type, axisScores }: LinkCopyButtonProps) {
 	}, [copied]);
 
 	const handleCopy = async () => {
-		// Link previews are fetched by crawlers, which get Korean on the locale-less URL.
-		const path = localizedPath('/result', locale);
-		const url = `${window.location.origin}${path}?${RESULT_PARAM}=${encodeResult(type, axisScores)}`;
 		try {
-			await navigator.clipboard.writeText(url);
+			await navigator.clipboard.writeText(SHARE_TEXT);
 			setCopied(true);
 			track({ name: 'link_copied', payload: { type } });
-			toast(t('링크를 복사했어요'));
+			toast(t('앵BTI 링크를 복사했어요. 친구에게 보내 보세요!'));
 		} catch {
-			toast(t('링크를 복사하지 못했어요. 주소창의 링크를 복사해 주세요.'));
+			toast(t('링크를 복사하지 못했어요. 다시 시도해 주세요.'));
 		}
 	};
 
