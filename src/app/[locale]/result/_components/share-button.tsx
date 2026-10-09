@@ -42,6 +42,7 @@ export function ShareButton({ type, photoUrl, axisScores, disabled = false }: Sh
 					type,
 					photo,
 					axisScores,
+					locale,
 				});
 
 				const outcome = await shareCard(blob, type, locale);

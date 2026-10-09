@@ -4,12 +4,16 @@ import { useEffect, useState } from 'react';
 
 import type { Axis, AxisScore, TypeCode } from '@/types/mbti';
 
+import type { Locale } from '@/lib/i18n/locale';
+
 import { loadImage } from '@/app/[locale]/result/_lib/card/load-image';
+import { useLocale } from '@/providers/locale-provider';
 
 interface CardState {
 	photoUrl: string;
 	type: TypeCode;
 	axisScores: Record<Axis, AxisScore>;
+	locale: Locale;
 	url: string | null;
 	error: boolean;
 }
@@ -19,6 +23,7 @@ export function useComposedCard(
 	type: TypeCode | null,
 	axisScores: Record<Axis, AxisScore> | null,
 ) {
+	const locale = useLocale();
 	const [state, setState] = useState<CardState | null>(null);
 
 	useEffect(() => {
@@ -32,12 +37,12 @@ export function useComposedCard(
 					import('@/app/[locale]/result/_lib/card/compose-card'),
 					loadImage(photoUrl),
 				]);
-				const card = await composeCard({ type, photo, axisScores });
+				const card = await composeCard({ type, photo, axisScores, locale });
 				if (disposed) return;
 				objectUrl = URL.createObjectURL(card);
-				setState({ photoUrl, type, axisScores, url: objectUrl, error: false });
+				setState({ photoUrl, type, axisScores, locale, url: objectUrl, error: false });
 			} catch {
-				if (!disposed) setState({ photoUrl, type, axisScores, url: null, error: true });
+				if (!disposed) setState({ photoUrl, type, axisScores, locale, url: null, error: true });
 			}
 		};
 
@@ -46,9 +51,14 @@ export function useComposedCard(
 			disposed = true;
 			if (objectUrl) URL.revokeObjectURL(objectUrl);
 		};
-	}, [photoUrl, type, axisScores]);
+	}, [photoUrl, type, axisScores, locale]);
 
 	const current =
-		state?.photoUrl === photoUrl && state?.type === type && state?.axisScores === axisScores ? state : null;
+		state?.photoUrl === photoUrl &&
+		state?.type === type &&
+		state?.axisScores === axisScores &&
+		state?.locale === locale
+			? state
+			: null;
 	return { url: current?.url ?? null, error: current?.error ?? false };
 }
