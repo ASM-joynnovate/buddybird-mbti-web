@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import type { Axis, AxisScore, TypeCode } from '@/types/mbti';
+import type { TypeCode } from '@/types/mbti';
 
 import { useDeckController } from '@/hooks/use-deck-controller';
 
@@ -23,13 +23,12 @@ import { GenerationProgress } from '@/app/[locale]/result/_components/generation
 import { LinkCopyButton } from '@/app/[locale]/result/_components/link-copy-button';
 import { MatchCard } from '@/app/[locale]/result/_components/match-card';
 import { PhotoInput } from '@/app/[locale]/result/_components/photo-input';
-import { ResultCardPreview } from '@/app/[locale]/result/_components/result-card-preview';
+import { ResultCardDisplay } from '@/app/[locale]/result/_components/result-card-display';
 import { ResultPolaroid } from '@/app/[locale]/result/_components/result-polaroid';
 import { ShareButton } from '@/app/[locale]/result/_components/share-button';
 import { Marker, emphasize } from '@/app/[locale]/result/_components/ui/emphasize';
 import { useComposedCard } from '@/app/[locale]/result/_hooks/use-composed-card';
 import { useGeneratedPhoto } from '@/app/[locale]/result/_hooks/use-generated-photo';
-import { usePreviewPhoto } from '@/app/[locale]/result/_hooks/use-preview-photo';
 import { useTranslation } from '@/providers/locale-provider';
 import { useTestProgress } from '@/providers/test-progress-provider';
 import { AnimatePresence, m, useReducedMotion } from 'motion/react';
@@ -40,13 +39,6 @@ import { GameButton } from '@/components/ui/button';
 import { GamePanel } from '@/components/ui/card';
 
 const PAPER_CLASS = 'relative min-h-dvh bg-[radial-gradient(130%_80%_at_50%_0%,#fff6e0_0%,#f4e7cb_70%,#efdfbf_100%)]';
-
-const SAMPLE_SCORES: Record<Axis, AxisScore> = {
-	EI: { left: 5, right: 2 },
-	SN: { left: 3, right: 4 },
-	TF: { left: 3, right: 4 },
-	JP: { left: 2, right: 5 },
-};
 
 export function ResultView() {
 	const t = useTranslation();
@@ -70,27 +62,18 @@ export function ResultView() {
 	const resultParam = searchParams.get(RESULT_PARAM);
 	const decoded = useMemo(() => decodeResult(resultParam), [resultParam]);
 	const type = ownType ?? decoded?.type ?? null;
-	const sample =
-		process.env.NODE_ENV === 'development' && searchParams.get('preview') === 'generated' && type !== null;
 	const axisScores = useMemo(
-		() =>
-			type === null
-				? null
-				: sample && type === 'ENFP'
-					? SAMPLE_SCORES
-					: (result?.axisScores ?? decoded?.axisScores ?? fallbackScores(type)),
-		[type, sample, result?.axisScores, decoded?.axisScores],
+		() => (type === null ? null : (result?.axisScores ?? decoded?.axisScores ?? fallbackScores(type))),
+		[type, result?.axisScores, decoded?.axisScores],
 	);
 	const generated = useGeneratedPhoto(photoFile, type);
-	const previewPhotoUrl = usePreviewPhoto(sample);
-	const photoUrl = previewPhotoUrl ?? generated.url;
-	const composedCard = useComposedCard(photoUrl, type, axisScores);
-	const cardPreviewRef = useRef<HTMLDivElement>(null);
+	const composedCard = useComposedCard(generated.url, type, axisScores);
+	const cardDisplayRef = useRef<HTMLDivElement>(null);
 	const lastScrolledCardUrl = useRef<string | null>(null);
 	useEffect(() => {
 		if (composedCard.url === null || lastScrolledCardUrl.current === composedCard.url) return;
 		lastScrolledCardUrl.current = composedCard.url;
-		cardPreviewRef.current?.scrollIntoView({
+		cardDisplayRef.current?.scrollIntoView({
 			behavior: reducedMotion ? 'auto' : 'smooth',
 			block: 'start',
 		});
@@ -134,15 +117,15 @@ export function ResultView() {
 						/>
 					</m.div>
 					{composedCard.url !== null && (
-						<m.div ref={cardPreviewRef} className="relative z-1 mt-8 w-full scroll-mt-5" variants={rise}>
-							<ResultCardPreview cardUrl={composedCard.url} />
+						<m.div ref={cardDisplayRef} className="relative z-1 mt-8 w-full scroll-mt-5" variants={rise}>
+							<ResultCardDisplay cardUrl={composedCard.url} />
 						</m.div>
 					)}
 				</m.header>
 
 				<m.div className="flex flex-col gap-4 px-gutter pt-5 pb-9" variants={staggerContainer}>
 					<m.div className="flex flex-col gap-3" variants={rise}>
-						{!photoUrl && !generated.busy && !sample && (
+						{!generated.url && !generated.busy && (
 							<PhotoInput
 								type={type}
 								onPick={(file) => {
@@ -155,7 +138,7 @@ export function ResultView() {
 						<div className="grid grid-cols-2 gap-2.5">
 							<ShareButton
 								type={type}
-								photoUrl={photoUrl}
+								photoUrl={generated.url}
 								axisScores={axisScores}
 								disabled={generated.busy}
 							/>

@@ -1,16 +1,15 @@
 'use client';
 
+import { Marker } from '@/app/[locale]/result/_components/ui/emphasize';
 import { useTranslation } from '@/providers/locale-provider';
 
-import { Marker } from '@/app/[locale]/result/_components/ui/emphasize';
+import styles from './result-card-display.module.css';
 
-import styles from './result-card-preview.module.css';
-
-interface ResultCardPreviewProps {
+interface ResultCardDisplayProps {
 	cardUrl: string;
 }
 
-export function ResultCardPreview({ cardUrl }: ResultCardPreviewProps) {
+export function ResultCardDisplay({ cardUrl }: ResultCardDisplayProps) {
 	const t = useTranslation();
 
 	return (
