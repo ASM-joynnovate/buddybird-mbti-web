@@ -10,6 +10,8 @@ export type AnalyticsEventName =
 	| 'share_success'
 	| 'share_fallback'
 	| 'link_copied'
+	| 'result_copy_landing'
+	| 'result_copy_test_start'
 	| 'app_cta_click'
 	| 'deck_open'
 	| 'deck_close'
@@ -39,6 +41,8 @@ export type AnalyticsEvent =
 	| { name: 'photo_attached'; payload: { source: 'picker' } }
 	| { name: 'share_success'; payload: { type: TypeCode } }
 	| { name: 'link_copied'; payload: { type: TypeCode } }
+	| { name: 'result_copy_landing'; payload: Record<string, never> }
+	| { name: 'result_copy_test_start'; payload: Record<string, never> }
 	| { name: 'share_fallback'; payload: { type: TypeCode; reason: string } }
 	| { name: 'app_cta_click'; payload: { placement: 'intro' | 'result' } }
 	| {
