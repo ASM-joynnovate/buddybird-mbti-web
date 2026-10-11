@@ -4,7 +4,6 @@ import type { CSSProperties } from 'react';
 
 import type { TypeCode } from '@/types/mbti';
 
-import { useTranslation } from '@/providers/locale-provider';
 import { m } from 'motion/react';
 
 import { ParrotImage } from '@/components/ui/parrot-image';
@@ -13,7 +12,6 @@ interface ResultPolaroidProps {
 	type: TypeCode;
 	name: string;
 	gradient: string;
-	photoUrl: string | null;
 	reducedMotion: boolean;
 }
 
@@ -59,8 +57,7 @@ function CharShot({ type, reducedMotion }: CharShotProps) {
 	);
 }
 
-export function ResultPolaroid({ type, name, gradient, photoUrl, reducedMotion }: ResultPolaroidProps) {
-	const t = useTranslation();
+export function ResultPolaroid({ type, name, gradient, reducedMotion }: ResultPolaroidProps) {
 	const charBg = { background: gradient } as CSSProperties;
 
 	return (
@@ -81,25 +78,8 @@ export function ResultPolaroid({ type, name, gradient, photoUrl, reducedMotion }
 				aria-hidden="true"
 			/>
 
-			<div
-				className={
-					photoUrl !== null
-						? 'relative aspect-[5/4] overflow-hidden rounded-sm bg-surface-cream'
-						: 'relative h-72 overflow-hidden rounded-sm'
-				}
-				style={photoUrl !== null ? undefined : charBg}
-			>
-				{photoUrl !== null ? (
-					// eslint-disable-next-line @next/next/no-img-element
-					<img
-						className="h-full w-full object-cover"
-						src={photoUrl}
-						alt={t('MBTI 의상을 입은 우리 새 합성 사진')}
-						data-clarity-mask="True"
-					/>
-				) : (
-					<CharShot type={type} reducedMotion={reducedMotion} />
-				)}
+			<div className="relative h-72 overflow-hidden rounded-sm" style={charBg}>
+				<CharShot type={type} reducedMotion={reducedMotion} />
 			</div>
 
 			<div className="flex flex-col items-center gap-0.5 px-1 pt-3 pb-4 text-center">

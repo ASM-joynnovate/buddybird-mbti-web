@@ -11,6 +11,7 @@ import { useDeckController } from '@/hooks/use-deck-controller';
 import { track, trackEvent } from '@/lib/analytics/track';
 import { withTrack } from '@/lib/analytics/with-track';
 import { CAROUSEL_TYPES } from '@/lib/content/assets';
+import { isResultCopyReferral } from '@/lib/content/invite-link';
 import { currentLocalePath } from '@/lib/i18n/path';
 
 import { BackStack, type BackStackControls } from '@/app/[locale]/(forest)/_components/back-stack';
@@ -41,11 +42,16 @@ export function IntroView({ heading, stats }: IntroViewProps) {
 	const deck = useDeckController('intro');
 	const stackControls = useRef<BackStackControls | null>(null);
 	const [detail, setDetail] = useState<TypeCode | null>(null);
+	const inviteTestStartTracked = useRef(false);
 
 	const handleStart = () => {
 		reset();
 		setIndex(0);
 		track({ name: 'test_start', payload: {} });
+		if (!inviteTestStartTracked.current && isResultCopyReferral(window.location.search)) {
+			inviteTestStartTracked.current = true;
+			track({ name: 'result_copy_test_start', payload: {} });
+		}
 		router.push(currentLocalePath('/species'));
 	};
 

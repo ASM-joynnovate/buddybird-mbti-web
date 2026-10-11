@@ -28,7 +28,7 @@ export default async function HomePage() {
 					className="isolate m-0 font-display text-[clamp(2.125rem,11vw,2.875rem)] leading-[1.08] text-ink
 						[text-shadow:0_2px_0_var(--color-surface-cream),0_0_16px_rgba(255,248,227,0.9)]"
 				>
-					{t('우리 앵무새')}
+					{t('우리 앵무새의')}
 					<br />
 					<span className="whitespace-nowrap">
 						<span
@@ -38,9 +38,9 @@ export default async function HomePage() {
 								after:bg-[linear-gradient(180deg,var(--color-primary-glow),var(--color-gold))]
 								after:opacity-85 after:content-['']"
 						>
-							{t('진짜 성격')}
+							{t('앵BTI')}
 						</span>
-						{t('은?')}
+						{t('는?')}
 					</span>
 				</h1>
 			}

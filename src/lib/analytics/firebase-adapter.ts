@@ -16,6 +16,8 @@ function renameType(payload: { type: TypeCode } & Record<string, string | number
 function toGaParams(event: AnalyticsEvent): GaParams {
 	switch (event.name) {
 		case 'test_start':
+		case 'result_copy_landing':
+		case 'result_copy_test_start':
 		case 'photo_removed':
 			return {};
 		case 'question_answered':
