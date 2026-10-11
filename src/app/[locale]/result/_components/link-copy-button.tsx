@@ -5,9 +5,9 @@ import { useEffect, useState } from 'react';
 import type { TypeCode } from '@/types/mbti';
 
 import { track } from '@/lib/analytics/track';
-import { RESULT_COPY_URL } from '@/lib/content/invite-link';
+import { resultCopyUrl } from '@/lib/content/invite-link';
 
-import { useTranslation } from '@/providers/locale-provider';
+import { useLocale, useTranslation } from '@/providers/locale-provider';
 import { CheckIcon, LinkIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -18,13 +18,13 @@ interface LinkCopyButtonProps {
 }
 
 const COPIED_MS = 1800;
-const SHARE_TEXT = `우리 앵무새 앵BTI는?! 🦜
+const SHARE_MESSAGE = `우리 앵무새 앵BTI는?! 🦜
 
-앵이의 진짜 성격을 확인하고, 사진을 넣어 귀여운 카드도 만들어보세요!
-${RESULT_COPY_URL}`;
+앵이의 진짜 성격을 확인하고, 사진을 넣어 귀여운 카드도 만들어보세요!`;
 
 export function LinkCopyButton({ type }: LinkCopyButtonProps) {
 	const t = useTranslation();
+	const locale = useLocale();
 	const [copied, setCopied] = useState(false);
 
 	useEffect(() => {
@@ -35,7 +35,7 @@ export function LinkCopyButton({ type }: LinkCopyButtonProps) {
 
 	const handleCopy = async () => {
 		try {
-			await navigator.clipboard.writeText(SHARE_TEXT);
+			await navigator.clipboard.writeText(`${t(SHARE_MESSAGE)}\n${resultCopyUrl(locale)}`);
 			setCopied(true);
 			track({ name: 'link_copied', payload: { type } });
 			toast(t('앵BTI 링크를 복사했어요. 친구에게 보내 보세요!'));

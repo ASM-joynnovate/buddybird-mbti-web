@@ -112,7 +112,6 @@ export function ResultView() {
 							type={type}
 							name={t(getTypeName(type))}
 							gradient={typeGradient(type)}
-							photoUrl={null}
 							reducedMotion={reducedMotion === true}
 						/>
 					</m.div>
