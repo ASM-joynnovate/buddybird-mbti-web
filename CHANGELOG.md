@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.0](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.5.0...v2.6.0) (2026-10-12)
+
+
+### Features
+
+* MBTI 유형 쏠림 완화를 위한 산출 수식 개선 [BB-666] ([#28](https://github.com/ASM-joynnovate/buddybird-mbti-web/issues/28)) ([4834854](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/4834854a2704bd84e18b7338b9a8317219545537))
+
 ## [2.5.0](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.4.0...v2.5.0) (2026-10-11)
 
 
