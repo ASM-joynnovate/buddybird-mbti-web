@@ -2,9 +2,9 @@ import { AXES, AXIS_LETTERS, type Axis, type AxisScore, type TypeCode } from '@/
 
 export const RESULT_PARAM = 't';
 
-const TALLY_HEX_LEN = 6;
-
-const SIDE_MAX = 7;
+// 축마다 (left, right)를 한쪽 5비트씩 담는다. 예전 링크는 한쪽 3비트·6자리였고 계속 읽는다.
+const TALLY = { sideBits: 5, hexLen: 10 };
+const LEGACY_TALLY = { sideBits: 3, hexLen: 6 };
 
 const RESULT_PATTERN = /^([EI][SN][TF][JP])([0-9a-f]*)$/;
 
@@ -24,21 +24,23 @@ export function fallbackScores(type: TypeCode): Record<Axis, AxisScore> {
 	);
 }
 
-const clampSide = (n: number): number => Math.min(SIDE_MAX, Math.max(0, Math.round(n)));
-
 export function encodeResult(type: TypeCode, axisScores?: Record<Axis, AxisScore>): string {
 	if (axisScores === undefined) {
 		return type;
 	}
 
+	const { sideBits, hexLen } = TALLY;
+	const sideMax = 2 ** sideBits - 1;
+	const clampSide = (n: number): number => Math.min(sideMax, Math.max(0, Math.round(n)));
+
 	let value = 0;
 	AXES.forEach((axis, index) => {
 		const { left, right } = axisScores[axis];
-		const chunk = (clampSide(left) << 3) | clampSide(right);
-		value += chunk * Math.pow(2, index * 6);
+		const chunk = clampSide(left) * 2 ** sideBits + clampSide(right);
+		value += chunk * 2 ** (index * sideBits * 2);
 	});
 
-	return `${type}${value.toString(16).padStart(TALLY_HEX_LEN, '0')}`;
+	return `${type}${value.toString(16).padStart(hexLen, '0')}`;
 }
 
 export function decodeResult(raw: string | null): DecodedResult | null {
@@ -54,15 +56,18 @@ export function decodeResult(raw: string | null): DecodedResult | null {
 	const type = match[1];
 	const suffix = match[2];
 
-	if (suffix.length !== TALLY_HEX_LEN) {
+	const format = [TALLY, LEGACY_TALLY].find(({ hexLen }) => hexLen === suffix.length);
+	if (format === undefined) {
 		return { type, axisScores: null };
 	}
 
+	const { sideBits } = format;
+	const sideSize = 2 ** sideBits;
 	const value = parseInt(suffix, 16);
 	const axisScores = AXES.reduce<Record<Axis, AxisScore>>(
 		(scores, axis, index) => {
-			const chunk = Math.floor(value / Math.pow(2, index * 6)) & 0b111111;
-			scores[axis] = { left: (chunk >> 3) & 0b111, right: chunk & 0b111 };
+			const chunk = Math.floor(value / 2 ** (index * sideBits * 2)) % (sideSize * sideSize);
+			scores[axis] = { left: Math.floor(chunk / sideSize), right: chunk % sideSize };
 			return scores;
 		},
 		{} as Record<Axis, AxisScore>,

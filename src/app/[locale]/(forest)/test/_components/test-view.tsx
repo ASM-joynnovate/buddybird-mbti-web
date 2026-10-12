@@ -11,7 +11,7 @@ import { track, trackEvent } from '@/lib/analytics/track';
 import { QUESTIONS, QUESTION_COUNT } from '@/lib/content/questions';
 import { currentLocalePath } from '@/lib/i18n/path';
 import { computeResult } from '@/lib/mbti/compute-result';
-import { speciesOffsetChoice } from '@/lib/mbti/species-weight';
+import { speciesWeights } from '@/lib/mbti/species-weight';
 import { easeLeaf, easeSpring, fadeOnly, popIn } from '@/lib/motion/variants';
 import { RESULT_PARAM, encodeResult } from '@/lib/result-url';
 
@@ -130,12 +130,10 @@ export function TestView() {
 			}
 
 			const finalAnswers: Record<string, Choice> = { ...answers, [question.id]: choice };
-			const orderedChoices = QUESTIONS.map((q) => finalAnswers[q.id]);
+			const orderedAnswers = QUESTIONS.map((q) => ({ primaryAxis: q.primaryAxis, choice: finalAnswers[q.id] }));
 
 			try {
-				const speciesChoice = species ? speciesOffsetChoice(species) : null;
-				const allChoices = speciesChoice ? [...orderedChoices, speciesChoice] : orderedChoices;
-				const result = computeResult(allChoices);
+				const result = computeResult(orderedAnswers, species ? speciesWeights(species) : undefined);
 				setResult(result);
 				track({ name: 'test_completed', payload: { type: result.type } });
 				router.push(

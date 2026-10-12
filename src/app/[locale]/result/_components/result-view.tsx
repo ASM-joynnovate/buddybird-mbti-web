@@ -173,7 +173,7 @@ export function ResultView() {
 					)}
 
 					<m.div variants={rise}>
-						<AxisBars axisScores={axisScores} />
+						<AxisBars type={type} axisScores={axisScores} />
 					</m.div>
 
 					{info !== null && info.match.length > 0 && (

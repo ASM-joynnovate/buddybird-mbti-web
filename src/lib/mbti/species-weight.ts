@@ -1,4 +1,4 @@
-import type { Choice, Letter } from '@/types/mbti';
+import type { Letter } from '@/types/mbti';
 
 export const SPECIES_LIST = [
 	'코뉴어',
@@ -38,8 +38,6 @@ const SPECIES_WEIGHTS: Record<Species, Partial<Record<Letter, number>>> = {
 	기타: {},
 };
 
-export function speciesOffsetChoice(species: Species): Choice | null {
-	const weights = SPECIES_WEIGHTS[species];
-	if (Object.keys(weights).length === 0) return null;
-	return { id: 'species-offset', label: species, weights };
+export function speciesWeights(species: Species): Partial<Record<Letter, number>> {
+	return SPECIES_WEIGHTS[species];
 }
