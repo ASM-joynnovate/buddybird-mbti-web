@@ -25,12 +25,12 @@ const LETTER_AXIS = Object.fromEntries(
 	]),
 ) as Record<Letter, Axis>;
 
-// 선택지는 두 축에 점수를 주는데, 같은 점수를 주면 축끼리 함께 움직여 특정 유형으로 쏠린다.
-// 문항의 주축에 무게를 두고 보조축은 동점을 가르는 정도로만 반영한다.
+// Equal points on both axes of a choice couple the axes and skew results toward a few types.
+// The question's primary axis carries the weight; the secondary axis only breaks close calls.
 const PRIMARY_POINTS = 3;
 const SECONDARY_POINTS = 1;
 
-// 종 가중치는 축마다 한 방향으로 최대 1단위만 더한다.
+// Species adds at most one unit per axis, toward the side it leans.
 const SPECIES_POINTS = 3;
 
 const DEFAULT_DIRECTION: Record<Axis, 'left' | 'right'> = {
@@ -109,7 +109,7 @@ export function computeResult(answers: Answer[], speciesWeights: Partial<Record<
 		const pair = AXIS_LETTERS[axis];
 		const total = axisScores[axis];
 		const questions = questionScores[axis];
-		// 종 가중치로 동점이 되면 문항 점수로 가른다.
+		// A tie caused by the species bonus falls back to the question scores.
 		const diff = total.left !== total.right ? total.left - total.right : questions.left - questions.right;
 		if (diff === 0) {
 			return DEFAULT_DIRECTION[axis] === 'left' ? pair.left : pair.right;

@@ -2,7 +2,7 @@ import { AXES, AXIS_LETTERS, type Axis, type AxisScore, type TypeCode } from '@/
 
 export const RESULT_PARAM = 't';
 
-// 축마다 (left, right)를 한쪽 5비트씩 담는다. 예전 링크는 한쪽 3비트·6자리였고 계속 읽는다.
+// Each axis packs (left, right) at 5 bits per side. Older links used 3 bits per side (6 hex) and still decode.
 const TALLY = { sideBits: 5, hexLen: 10 };
 const LEGACY_TALLY = { sideBits: 3, hexLen: 6 };
 
