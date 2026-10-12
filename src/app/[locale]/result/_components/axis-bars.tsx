@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from 'react';
 
-import { AXES, type Axis, type AxisScore } from '@/types/mbti';
+import { AXES, AXIS_LETTERS, type Axis, type AxisScore, type TypeCode } from '@/types/mbti';
 
 import { AXIS_META } from '@/lib/content/axes';
 import { easeSpring } from '@/lib/motion/variants';
@@ -14,6 +14,7 @@ import { m, useReducedMotion } from 'motion/react';
 import { GamePanel } from '@/components/ui/card';
 
 interface AxisBarsProps {
+	type: TypeCode;
 	axisScores: Record<Axis, AxisScore>;
 }
 
@@ -22,7 +23,7 @@ const barTransition = { duration: 0.9, ease: easeSpring };
 const END_CLASS = 'inline-flex items-baseline gap-1';
 const END_ACTIVE_CLASS = 'inline-flex items-baseline gap-1 text-[var(--axis-color)]';
 
-export function AxisBars({ axisScores }: AxisBarsProps) {
+export function AxisBars({ type, axisScores }: AxisBarsProps) {
 	const t = useTranslation();
 	const reducedMotion = useReducedMotion();
 
@@ -32,12 +33,12 @@ export function AxisBars({ axisScores }: AxisBarsProps) {
 				<Marker variant="head">{t('성향 스펙트럼')}</Marker>
 			</h2>
 			<div className="flex flex-col gap-4">
-				{AXES.map((axis) => {
+				{AXES.map((axis, index) => {
 					const meta = AXIS_META[axis];
 					const { left, right } = axisScores[axis];
 					const total = left + right || 1;
 					const knob = (right / total) * 100;
-					const leftActive = left >= right;
+					const leftActive = left === right ? type[index] === AXIS_LETTERS[axis].left : left > right;
 					const dominantPct = Math.round((Math.max(left, right) / total) * 100);
 
 					const segStart = Math.min(50, knob);

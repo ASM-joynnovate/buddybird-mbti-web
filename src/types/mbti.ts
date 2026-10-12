@@ -25,7 +25,13 @@ export interface Question {
 	id: string;
 	emoji: string;
 	text: string;
+	primaryAxis: Axis;
 	choices: [Choice, Choice];
+}
+
+export interface Answer {
+	primaryAxis: Axis;
+	choice: Choice;
 }
 
 export interface TypeInfo {
