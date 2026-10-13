@@ -1,23 +1,18 @@
 import { displayFont } from './card-layout';
 
-// 폰트 요청이 실패하지 않고 멈추는 경우에도 카드 생성이 막히지 않게 한다.
-const FONT_TIMEOUT_MS = 2500;
-
 export async function loadFonts(): Promise<void> {
 	if (typeof document === 'undefined' || !document.fonts) {
 		return;
 	}
-	const load = async () => {
+	try {
 		await document.fonts.ready;
+		// Android에는 Arial이 없어 Fallback 폰트를 함께 요청하면 실패한다.
 		await document.fonts.load(
-			`38px ${displayFont()}`,
+			`38px ${displayFont().split(',')[0]}`,
 			'인싸앵 집콕앵 현실앵 구름앵 팩폭앵 말랑앵 칼각앵 즉흥앵 Outgoing Reserved Practical Dreamy Logical Tender Orderly Spontaneous EISNTFJP 100%',
 		);
-	};
-	try {
-		await Promise.race([load(), new Promise((resolve) => setTimeout(resolve, FONT_TIMEOUT_MS))]);
 	} catch {
-		// 인앱 WebView 등에서 폰트 파일을 받지 못하면 NetworkError로 실패한다. 카드는 대체 글꼴로 그린다.
+		// 폰트를 받지 못하면 대체 글꼴로 그린다.
 	}
 }
 
