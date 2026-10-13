@@ -14,6 +14,8 @@ interface CardState {
 	type: TypeCode;
 	axisScores: Record<Axis, AxisScore>;
 	locale: Locale;
+	attempt: number;
+	blob: Blob | null;
 	url: string | null;
 	error: boolean;
 }
@@ -25,6 +27,7 @@ export function useComposedCard(
 ) {
 	const locale = useLocale();
 	const [state, setState] = useState<CardState | null>(null);
+	const [attempt, setAttempt] = useState(0);
 
 	useEffect(() => {
 		if (photoUrl === null || type === null || axisScores === null) return;
@@ -40,9 +43,10 @@ export function useComposedCard(
 				const card = await composeCard({ type, photo, axisScores, locale });
 				if (disposed) return;
 				objectUrl = URL.createObjectURL(card);
-				setState({ photoUrl, type, axisScores, locale, url: objectUrl, error: false });
+				setState({ photoUrl, type, axisScores, locale, attempt, blob: card, url: objectUrl, error: false });
 			} catch {
-				if (!disposed) setState({ photoUrl, type, axisScores, locale, url: null, error: true });
+				if (!disposed)
+					setState({ photoUrl, type, axisScores, locale, attempt, blob: null, url: null, error: true });
 			}
 		};
 
@@ -51,14 +55,21 @@ export function useComposedCard(
 			disposed = true;
 			if (objectUrl) URL.revokeObjectURL(objectUrl);
 		};
-	}, [photoUrl, type, axisScores, locale]);
+	}, [photoUrl, type, axisScores, locale, attempt]);
 
 	const current =
 		state?.photoUrl === photoUrl &&
 		state?.type === type &&
 		state?.axisScores === axisScores &&
-		state?.locale === locale
+		state?.locale === locale &&
+		state?.attempt === attempt
 			? state
 			: null;
-	return { url: current?.url ?? null, error: current?.error ?? false };
+	return {
+		blob: current?.blob ?? null,
+		url: current?.url ?? null,
+		error: current?.error ?? false,
+		pending: photoUrl !== null && type !== null && axisScores !== null && current === null,
+		retry: () => setAttempt((value) => value + 1),
+	};
 }

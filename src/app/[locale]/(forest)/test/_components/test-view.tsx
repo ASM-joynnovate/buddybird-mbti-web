@@ -65,27 +65,10 @@ export function TestView() {
 
 	const [picked, setPicked] = useState<string | null>(null);
 	const [direction, setDirection] = useState<Direction>('r');
-	const [fontReady, setFontReady] = useState(false);
 	const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	useEffect(() => {
-		let fontTimer: ReturnType<typeof setTimeout> | undefined;
-		const scheduleFont = () => {
-			fontTimer = setTimeout(() => {
-				Promise.all([
-					document.fonts.load(`400 1em ${nexon.style.fontFamily}`),
-					document.fonts.load(`700 1em ${nexon.style.fontFamily}`),
-				]).then(() => setFontReady(true));
-			}, 3000);
-		};
-		if (document.readyState === 'complete') {
-			scheduleFont();
-		} else {
-			window.addEventListener('load', scheduleFont, { once: true });
-		}
 		return () => {
-			window.removeEventListener('load', scheduleFont);
-			if (fontTimer !== undefined) clearTimeout(fontTimer);
 			if (advanceTimer.current !== null) {
 				clearTimeout(advanceTimer.current);
 			}
@@ -165,7 +148,7 @@ export function TestView() {
 	const pct = Math.round((filled / QUESTION_COUNT) * 100);
 
 	return (
-		<main className={`relative flex min-h-dvh flex-col px-gutter pt-15 pb-10 ${fontReady ? nexon.variable : ''}`}>
+		<main className={`relative flex min-h-dvh flex-col px-gutter pt-15 pb-10 ${nexon.variable}`}>
 			<div className="flex items-center gap-3">
 				<GameButton
 					variant="icon"

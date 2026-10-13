@@ -3,7 +3,14 @@ import type { TypeCode } from '@/types/mbti';
 import type { Locale } from '@/lib/i18n/locale';
 import { translator } from '@/lib/i18n/translate';
 
-export type ShareOutcome = { kind: 'shared' } | { kind: 'canceled' } | { kind: 'fallback'; reason: string };
+const BLOB_URL_TTL_MS = 30_000;
+
+export type ShareOutcome =
+	| { kind: 'shared' }
+	| { kind: 'canceled' }
+	| { kind: 'fallback'; reason: string }
+	// 인앱 브라우저는 blob: 다운로드를 처리하지 못해 사용자가 카드 이미지를 직접 길게 눌러 저장해야 한다.
+	| { kind: 'manual-save'; reason: string };
 
 export async function shareCard(blob: Blob, type: TypeCode, locale: Locale): Promise<ShareOutcome> {
 	const t = translator(locale);
@@ -29,13 +36,27 @@ export async function shareCard(blob: Blob, type: TypeCode, locale: Locale): Pro
 			if (error instanceof DOMException && error.name === 'AbortError') {
 				return { kind: 'canceled' };
 			}
-			downloadFile(file);
-			return { kind: 'fallback', reason: getErrorMessage(error) };
+			return saveFile(file, getErrorMessage(error));
 		}
 	}
 
+	return saveFile(file, isDesktop ? 'desktop-download' : 'web-share-unsupported');
+}
+
+function saveFile(file: File, reason: string): ShareOutcome {
+	if (isInAppBrowser()) {
+		return { kind: 'manual-save', reason };
+	}
 	downloadFile(file);
-	return { kind: 'fallback', reason: isDesktop ? 'desktop-download' : 'web-share-unsupported' };
+	return { kind: 'fallback', reason };
+}
+
+function isInAppBrowser(): boolean {
+	if (typeof navigator === 'undefined') {
+		return false;
+	}
+	// Instagram, Facebook, KakaoTalk, NAVER, LINE 앱과 그 밖의 Android WebView(`; wv)`).
+	return /Instagram|FBAN|FBAV|KAKAOTALK|NAVER\(inapp|Line\/|; wv\)/.test(navigator.userAgent);
 }
 
 function isMobileUserAgent(): boolean {
@@ -57,7 +78,8 @@ function downloadFile(file: File): void {
 	document.body.appendChild(anchor);
 	anchor.click();
 	anchor.remove();
-	URL.revokeObjectURL(url);
+	// 일부 브라우저는 다운로드를 비동기로 시작하므로 URL을 바로 해제하면 저장에 실패한다.
+	setTimeout(() => URL.revokeObjectURL(url), BLOB_URL_TTL_MS);
 }
 
 function getErrorMessage(error: unknown): string {

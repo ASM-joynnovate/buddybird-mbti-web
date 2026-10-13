@@ -74,7 +74,10 @@
 	"🗂 앵BTI 유형 보기": "Explore MBTI types",
 	"↺ 다시하기": "↺ Try again",
 	"카드를 저장했어요. 인스타그램에 올려 주세요!": "Card saved! Share it on Instagram.",
-	"카드를 만들지 못했어요. 잠시 후 다시 시도해 주세요.": "Could not create your card. Please try again in a moment.",
+	"카드 이미지를 길게 눌러 저장해 주세요.": "Press and hold the card image to save it.",
+	"카드를 공유하지 못했어요. 잠시 후 다시 시도해 주세요.": "Could not share your card. Please try again in a moment.",
+	"카드를 만들지 못했어요.": "Could not create your card.",
+	"다시 시도": "Try again",
 	"카드 만드는 중…": "Creating…",
 	"카드 공유하기": "Share card",
 	"합성 이미지를 읽을 수 없어요.": "Could not read the generated image.",
@@ -258,6 +261,5 @@
 	"완성된 앵BTI 카드": "Your Parrot MBTI card",
 	"우리 앵이의 결과를 한 장에 담았어요.": "Your parrot's result, all in one card.",
 	"우리 앵이 사진": "Your parrot's photo",
-	"카드를 구성하고 있어요…": "Putting your card together…",
-	"카드를 표시하지 못했어요. 새로고침해 주세요.": "Couldn't display the card. Please refresh the page."
+	"카드를 구성하고 있어요…": "Putting your card together…"
 }
