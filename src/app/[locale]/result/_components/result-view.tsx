@@ -140,6 +140,12 @@ export function ResultView() {
 								photoUrl={generated.url}
 								axisScores={axisScores}
 								disabled={generated.busy}
+								onManualSave={() =>
+									cardDisplayRef.current?.scrollIntoView({
+										behavior: reducedMotion ? 'auto' : 'smooth',
+										block: 'start',
+									})
+								}
 							/>
 							<LinkCopyButton type={type} />
 						</div>

@@ -18,9 +18,10 @@ interface ShareButtonProps {
 	photoUrl: string | null;
 	axisScores: Record<Axis, AxisScore>;
 	disabled?: boolean;
+	onManualSave?: () => void;
 }
 
-export function ShareButton({ type, photoUrl, axisScores, disabled = false }: ShareButtonProps) {
+export function ShareButton({ type, photoUrl, axisScores, disabled = false, onManualSave }: ShareButtonProps) {
 	const t = useTranslation();
 	const locale = useLocale();
 	const [busy, startTransition] = useTransition();
@@ -51,6 +52,10 @@ export function ShareButton({ type, photoUrl, axisScores, disabled = false }: Sh
 				} else if (outcome.kind === 'fallback') {
 					track({ name: 'share_fallback', payload: { type, reason: outcome.reason } });
 					toast(t('카드를 저장했어요. 인스타그램에 올려 주세요!'));
+				} else if (outcome.kind === 'manual-save') {
+					track({ name: 'share_fallback', payload: { type, reason: `in-app-browser:${outcome.reason}` } });
+					onManualSave?.();
+					toast(t('카드 이미지를 길게 눌러 저장해 주세요.'));
 				} else {
 					track({ name: 'share_cancel', payload: { type } });
 				}
