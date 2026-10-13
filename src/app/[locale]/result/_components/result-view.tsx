@@ -137,9 +137,8 @@ export function ResultView() {
 						<div className="grid grid-cols-2 gap-2.5">
 							<ShareButton
 								type={type}
-								photoUrl={generated.url}
-								axisScores={axisScores}
-								disabled={generated.busy}
+								card={composedCard.blob}
+								pending={composedCard.pending}
 								onManualSave={() =>
 									cardDisplayRef.current?.scrollIntoView({
 										behavior: reducedMotion ? 'auto' : 'smooth',
@@ -156,7 +155,14 @@ export function ResultView() {
 						)}
 						{composedCard.error && (
 							<div role="status" aria-live="polite" className="text-center text-sm text-ink-muted">
-								{t('카드를 표시하지 못했어요. 새로고침해 주세요.')}
+								{t('카드를 만들지 못했어요.')}{' '}
+								<button
+									type="button"
+									className="underline underline-offset-2"
+									onClick={composedCard.retry}
+								>
+									{t('다시 시도')}
+								</button>
 							</div>
 						)}
 						<AppCtaButton placement="result" />

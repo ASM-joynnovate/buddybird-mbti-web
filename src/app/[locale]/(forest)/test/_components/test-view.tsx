@@ -72,10 +72,14 @@ export function TestView() {
 		let fontTimer: ReturnType<typeof setTimeout> | undefined;
 		const scheduleFont = () => {
 			fontTimer = setTimeout(() => {
+				if (!document.fonts) return;
 				Promise.all([
 					document.fonts.load(`400 1em ${nexon.style.fontFamily}`),
 					document.fonts.load(`700 1em ${nexon.style.fontFamily}`),
-				]).then(() => setFontReady(true));
+				])
+					.then(() => setFontReady(true))
+					// 인앱 WebView 등에서 폰트를 받지 못하면 기본 글꼴을 유지한다.
+					.catch(() => {});
 			}, 3000);
 		};
 		if (document.readyState === 'complete') {
