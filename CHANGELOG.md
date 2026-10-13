@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.6.2](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.6.1...v2.6.2) (2026-10-13)
+
+
+### Bug Fixes
+
+* 모바일 카드 저장 안내와 사진 합성 타임아웃 수정 [BB-676] ([eda0343](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/eda034334c8c6c6a6615029496890d043010232b))
+* 모바일에서 blob 다운로드 대신 카드 저장을 안내하도록 변경 [BB-676] ([0670326](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/0670326f55d8110e954130aa64e6fc651167fc05))
+* 사진 합성 타임아웃을 AbortSignal.any 없이 처리 [BB-676] ([060daf0](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/060daf01033a2d81e07c65dd83d0a9a693829097))
+
 ## [2.6.1](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.6.0...v2.6.1) (2026-10-13)
 
 
