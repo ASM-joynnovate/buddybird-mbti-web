@@ -22,9 +22,8 @@ import { TestProgressProvider } from '@/providers/test-progress-provider';
 
 import { Toaster } from '@/components/ui/sonner';
 
-// 소스에서 쓰는 글자만 담은 서브셋. 문구를 추가하면 `node scripts/subset-display-font.mjs`로 다시 생성한다.
 const jua = localFont({
-	src: '../fonts/jua-subset.woff2',
+	src: '../fonts/Jua-Regular.woff2',
 	weight: '400',
 	display: 'swap',
 	preload: false,
