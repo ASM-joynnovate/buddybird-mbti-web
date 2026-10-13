@@ -37,6 +37,7 @@ export function useGeneratedPhoto(selectedFile: File | null, type: TypeCode | nu
 		active.current?.abort();
 		const controller = new AbortController();
 		active.current = controller;
+		const timer = setTimeout(() => controller.abort(new DOMException('timeout', 'TimeoutError')), 120_000);
 		const started = performance.now();
 		if (url.current) URL.revokeObjectURL(url.current);
 		url.current = null;
@@ -48,7 +49,7 @@ export function useGeneratedPhoto(selectedFile: File | null, type: TypeCode | nu
 			const response = await fetch('/api/generate-image', {
 				method: 'POST',
 				body: form,
-				signal: AbortSignal.any([controller.signal, AbortSignal.timeout(120_000)]),
+				signal: controller.signal,
 			});
 			if (!response.ok) {
 				const body = await response.json().catch(() => null);
@@ -64,14 +65,16 @@ export function useGeneratedPhoto(selectedFile: File | null, type: TypeCode | nu
 				duration_ms: Math.round(performance.now() - started),
 			});
 		} catch (error) {
-			if (active.current !== controller || controller.signal.aborted) return;
+			// Safari는 중단 사유와 관계없이 AbortError로 실패한다.
+			const timedOut = controller.signal.reason?.name === 'TimeoutError';
+			if (active.current !== controller || (controller.signal.aborted && !timedOut)) return;
 			setGeneration({
 				file,
 				type,
 				status: 'error',
 				url: null,
 				error:
-					error instanceof Error && error.name !== 'TimeoutError'
+					error instanceof Error && !timedOut
 						? error.message
 						: '합성 시간이 길어지고 있어요. 다시 시도해 주세요.',
 			});
@@ -80,6 +83,7 @@ export function useGeneratedPhoto(selectedFile: File | null, type: TypeCode | nu
 				duration_ms: Math.round(performance.now() - started),
 			});
 		} finally {
+			clearTimeout(timer);
 			if (active.current === controller) active.current = null;
 		}
 	};
