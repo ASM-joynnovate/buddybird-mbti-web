@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.1](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.6.0...v2.6.1) (2026-10-13)
+
+
+### Bug Fixes
+
+* 인앱 브라우저 카드 저장과 공유 흐름 개선 [BB-676] ([#30](https://github.com/ASM-joynnovate/buddybird-mbti-web/issues/30)) ([1a26f46](https://github.com/ASM-joynnovate/buddybird-mbti-web/commit/1a26f462a73fe3f82d785474adb3a064d416857a))
+
 ## [2.6.0](https://github.com/ASM-joynnovate/buddybird-mbti-web/compare/v2.5.0...v2.6.0) (2026-10-12)
 
 
