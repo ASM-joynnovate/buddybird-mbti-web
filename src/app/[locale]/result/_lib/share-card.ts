@@ -9,7 +9,7 @@ export type ShareOutcome =
 	| { kind: 'shared' }
 	| { kind: 'canceled' }
 	| { kind: 'fallback'; reason: string }
-	// 인앱 브라우저는 blob: 다운로드를 처리하지 못해 사용자가 카드 이미지를 직접 길게 눌러 저장해야 한다.
+	// 모바일 WebView는 blob: 다운로드를 저장하지 못한다.
 	| { kind: 'manual-save'; reason: string };
 
 export async function shareCard(blob: Blob, type: TypeCode, locale: Locale): Promise<ShareOutcome> {
@@ -36,27 +36,15 @@ export async function shareCard(blob: Blob, type: TypeCode, locale: Locale): Pro
 			if (error instanceof DOMException && error.name === 'AbortError') {
 				return { kind: 'canceled' };
 			}
-			return saveFile(file, getErrorMessage(error));
+			return { kind: 'manual-save', reason: getErrorMessage(error) };
 		}
 	}
 
-	return saveFile(file, isDesktop ? 'desktop-download' : 'web-share-unsupported');
-}
-
-function saveFile(file: File, reason: string): ShareOutcome {
-	if (isInAppBrowser()) {
-		return { kind: 'manual-save', reason };
+	if (!isDesktop) {
+		return { kind: 'manual-save', reason: 'web-share-unsupported' };
 	}
 	downloadFile(file);
-	return { kind: 'fallback', reason };
-}
-
-function isInAppBrowser(): boolean {
-	if (typeof navigator === 'undefined') {
-		return false;
-	}
-	// Instagram, Facebook, KakaoTalk, NAVER, LINE 앱과 그 밖의 Android WebView(`; wv)`).
-	return /Instagram|FBAN|FBAV|KAKAOTALK|NAVER\(inapp|Line\/|; wv\)/.test(navigator.userAgent);
+	return { kind: 'fallback', reason: 'desktop-download' };
 }
 
 function isMobileUserAgent(): boolean {

@@ -40,7 +40,7 @@ export function ShareButton({ type, card, pending = false, onManualSave }: Share
 					track({ name: 'share_fallback', payload: { type, reason: outcome.reason } });
 					toast(t('카드를 저장했어요. 인스타그램에 올려 주세요!'));
 				} else if (outcome.kind === 'manual-save') {
-					track({ name: 'share_fallback', payload: { type, reason: `in-app-browser:${outcome.reason}` } });
+					track({ name: 'share_fallback', payload: { type, reason: outcome.reason } });
 					onManualSave?.();
 					toast(t('카드 이미지를 길게 눌러 저장해 주세요.'));
 				} else {
